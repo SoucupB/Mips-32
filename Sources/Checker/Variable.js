@@ -1,4 +1,5 @@
 import Character from "./Character.js";
+import Chomp from "./Chomp.js";
 
 class Variable {
   static isValid(str) {
@@ -20,7 +21,21 @@ class Variable {
   }
 
   static chomp(str, index) {
-    
+    if(!str.length || Character.isNumeric(str[index])) {
+      return Chomp.invalid();
+    }
+
+    let i = index;
+    let result = "";
+
+    while(i < str.length && (Character.isAlpha(str[i]) || Character.isNumeric(str[i]) || str[i] == '_')) {
+      result += str[i++];
+    }
+    if(!result.length) {
+      return Chomp.invalid();
+    }
+
+    return new Chomp(result, i);
   }
 }
 
