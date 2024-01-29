@@ -21,7 +21,7 @@ class Variable {
   }
 
   static chomp(str, index) {
-    if(!str.length || Character.isNumeric(str[index])) {
+    if(!str || !str.length || Character.isNumeric(str[index])) {
       return Chomp.invalid();
     }
 
