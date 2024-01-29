@@ -8,7 +8,7 @@ class Character {
   }
 
   static isOperator(char) {
-    return ['+', '-', '*', '/', '%', '=', '<', '>', '|', '^'].includes(char);
+    return ['+', '-', '*', '/', '%', '=', '<', '>', '|', '^', '&'].includes(char);
   }
 }
 export default Character;
