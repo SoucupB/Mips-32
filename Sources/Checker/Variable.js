@@ -35,7 +35,7 @@ class Variable {
       return Chomp.invalid();
     }
 
-    return new Chomp(result, i);
+    return new Chomp(result, i, Variable);
   }
 }
 

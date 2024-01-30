@@ -1,12 +1,13 @@
 class Chomp {
-  constructor(buffer, index, invalid = false) {
+  constructor(buffer, index, type, invalid = false) {
     this.buffer = buffer;
     this.index = index;
     this.invalid = invalid;
+    this.type = type;
   }
 
   static invalid() {
-    return new Chomp(-1, -1, true);
+    return new Chomp(-1, -1, null, true);
   }
 
   isInvalid() {

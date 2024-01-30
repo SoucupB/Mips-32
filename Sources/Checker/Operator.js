@@ -19,13 +19,13 @@ class Operator {
       let specialCharactersArray = ['==', '!=', '||', '&&']
       for(let j = 0, c = specialCharactersArray.length; j < c; j++) {
         if(`${str[i]}${str[i + 1]}` == specialCharactersArray[j]) {
-          return new Chomp(specialCharactersArray[j], i + 2);
+          return new Chomp(specialCharactersArray[j], i + 2, Operator);
         }
       }
     }
 
     if(Character.isOperator(str[i])) {
-      return new Chomp(str[i], i + 1);
+      return new Chomp(str[i], i + 1, Operator);
     }
 
     return Chomp.invalid();
