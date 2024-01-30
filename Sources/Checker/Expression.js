@@ -41,7 +41,7 @@ class Expression {
         return chomp;
       }
     }
-    return null;
+    return Chomp.invalid();
   }
 }
 
