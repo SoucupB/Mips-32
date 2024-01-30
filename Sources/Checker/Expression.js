@@ -14,9 +14,6 @@ class Expression {
       if(Expression.operator_Chomp(str, index, chompsArray).isInvalid()) {
         return false;
       }
-      if(!Expression.chompParanthesisData(str, index, chompsArray)) {
-        return false;
-      }
       if(Expression.denominator_Chomp(str, index, chompsArray).isInvalid()) {
         return false;
       }
@@ -38,7 +35,12 @@ class Expression {
   static denominator_Chomp(str, indexArray, chompsArray) {
     let chomp = Expression.chompDenominator(str, indexArray[0]);
     if(chomp.isInvalid()) {
-      return Chomp.invalid();
+      let denomitorChomp = Expression.chomp_ParanthesisData(str, indexArray, chompsArray);
+      if(!denomitorChomp.isInvalid()) {
+        chompsArray.push(denomitorChomp);
+        indexArray[0] = denomitorChomp.index;
+      }
+      return denomitorChomp;
     }
     chompsArray.push(chomp);
     indexArray[0] = chomp.index;
@@ -46,43 +48,49 @@ class Expression {
     return chomp;
   }
 
-  static chomp(str, index) {
-    let newIndex = [index];
-    let chompsArray = [];
-    if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
-      return false;
-    }
-    while(newIndex < str.length) {
-      if(Expression.operator_Chomp(str, newIndex, chompsArray).isInvalid()) {
-        return false;
-      }
-      if(!Expression.chompParanthesisData(str, newIndex, chompsArray)) {
-        return Chomp.invalid();
-      }
-      if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
-        return Chomp.invalid();
-      }
-    }
+  static chompFromArray(chompsArray, newIndex) {
     let chompResponse = new Chomp('', newIndex[0], Expression, true);
     chompResponse.childrenChomps = chompsArray;
 
     return chompResponse;
   }
 
-  static chompParanthesisData(str, index, chompsArray) {
-    if(Operator.chompOpenParanth(str, index[0]).isInvalid()) {
-      return true;
+  static chomp(str, index) {
+    let newIndex = [index];
+    let chompsArray = [];
+    if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
+      return Chomp.invalid();
     }
-    let chomp = Operator.chomp(str, index[0]);
+    while(newIndex < str.length) {
+      if(Expression.operator_Chomp(str, newIndex, chompsArray).isInvalid()) {
+        return Expression.chompFromArray(chompsArray, newIndex);
+      }
+      if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
+        return Chomp.invalid();
+      }
+    }
+    return Expression.chompFromArray(chompsArray, newIndex);
+  }
+
+  static chomp_ParanthesisData(str, index) {
+    let chompsArray = [];
+    let chompOpenParanth = Operator.chompOpenParanth(str, index[0]);
+    if(chompOpenParanth.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index[0] = chompOpenParanth.index;
+    let chomp = Expression.chomp(str, index[0]);
     if(chomp.isInvalid()) {
-      return false;
+      return Chomp.invalid();
     }
     index[0] = chomp.index;
     chompsArray.push(chomp);
-    if(Operator.chompCloseParanth(str, index[0]).isInvalid()) {
-      return false;
+    let chompCloseParanth = Operator.chompCloseParanth(str, index[0]);
+    if(chompCloseParanth.isInvalid()) {
+      return Chomp.invalid();
     }
-    return true;
+    index[0] = chompCloseParanth.index;
+    return Expression.chompFromArray(chompsArray, index);
   }
 
   static chompDenominator(str, index) {
