@@ -30,6 +30,22 @@ class Operator {
 
     return Chomp.invalid();
   }
+
+  static chompOpenParanth(str, index) {
+    if(index >= str.length || str[index] != '(') {
+      return Chomp.invalid();
+    }
+
+    return new Chomp('(', index + 1, Operator)
+  }
+
+  static chompCloseParanth(str, index) {
+    if(index >= str.length || str[index] != ')') {
+      return Chomp.invalid();
+    }
+
+    return new Chomp(')', index + 1, Operator)
+  }
 }
 
 export default Operator;

@@ -14,6 +14,9 @@ class Expression {
       if(Expression.operator_Chomp(str, index, chompsArray).isInvalid()) {
         return false;
       }
+      if(!Expression.chompParanthesisData(str, index, chompsArray)) {
+        return false;
+      }
       if(Expression.denominator_Chomp(str, index, chompsArray).isInvalid()) {
         return false;
       }
@@ -44,33 +47,42 @@ class Expression {
   }
 
   static chomp(str, index) {
+    let newIndex = [index];
     let chompsArray = [];
-    let chomp = Expression.chompDenominator(str, index);
-    if(chomp.isInvalid()) {
-      return chomp.invalid();
+    if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
+      return false;
     }
-    chompsArray.push(chomp);
-    index = chomp.index;
-
-    while(index < str.length) {
-      let signChomp = Operator.chomp(str, index);
-      if(signChomp.isInvalid()) {
-        break;
+    while(newIndex < str.length) {
+      if(Expression.operator_Chomp(str, newIndex, chompsArray).isInvalid()) {
+        return false;
       }
-      chompsArray.push(signChomp);
-      index = signChomp.index;
-
-      chomp = Expression.chompDenominator(str, index);
-      if(chomp.isInvalid()) {
-        return chomp.invalid();
+      if(!Expression.chompParanthesisData(str, newIndex, chompsArray)) {
+        return Chomp.invalid();
       }
-      chompsArray.push(chomp);
-      index = chomp.index;
+      if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
+        return Chomp.invalid();
+      }
     }
-    let chompResponse = new Chomp('', index, Expression, true);
+    let chompResponse = new Chomp('', newIndex[0], Expression, true);
     chompResponse.childrenChomps = chompsArray;
 
     return chompResponse;
+  }
+
+  static chompParanthesisData(str, index, chompsArray) {
+    if(Operator.chompOpenParanth(str, index[0]).isInvalid()) {
+      return true;
+    }
+    let chomp = Operator.chomp(str, index[0]);
+    if(chomp.isInvalid()) {
+      return false;
+    }
+    index[0] = chomp.index;
+    chompsArray.push(chomp);
+    if(Operator.chompCloseParanth(str, index[0]).isInvalid()) {
+      return false;
+    }
+    return true;
   }
 
   static chompDenominator(str, index) {
