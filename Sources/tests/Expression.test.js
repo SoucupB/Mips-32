@@ -126,3 +126,8 @@ test('Check expression v24', (t) => {
   t.equal(Expression.isValid('(_)+(((1))*4)'), true, 'returns');
   t.end();
 });
+
+test('Check expression v25', (t) => {
+  t.equal(Expression.isValid('(_)+(((1))*4)+(+3)'), false, 'returns');
+  t.end();
+});
