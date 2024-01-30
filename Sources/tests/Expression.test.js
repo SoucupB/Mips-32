@@ -66,3 +66,63 @@ test('Check expression v13', (t) => {
   t.equal(Expression.isValid('5+(3+2)+3'), true, 'returns');
   t.end();
 });
+
+test('Check expression v14', (t) => {
+  t.equal(Expression.isValid('(3+2)+3*5'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v14', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+2)'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v15', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+ana+mere+32)*5'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v16', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+ana+mer+5e+e+32)*5'), false, 'returns');
+  t.end();
+});
+
+test('Check expression v17', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+ana+mer+5+(5&5)+e+32)*5'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v18', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+ana+mer+5+(5&5+(6))+e+32)*5'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v19', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+ana)+mer+5+(5&5+(6))+e+32)*5'), false, 'returns');
+  t.end();
+});
+
+test('Check expression v20', (t) => {
+  t.equal(Expression.isValid('2+3*5+(3+ana()))+mer+5+(5&5+(6))+e+32)*5'), false, 'returns');
+  t.end();
+});
+
+test('Check expression v21', (t) => {
+  t.equal(Expression.isValid('(((1)))'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v22', (t) => {
+  t.equal(Expression.isValid('(((1))*4)'), true, 'returns');
+  t.end();
+});
+
+test('Check expression v23', (t) => {
+  t.equal(Expression.isValid(')(((1))*4)'), false, 'returns');
+  t.end();
+});
+
+test('Check expression v24', (t) => {
+  t.equal(Expression.isValid('(_)+(((1))*4)'), true, 'returns');
+  t.end();
+});
