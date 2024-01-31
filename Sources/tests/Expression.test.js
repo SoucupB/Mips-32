@@ -143,3 +143,21 @@ test('Check expression v27', (t) => {
   t.equal(chomp.toString(), '(_)+(((1))*4)', 'returns');
   t.end();
 });
+
+test('Check expression v28', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)+(3+)', 0);
+  t.equal(chomp.toString(), '(_)+(((1))*4)', 'returns');
+  t.end();
+});
+
+test('Check expression v29', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)+(3+3)', 0);
+  t.equal(chomp.toString(), '(_)+(((1))*4)+(3+3)', 'returns');
+  t.end();
+});
+
+test('Check expression v30', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)+(3+3-3+(0-))', 0);
+  t.equal(chomp.toString(), '(_)+(((1))*4)', 'returns');
+  t.end();
+});
