@@ -19,20 +19,37 @@ export class Initialization {
       return false;
     }
     index = keywordType.index;
-    let assignerVariable = Initialization.chompInitializedVariable(str, index);
-    if(assignerVariable.isInvalid()) {
-      return false;
+    while(index < str.length) {
+      let currentChomp = Initialization.chompDeclaration(str, index);
+      if(currentChomp.isInvalid()) {
+        break;
+      }
+      index = currentChomp.index;
+      if(Character.isCommaSeparator(str[index])) {
+        index++;
+      }
     }
-    index = assignerVariable.index;
-    let expression = Expression.chomp(str, index);
-    if(expression.isInvalid()) {
-      return false;
-    }
-    index = expression.index;
     if(!Character.isAssignationEnding(str[index])) {
       return false;
     }
     return true;
+  }
+
+  static chompDeclaration(str, index) {
+    let assignerVariable = Initialization.chompInitializedVariable(str, index);
+    if(assignerVariable.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = assignerVariable.index;
+    let expression = Expression.chomp(str, index);
+    if(expression.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = expression.index;
+    let chompResponse = new Chomp('', index, Initialization);
+    chompResponse.childrenChomps = [assignerVariable, expression];
+
+    return chompResponse;
   }
 
   static chompDeclarationHeader(str, index) {

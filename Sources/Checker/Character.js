@@ -15,6 +15,10 @@ class Character {
     return char == ' ';
   }
 
+  static isCommaSeparator(char) {
+    return char == ',';
+  }
+
   static isAssignationEnding(char) {
     return char == ';';
   }
