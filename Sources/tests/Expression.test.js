@@ -133,7 +133,7 @@ test('Check expression v25', (t) => {
 });
 
 test('Check expression v26', (t) => {
-  let chomp = Expression.chomp('4+5+(4+3)', 0); // (_)+(((1))*4)
+  let chomp = Expression.chomp('4+5+(4+3)', 0);
   t.equal(chomp.toString(), '4+5+(4+3)', 'returns');
   t.end();
 });
@@ -159,5 +159,35 @@ test('Check expression v29', (t) => {
 test('Check expression v30', (t) => {
   let chomp = Expression.chomp('(_)+(((1))*4)+(3+3-3+(0-))', 0);
   t.equal(chomp.toString(), '(_)+(((1))*4)', 'returns');
+  t.end();
+});
+
+test('Check expression v31', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)+(3+3-3+(0-zzz))', 0);
+  t.equal(chomp.toString(), '(_)+(((1))*4)+(3+3-3+(0-zzz))', 'returns');
+  t.end();
+});
+
+test('Check expression v32', (t) => {
+  let chomp = Expression.chomp('(4+3)-3', 0);
+  t.equal(chomp.toString(), '(4+3)-3', 'returns');
+  t.end();
+});
+
+test('Check expression v33', (t) => {
+  let chomp = Expression.chomp('3+(4+3)-3', 2);
+  t.equal(chomp.toString(), '(4+3)-3', 'returns');
+  t.end();
+});
+
+test('Check expression v34', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)+(3+3-3+(0-zzz))', 4);
+  t.equal(chomp.toString(), '(((1))*4)+(3+3-3+(0-zzz))', 'returns');
+  t.end();
+});
+
+test('Check expression v35', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)+(3+3-3+(0-zzz))', 3);
+  t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
