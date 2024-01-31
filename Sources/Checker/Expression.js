@@ -77,6 +77,7 @@ class Expression {
     for(let i = str.length - 1; i >= index; i--) {
       let chomp = Expression.chompSearch_t(str.substring(index, i + 1), 0);
       if(!chomp.isInvalid()) {
+        chomp.index += index;
         return chomp;
       }
     }

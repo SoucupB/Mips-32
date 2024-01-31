@@ -31,6 +31,13 @@ class Operator {
     return Chomp.invalid();
   }
 
+  static chompEqual(str, index) {
+    if((!str || index >= str.length) || str[index] != '=') {
+      return Chomp.invalid();
+    }
+    return new Chomp('=', index + 1, Operator);
+  }
+
   static chompOpenParanth(str, index) {
     if(index >= str.length || str[index] != '(') {
       return Chomp.invalid();

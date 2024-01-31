@@ -10,5 +10,13 @@ class Character {
   static isOperator(char) {
     return ['+', '-', '*', '/', '%', '=', '<', '>', '|', '^', '&'].includes(char);
   }
+
+  static isSeparator(char) {
+    return char == ' ';
+  }
+
+  static isAssignationEnding(char) {
+    return char == ';';
+  }
 }
 export default Character;

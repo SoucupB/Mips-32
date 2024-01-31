@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import Initialization from '../Checker/Initialization.js';
+import { Initialization, Keyword } from '../Checker/Initialization.js';
 
 test('Check Initialization checker v1', (t) => {
   t.equal(Initialization.isValid('a'), false, 'returns');
