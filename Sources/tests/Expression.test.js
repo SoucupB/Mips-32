@@ -191,3 +191,21 @@ test('Check expression v35', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check expression v36', (t) => {
+  let chomp = Expression.chomp('((((((5))))))', 0);
+  t.equal(chomp.toString(), '((((((5))))))', 'returns');
+  t.end();
+});
+
+test('Check expression v37', (t) => {
+  let chomp = Expression.chomp('((((((5)))))', 0);
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check expression v38', (t) => {
+  let chomp = Expression.chomp('(((((5))))))', 0); 
+  t.equal(chomp.toString(), '(((((5)))))', 'returns');
+  t.end();
+});
