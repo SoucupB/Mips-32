@@ -14,15 +14,11 @@ export class Keyword {
 export class Initialization {
   static isValid(str) {
     let index = 0;
-    let keywordType = Initialization.chompKeywordsInitialization(str, index);
+    let keywordType = Initialization.chompDeclarationHeader(str, index);
     if(keywordType.isInvalid()) {
       return false;
     }
     index = keywordType.index;
-    if(!Character.isSeparator(str[index])) {
-      return false;
-    }
-    index++;
     let assignerVariable = Initialization.chompInitializedVariable(str, index);
     if(assignerVariable.isInvalid()) {
       return false;
@@ -37,6 +33,19 @@ export class Initialization {
       return false;
     }
     return true;
+  }
+
+  static chompDeclarationHeader(str, index) {
+    let keywordType = Initialization.chompKeywordsInitialization(str, index);
+    if(keywordType.isInvalid()) {
+      return keywordType;
+    }
+    index = keywordType.index;
+    if(!Character.isSeparator(str[index])) {
+      return Chomp.invalid();
+    }
+    keywordType.index = index + 1;
+    return keywordType;
   }
 
   static chompInitializedVariable(str, index) {
