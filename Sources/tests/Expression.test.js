@@ -131,3 +131,15 @@ test('Check expression v25', (t) => {
   t.equal(Expression.isValid('(_)+(((1))*4)+(+3)'), false, 'returns');
   t.end();
 });
+
+test('Check expression v26', (t) => {
+  let chomp = Expression.chomp('4+5+(4+3)', 0); // (_)+(((1))*4)
+  t.equal(chomp.toString(), '4+5+(4+3)', 'returns');
+  t.end();
+});
+
+test('Check expression v27', (t) => {
+  let chomp = Expression.chomp('(_)+(((1))*4)', 0);
+  t.equal(chomp.toString(), '(_)+(((1))*4)', 'returns');
+  t.end();
+});

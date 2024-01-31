@@ -35,7 +35,8 @@ class Expression {
   static denominator_Chomp(str, indexArray, chompsArray) {
     let chomp = Expression.chompDenominator(str, indexArray[0]);
     if(chomp.isInvalid()) {
-      let denomitorChomp = Expression.chomp_ParanthesisData(str, indexArray, chompsArray);
+      let newIndex = [indexArray[0]]
+      let denomitorChomp = Expression.chomp_ParanthesisData(str, newIndex, chompsArray);
       if(!denomitorChomp.isInvalid()) {
         chompsArray.push(denomitorChomp);
         indexArray[0] = denomitorChomp.index;
@@ -55,7 +56,7 @@ class Expression {
     return chompResponse;
   }
 
-  static chomp(str, index) {
+  static chompSearch_t(str, index) {
     let newIndex = [index];
     let chompsArray = [];
     if(Expression.denominator_Chomp(str, newIndex, chompsArray).isInvalid()) {
@@ -72,25 +73,33 @@ class Expression {
     return Expression.chompFromArray(chompsArray, newIndex);
   }
 
+  static chomp(str, index) {
+    for(let i = str.length - 1; i >= index; i--) {
+      let chomp = Expression.chompSearch_t(str.substring(index, i + 1), index);
+      if(!chomp.isInvalid()) {
+        return chomp;
+      }
+    }
+    return Chomp.invalid();
+  }
+
   static chomp_ParanthesisData(str, index) {
-    let chompsArray = [];
     let chompOpenParanth = Operator.chompOpenParanth(str, index[0]);
     if(chompOpenParanth.isInvalid()) {
       return Chomp.invalid();
     }
     index[0] = chompOpenParanth.index;
-    let chomp = Expression.chomp(str, index[0]);
+    let chomp = Expression.chompSearch_t(str, index[0]);
     if(chomp.isInvalid()) {
       return Chomp.invalid();
     }
     index[0] = chomp.index;
-    chompsArray.push(chomp);
     let chompCloseParanth = Operator.chompCloseParanth(str, index[0]);
     if(chompCloseParanth.isInvalid()) {
       return Chomp.invalid();
     }
     index[0] = chompCloseParanth.index;
-    return Expression.chompFromArray(chompsArray, index);
+    return Expression.chompFromArray(chomp.childrenChomps, index);
   }
 
   static chompDenominator(str, index) {

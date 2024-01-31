@@ -19,6 +19,21 @@ class Chomp {
   isInvalid() {
     return this.invalid;
   }
+
+  toString(depth = 0) {
+    if(this.isParent) {
+      let childParent = '';
+      for(let i = 0, c = this.childrenChomps.length; i < c; i++) {
+        const childString = this.childrenChomps[i].toString(depth + 1);
+        childParent += childString;
+      }
+      if(depth) {
+        return `(${childParent})`;
+      }
+      return childParent;
+    }
+    return this.buffer;
+  }
 }
 
 export default Chomp;
