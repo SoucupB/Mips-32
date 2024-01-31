@@ -61,3 +61,18 @@ test('Check Initialization checker v12', (t) => {
   t.equal(Initialization.isValid('char _newVar=b+3-3+(32+4&&(2||3)/2)+4;'), true, 'returns');
   t.end();
 });
+
+test('Check Initialization checker v13', (t) => {
+  t.equal(Initialization.isValid('char _newVar=b+3-3+(32+4&&(2||3)/2)+4,vec=32+22;'), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v14', (t) => {
+  t.equal(Initialization.isValid('char a=b+3-3+(32+4&&(2||3)/2)+4,vec=32+22,scor=32+(44-2+2);'), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v15', (t) => {
+  t.equal(Initialization.isValid('char a=b+3-3+(32+4&&(2||3)/2)+4,vec=32+22,scor=32+(44-2+2),z=--2;'), false, 'returns');
+  t.end();
+});
