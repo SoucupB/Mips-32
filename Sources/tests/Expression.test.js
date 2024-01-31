@@ -177,6 +177,7 @@ test('Check expression v32', (t) => {
 test('Check expression v33', (t) => {
   let chomp = Expression.chomp('3+(4+3)-3', 2);
   t.equal(chomp.toString(), '(4+3)-3', 'returns');
+  t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
 
