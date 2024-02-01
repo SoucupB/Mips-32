@@ -92,3 +92,17 @@ test('Check CodeBlock checker v13', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Check CodeBlock checker v14', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;while(c<10){for(int i=0;i<=a;i=i+1){if(a==5){z=5;}while(z>5){b=z+1;}for(int j=0;j<=5;j=j+1){c=i+j;}}}}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock checker v15', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;while(c<10){for(int i=0;i<=a;i=i+1)if{while(z>5){b=z+1;}for(int j=0;j<=5;j=j+1){c=i+j;}}}}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

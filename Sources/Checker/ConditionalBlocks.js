@@ -13,6 +13,8 @@ export class ConditionalKeywords {
 }
 
 export class ConditionalBlocks {
+  // [0] -> expression, [1] -> block
+
   static chomp(str, index) {
     let conditionalBlock = ConditionalBlocks.chompKeywordsInitialization(str, index);
     if(conditionalBlock.isInvalid()) {
