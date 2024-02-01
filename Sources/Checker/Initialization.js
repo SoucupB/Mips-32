@@ -11,6 +11,10 @@ export class Keyword {
   }
 }
 
+export class InitializationTuple {
+
+}
+
 export class Initialization {
   static isValid(str) {
     let index = 0;
@@ -35,6 +39,34 @@ export class Initialization {
     return true;
   }
 
+  // Chomp.new('', index, Expression)
+  static chomp(str, index) {
+    let initializers = [];    
+    let keywordType = Initialization.chompDeclarationHeader(str, index);
+    if(keywordType.isInvalid()) {
+      return Chomp.invalid();
+    }
+    initializers.push(keywordType)
+    index = keywordType.index;
+    while(index < str.length) {
+      let currentChomp = Initialization.chompDeclaration(str, index);
+      if(currentChomp.isInvalid()) {
+        break;
+      }
+      initializers.push(currentChomp)
+      index = currentChomp.index;
+      if(Character.isCommaSeparator(str[index])) {
+        index++;
+      }
+    }
+    if(!Character.isAssignationEnding(str[index])) {
+      return Chomp.invalid();
+    }
+    let chompResponse = new Chomp('', index, Initialization);
+    chompResponse.childrenChomps = initializers;
+    return chompResponse;
+  }
+
   static chompDeclaration(str, index) {
     let assignerVariable = Initialization.chompInitializedVariable(str, index);
     if(assignerVariable.isInvalid()) {
@@ -46,7 +78,7 @@ export class Initialization {
       return Chomp.invalid();
     }
     index = expression.index;
-    let chompResponse = new Chomp('', index, Initialization);
+    let chompResponse = new Chomp('', index, InitializationTuple);
     chompResponse.childrenChomps = [assignerVariable, expression];
 
     return chompResponse;
@@ -81,9 +113,8 @@ export class Initialization {
 
   static chompKeywordsInitialization(str, index) {
     let keywords = Keyword.keyWords();
-
     for(let i = 0, c = keywords.length; i < c; i++) {
-      if(str.indexOf(keywords[i]) == 0) {
+      if(str.indexOf(keywords[i]) == index) {
         return new Chomp(keywords[i], index + keywords[i].length, Keyword)
       }
     }

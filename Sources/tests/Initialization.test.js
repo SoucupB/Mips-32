@@ -76,3 +76,45 @@ test('Check Initialization checker v15', (t) => {
   t.equal(Initialization.isValid('char a=b+3-3+(32+4&&(2||3)/2)+4,vec=32+22,scor=32+(44-2+2),z=--2;'), false, 'returns');
   t.end();
 });
+
+test('Check Initialization checker v16', (t) => {
+  const chomp = Initialization.chomp('char a=2;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v17', (t) => {
+  const chomp = Initialization.chomp('char a=2;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v18', (t) => {
+  const chomp = Initialization.chomp('char a=2,c=3,zz_f=2;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v18', (t) => {
+  const chomp = Initialization.chomp('char 3a=2,c=3,zz_f=2;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v19', (t) => {
+  const chomp = Initialization.chomp('pidchar a=2,c=3,zz_f=2;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v20', (t) => {
+  const chomp = Initialization.chomp('pidchar a=2,c=3,zz_f=2;', 3)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
