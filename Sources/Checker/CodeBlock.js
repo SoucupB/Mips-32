@@ -3,6 +3,7 @@ import Chomp from "./Chomp.js";
 import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import { LoopBlocks } from "./LoopBlocks.js";
+import { ConditionalBlocks } from "./ConditionalBlocks.js";
 
 export class CodeBlock {
   static chomp(str, index) {
@@ -23,7 +24,7 @@ export class CodeBlock {
   }
 
   static chompBlock(str, index) {
-    let availableBlocks = [Assignation.chomp, Initialization.chomp, CodeBlock.chomp, LoopBlocks.chomp];
+    let availableBlocks = [Assignation.chomp, Initialization.chomp, CodeBlock.chomp, LoopBlocks.chomp, ConditionalBlocks.chomp];
     let responseBlocks = [];
     while(index < str.length) {
       let hasLineBeenProcessed = false;
