@@ -89,7 +89,7 @@ test('Check LoopBlocks checker v12', (t) => {
 });
 
 test('Check LoopBlocks checker v13', (t) => {
-  let chomp = LoopBlocks.chomp('for(int i=0;i<=5;i=i+1){for(int j=0;j<=5;j=j+1){c=i+j;}}', 0);
+  let chomp = LoopBlocks.chomp('while(c<10){for(int i=0;i<=5;i=i+1){for(int j=0;j<=5;j=j+1){c=i+j;}}}', 0);
 
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
