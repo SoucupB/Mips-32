@@ -167,3 +167,31 @@ test('Check Initialization checker v27', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Check Initialization checker v28', (t) => {
+  const chomp = Initialization.chomp('int adafg;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v29', (t) => {
+  const chomp = Initialization.chomp('int adafg=3+4-(2-22)+b;', 0)
+
+  t.equal(Initialization.display(chomp), 'int -> adafg=3+4-(2-22)+b', 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v30', (t) => {
+  const chomp = Initialization.chomp('int adafg=3+4-(2-22)+b,crt=3-4;', 0)
+
+  t.equal(Initialization.display(chomp), 'int -> adafg=3+4-(2-22)+b -> crt=3-4', 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v31', (t) => {
+  const chomp = Initialization.chomp('int adafg=3+4-(2-22)+b,crt=3-4,a=b,c=32+22;', 0)
+
+  t.equal(Initialization.display(chomp), 'int -> adafg=3+4-(2-22)+b -> crt=3-4 -> a=b -> c=32+22', 'returns');
+  t.end();
+});

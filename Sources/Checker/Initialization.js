@@ -62,7 +62,7 @@ export class Initialization {
     if(!Character.isAssignationEnding(str[index])) {
       return Chomp.invalid();
     }
-    let chompResponse = new Chomp('', index, Initialization);
+    let chompResponse = new Chomp('', index, Initialization, true);
     chompResponse.childrenChomps = initializers;
     return chompResponse;
   }
@@ -78,7 +78,7 @@ export class Initialization {
       return assignerVariable;
     }
     index = expression.index;
-    let chompResponse = new Chomp('', index, InitializationTuple);
+    let chompResponse = new Chomp('', index, InitializationTuple, true);
     chompResponse.childrenChomps = [assignerVariable, expression];
 
     return chompResponse;
@@ -120,5 +120,32 @@ export class Initialization {
     }
 
     return Chomp.invalid();
+  }
+
+  static displayComponent(component) {
+    let response = "";
+    let componentChildren = component.childrenChomps;
+    response += componentChildren[0].buffer + '=';
+
+    for(let i = 1, c = componentChildren.length; i < c; i++) {
+      if(componentChildren[i].type == Expression) {
+        response += componentChildren[i].toString();
+        continue;
+      }
+      response += componentChildren[i].buffer;
+    }
+
+    return response;
+  }
+
+  static display(chomp) {
+    let response = [];
+    response.push(chomp.childrenChomps[0].buffer);
+    let children = chomp.childrenChomps;
+
+    for(let i = 1, c = children.length; i < c; i++) {
+      response.push(Initialization.displayComponent(children[i]));
+    }
+    return response.join(' -> ');
   }
 }
