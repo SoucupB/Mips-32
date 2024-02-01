@@ -58,3 +58,10 @@ test('Check LoopBlocks checker v8', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check LoopBlocks checker v9', (t) => {
+  let chomp = LoopBlocks.chomp('while(1){a=b+3;whire(2){a=3+2-(c-s);}}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
