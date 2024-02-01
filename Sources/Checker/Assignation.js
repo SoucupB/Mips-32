@@ -45,4 +45,13 @@ export class Assignation {
     index = equalChomp.index;
     return new Chomp(variable.buffer, index, Variable);
   }
+
+  static toString(chomp) {
+    let response = '';
+    response += chomp.childrenChomps[0].buffer;
+    response += '=';
+    response += chomp.childrenChomps[1].toString();
+    response += ';';
+    return response;
+  }
 }
