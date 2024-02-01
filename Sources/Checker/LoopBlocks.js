@@ -76,7 +76,7 @@ export class LoopBlocks {
     }
     index = openParanth.index;
 
-    let firstPart = Expression.chompForInitialization(str, index);
+    let firstPart = LoopBlocks.chompForInitialization(str, index);
     if(firstPart.isInvalid()) {
       return Chomp.invalid();
     }

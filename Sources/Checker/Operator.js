@@ -6,7 +6,7 @@ class Operator {
     if(!str || !str.length) {
       return false;
     }
-    return Character.isOperator(str[0]) || str == '==' || str == '!=' || str == '||' || str == '&&';
+    return Character.isOperator(str[0]) || str == '==' || str == '!=' || str == '||' || str == '&&' || str == '<=' || str == '>=';
   }
 
   static chomp(str, index) {
@@ -16,7 +16,7 @@ class Operator {
 
     let i = index;
     if(str.length - i >= 2) {
-      let specialCharactersArray = ['==', '!=', '||', '&&']
+      let specialCharactersArray = ['==', '!=', '||', '&&', '<=', '>=']
       for(let j = 0, c = specialCharactersArray.length; j < c; j++) {
         if(`${str[i]}${str[i + 1]}` == specialCharactersArray[j]) {
           return new Chomp(specialCharactersArray[j], i + 2, Operator);

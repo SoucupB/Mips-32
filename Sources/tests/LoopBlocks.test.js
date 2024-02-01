@@ -65,3 +65,32 @@ test('Check LoopBlocks checker v9', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check LoopBlocks checker v10', (t) => {
+  let chomp = LoopBlocks.chomp('for(int i=0;i<=5;i=i+1){a=b+3;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks checker v11', (t) => {
+  let chomp = LoopBlocks.chomp('for(int i=0;i<=5;i=i+1;c=3){a=b+3;}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks checker v12', (t) => {
+  let chomp = LoopBlocks.chomp('for(int i=0;i<=5;i=i+1){for(int j=0;j<=5;j=j+1){c=i+j;}}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 56, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks checker v13', (t) => {
+  let chomp = LoopBlocks.chomp('for(int i=0;i<=5;i=i+1){for(int j=0;j<=5;j=j+1){c=i+j;}}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
