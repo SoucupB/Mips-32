@@ -63,3 +63,11 @@ test('Check CodeBlock checker v9', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check CodeBlock checker v10', (t) => {
+  let chomp = CodeBlock.chomp('{int a;b=3;}{f=3;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 12, 'returns');
+  t.end();
+});
