@@ -53,6 +53,22 @@ class Operator {
 
     return new Chomp(')', index + 1, Operator)
   }
+
+  static chompOpenBracket(str, index) {
+    if(index >= str.length || str[index] != '{') {
+      return Chomp.invalid();
+    }
+
+    return new Chomp('{', index + 1, Operator)
+  }
+
+  static chompCloseBracket(str, index) {
+    if(index >= str.length || str[index] != '}') {
+      return Chomp.invalid();
+    }
+
+    return new Chomp('}', index + 1, Operator)
+  }
 }
 
 export default Operator;
