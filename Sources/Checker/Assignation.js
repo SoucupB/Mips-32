@@ -5,13 +5,15 @@ import Expression from "./Expression.js";
 import Character from "./Character.js";
 
 export class Assignation {
-  static chomp(str, index) {
+  static chomp(str, index, withEnding = true) {
     let chomper = Assignation.chompDeclaration(str, index);
     index = chomper.index;
-    if(!Character.isAssignationEnding(str[index])) {
-      return Chomp.invalid();
+    if(withEnding) {
+      if(!Character.isAssignationEnding(str[index])) {
+        return Chomp.invalid();
+      }
+      chomper.index++;
     }
-    chomper.index++;
     return chomper;
   }
 
