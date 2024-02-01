@@ -118,3 +118,52 @@ test('Check Initialization checker v20', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Check Initialization checker v21', (t) => {
+  const chomp = Initialization.chomp('char a;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v22', (t) => {
+  const chomp = Initialization.chomp('int a;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v23', (t) => {
+  const chomp = Initialization.chomp('int a', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v24', (t) => {
+  const chomp = Initialization.chomp('inta;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v25', (t) => {
+  const chomp = Initialization.chomp('int a-4;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v26', (t) => {
+  const chomp = Initialization.chomp('int a=3+4+5', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v27', (t) => {
+  const chomp = Initialization.chomp('int a=3+4+5;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});

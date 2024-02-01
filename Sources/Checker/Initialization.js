@@ -75,7 +75,7 @@ export class Initialization {
     index = assignerVariable.index;
     let expression = Expression.chomp(str, index);
     if(expression.isInvalid()) {
-      return Chomp.invalid();
+      return assignerVariable;
     }
     index = expression.index;
     let chompResponse = new Chomp('', index, InitializationTuple);
@@ -105,7 +105,7 @@ export class Initialization {
     index = variable.index;
     let equalChomp = Operator.chompEqual(str, index);
     if(equalChomp.isInvalid()) {
-      return Chomp.invalid();
+      return variable;
     }
     index = equalChomp.index;
     return new Chomp(variable.buffer, index, Variable);
