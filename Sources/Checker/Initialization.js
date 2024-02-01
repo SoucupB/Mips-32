@@ -1,5 +1,4 @@
 import Operator from "./Operator.js";
-import Constant from "./Constant.js";
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import Expression from "./Expression.js";
@@ -39,7 +38,6 @@ export class Initialization {
     return true;
   }
 
-  // Chomp.new('', index, Expression)
   static chomp(str, index) {
     let initializers = [];    
     let keywordType = Initialization.chompDeclarationHeader(str, index);
