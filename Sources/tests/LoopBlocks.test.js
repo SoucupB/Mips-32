@@ -38,8 +38,23 @@ test('Check LoopBlocks checker v5', (t) => {
 });
 
 test('Check LoopBlocks checker v6', (t) => {
-  let chomp = LoopBlocks.chomp('while(1){a=b+3;}', 0);
+  let chomp = LoopBlocks.chomp('while(1){a=b+3;}while(1){a=b+3;}', 0);
 
   t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 16, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks checker v7', (t) => {
+  let chomp = LoopBlocks.chomp('while(1){a=b+3;while(2){a=3+2-(c-s);}}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks checker v8', (t) => {
+  let chomp = LoopBlocks.chomp('while(1){a=b+3;while(2){a=3+2-(c-s-);}}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
