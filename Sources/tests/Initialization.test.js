@@ -195,3 +195,13 @@ test('Check Initialization checker v31', (t) => {
   t.equal(Initialization.display(chomp), 'int -> adafg=3+4-(2-22)+b -> crt=3-4 -> a=b -> c=32+22', 'returns');
   t.end();
 });
+
+test('Check Initialization checker v32', (t) => {
+  const chomp1 = Initialization.chomp('int adafg=a+b-2;int yolo=33+22-a;', 0)
+  const chomp2 = Initialization.chomp('int adafg=a+b-2;int yolo=33+22-a;', 16)
+
+  t.equal(Initialization.display(chomp1), 'int -> adafg=a+b-2', 'returns');
+  t.equal(chomp1.index, 16, 'returns');
+  t.equal(Initialization.display(chomp2), 'int -> yolo=33+22-a', 'returns');
+  t.end();
+});

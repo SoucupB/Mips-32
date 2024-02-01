@@ -62,7 +62,7 @@ export class Initialization {
     if(!Character.isAssignationEnding(str[index])) {
       return Chomp.invalid();
     }
-    let chompResponse = new Chomp('', index, Initialization, true);
+    let chompResponse = new Chomp('', index + 1, Initialization, true);
     chompResponse.childrenChomps = initializers;
     return chompResponse;
   }
@@ -114,7 +114,7 @@ export class Initialization {
   static chompKeywordsInitialization(str, index) {
     let keywords = Keyword.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
-      if(str.indexOf(keywords[i]) == index) {
+      if(str.indexOf(keywords[i], index) == index) {
         return new Chomp(keywords[i], index + keywords[i].length, Keyword)
       }
     }
@@ -139,6 +139,9 @@ export class Initialization {
   }
 
   static display(chomp) {
+    if(chomp.isInvalid()) {
+      return "Invalid!";
+    }
     let response = [];
     response.push(chomp.childrenChomps[0].buffer);
     let children = chomp.childrenChomps;
