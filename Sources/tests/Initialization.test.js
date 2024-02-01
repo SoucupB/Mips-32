@@ -193,6 +193,7 @@ test('Check Initialization checker v31', (t) => {
   const chomp = Initialization.chomp('int adafg=3+4-(2-22)+b,crt=3-4,a=b,c=32+22;', 0)
 
   t.equal(Initialization.display(chomp), 'int -> adafg=3+4-(2-22)+b -> crt=3-4 -> a=b -> c=32+22', 'returns');
+  t.equal(chomp.index, 43, 'returns');
   t.end();
 });
 
