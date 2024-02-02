@@ -2,6 +2,7 @@ import Operator from "./Operator.js";
 import Constant from "./Constant.js";
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
+import { Methods } from "./Methods.js";
 
 class Expression {
   static isValid(str) {
@@ -104,7 +105,7 @@ class Expression {
   }
 
   static chompDenominator(str, index) {
-    let possibleCharacters = [Constant.chomp, Variable.chomp]
+    let possibleCharacters = [Methods.chompMethodCall, Constant.chomp, Variable.chomp]
     for(let i = 0, c = possibleCharacters.length; i < c; i++) {
       let chomp = possibleCharacters[i](str, index);
       if(!chomp.isInvalid()) {

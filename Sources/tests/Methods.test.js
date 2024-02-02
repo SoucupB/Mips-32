@@ -160,3 +160,10 @@ test('Check Methods checker v22', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Methods checker v23', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
