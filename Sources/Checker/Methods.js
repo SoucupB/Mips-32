@@ -96,7 +96,7 @@ export class Methods {
     return Chomp.invalid();
   }
 
-  chompMethodParameters(str, index) {
+  static chompMethodParameters(str, index) {
     let expressions = [];
     let hasParameters = false;
     while(index < str.length) {
@@ -104,7 +104,7 @@ export class Methods {
       let isInvalid = expression.isInvalid();
 
       if(!hasParameters && isInvalid) {
-        return Methods.arrayToChomp(str, expressions);
+        return Methods.arrayToChomp(expressions, index);
       }
       if(isInvalid) {
         return Chomp.invalid();
@@ -112,15 +112,15 @@ export class Methods {
 
       hasParameters = true;
       index = expression.index;
-      expression.push(expressions);
+      expressions.push(expression);
 
-      if(index >= str.length || !Character.isSeparator(str[index])) {
-        return Methods.arrayToChomp(str, expressions);
+      if(index >= str.length || !Character.isCommaSeparator(str[index])) {
+        return Methods.arrayToChomp(expressions, index);
       }
       index++;
     }
 
-    return Methods.arrayToChomp(str, expressions);
+    return Methods.arrayToChomp(expressions, index);
   }
 
   static methodHeaderDeclaration(str, index) {

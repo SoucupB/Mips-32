@@ -89,3 +89,74 @@ test('Check Methods checker v12', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Methods checker v13', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod(a,b)', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v14', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod(a+32-3+(b+c)-2,b-c)', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 30, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v15', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod(a+32-3+(b+c)-2,b-c,v-2,p/2)', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v16', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod(a+32-3+(b+c-)-2,b-c,v-2,p/2)', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v17', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod(a+32-3+(b+c)-2,b-c,v-2,p/2', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v18', (t) => {
+  let chomp = Methods.chompMethodCall('someMethod(a+32-3+(b+c)-2,b-c,v-2p/2)', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v19', (t) => {
+  let chomp = Methods.chompMethodCall('someMethoda+32-3+(b+c)-2,b-c,v-2,p/2)', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v20', (t) => {
+  let chomp = Methods.chompMethodCall('some+Method(a+32-3+(b+c)-2,b-c,v-2,p/2)', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v21', (t) => {
+  let chomp = Methods.chompMethodCall('_325someMethod(a+32-3+(b+c)-2,b-c,v-2,p/2)', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v22', (t) => {
+  let chomp = Methods.chompMethodCall('43_325someMethod(a+32-3+(b+c)-2,b-c,v-2,p/2)', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
