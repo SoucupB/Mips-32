@@ -1,6 +1,8 @@
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import Character from "./Character.js";
+import { MethodsParams } from "./MethodsParam.js";
+import { CodeBlock } from "./CodeBlock.js";
 
 export class MethodsKeywords {
   static keyWords() {
@@ -34,7 +36,16 @@ export class Methods {
     }
     index = closeParanth.index;
     // ...
+    let methodBlock = CodeBlock.chomp(str, index);
+    if(methodBlock.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = methodBlock.index;
 
+    let chompResponse = new Chomp(null, index, Methods);
+    chompResponse.childrenChomps = [methodDeclaration, methodParams, methodBlock];
+
+    return chompResponse;
   }
 
   static chompKeywordsInitialization(str, index) {
@@ -72,7 +83,32 @@ export class Methods {
     return chomp;
   }
 
-  static chompMethodDeclarationsAnthetParams(str, index) {
+  static arrayToChomp(arr, index) {
+    let chomp = new Chomp(null, index);
+    chomp.childrenChomps = arr;
 
+    return chomp;
+  }
+
+  static chompMethodDeclarationsAnthetParams(str, index) {
+    let params = [];
+    let firstParamPresence = false;
+
+    while(index < str.length) {
+      let currentParamDeclaration = MethodsParams.chomp(str, index);
+      if(!firstParamPresence && currentParamDeclaration.isInvalid()) {
+        return Chomp.invalid();
+      }
+      params.push(currentParamDeclaration);
+      index = currentParamDeclaration.index;
+      firstParamPresence = true;
+
+      if(index >= str.length || Character.isCommaSeparator(str[index])) {
+        return MethodsParams.arrayToChomp(str, index);
+      }
+      index++;
+    }
+
+    return MethodsParams.arrayToChomp(str, index);
   }
 }

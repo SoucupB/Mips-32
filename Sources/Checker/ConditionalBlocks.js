@@ -2,9 +2,6 @@ import Operator from "./Operator.js";
 import Chomp from "./Chomp.js";
 import { CodeBlock } from "./CodeBlock.js";
 import Expression from "./Expression.js";
-import { Assignation } from "./Assignation.js";
-import { Initialization } from "./Initialization.js";
-import Character from "./Character.js";
 
 export class ConditionalKeywords {
   static keyWords() {

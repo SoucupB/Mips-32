@@ -48,5 +48,14 @@ test('Check MethodsParams checker v7', (t) => {
   let chomp = MethodsParams.chomp('int _someVariable32', 0);
 
   t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 19, 'returns');
+  t.end();
+});
+
+test('Check MethodsParams checker v8', (t) => {
+  let chomp = MethodsParams.chomp('int _someVariable32;', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 19, 'returns');
   t.end();
 });
