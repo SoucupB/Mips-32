@@ -4,11 +4,16 @@ import Character from "./Character.js";
 import { MethodsParams } from "./MethodsParam.js";
 import { CodeBlock } from "./CodeBlock.js";
 import Operator from "./Operator.js";
+import Expression from "./Expression.js";
 
 export class MethodsKeywords {
   static keyWords() {
     return ['int', 'void', 'char'];
   }
+}
+
+export class MethodCall {
+
 }
 
 export class Methods {
@@ -49,6 +54,37 @@ export class Methods {
     return chompResponse;
   }
 
+  static chompMethodCall(str, index) {
+    let methodName = Variable.chomp(str, index);
+    if(methodName.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = methodName.index;
+
+    let openParanth = Operator.chompOpenParanth(str, index);
+    if(openParanth.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = openParanth.index;
+
+    let params = Methods.chompMethodParameters(str, index);
+    if(params.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = params.index;
+
+    let closeParanth = Operator.chompCloseParanth(str, index);
+    if(closeParanth.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = closeParanth.index;
+
+    let chomp = new Chomp(null, index, MethodCall)
+    chomp.childrenChomps = [methodName, params];
+
+    return chomp;
+  }
+
   static chompKeywordsInitialization(str, index) {
     let keywords = MethodsKeywords.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
@@ -58,6 +94,33 @@ export class Methods {
     }
 
     return Chomp.invalid();
+  }
+
+  chompMethodParameters(str, index) {
+    let expressions = [];
+    let hasParameters = false;
+    while(index < str.length) {
+      let expression = Expression.chomp(str, index);
+      let isInvalid = expression.isInvalid();
+
+      if(!hasParameters && isInvalid) {
+        return Methods.arrayToChomp(str, expressions);
+      }
+      if(isInvalid) {
+        return Chomp.invalid();
+      }
+
+      hasParameters = true;
+      index = expression.index;
+      expression.push(expressions);
+
+      if(index >= str.length || !Character.isSeparator(str[index])) {
+        return Methods.arrayToChomp(str, expressions);
+      }
+      index++;
+    }
+
+    return Methods.arrayToChomp(str, expressions);
   }
 
   static methodHeaderDeclaration(str, index) {
