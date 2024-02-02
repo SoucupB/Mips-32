@@ -3,6 +3,7 @@ import Variable from "./Variable.js";
 import Character from "./Character.js";
 import { MethodsParams } from "./MethodsParam.js";
 import { CodeBlock } from "./CodeBlock.js";
+import Operator from "./Operator.js";
 
 export class MethodsKeywords {
   static keyWords() {
@@ -18,7 +19,7 @@ export class Methods {
     }
     index = methodDeclaration.index;
 
-    let openParanth = Methods.chompOpenParanth(str, index);
+    let openParanth = Operator.chompOpenParanth(str, index);
     if(openParanth.isInvalid()) {
       return Chomp.invalid();
     }
@@ -30,12 +31,13 @@ export class Methods {
     }
     index = methodParams.index;
 
-    let closeParanth = Methods.chompCloseParanth(str, index);
+    console.log(index, str[index]);
+    let closeParanth = Operator.chompCloseParanth(str, index);
     if(closeParanth.isInvalid()) {
       return Chomp.invalid();
     }
     index = closeParanth.index;
-    // ...
+
     let methodBlock = CodeBlock.chomp(str, index);
     if(methodBlock.isInvalid()) {
       return Chomp.invalid();
@@ -103,12 +105,12 @@ export class Methods {
       index = currentParamDeclaration.index;
       firstParamPresence = true;
 
-      if(index >= str.length || Character.isCommaSeparator(str[index])) {
-        return MethodsParams.arrayToChomp(str, index);
+      if(index >= str.length || !Character.isCommaSeparator(str[index])) {
+        return Methods.arrayToChomp(str, index);
       }
       index++;
     }
 
-    return MethodsParams.arrayToChomp(str, index);
+    return Methods.arrayToChomp(str, index);
   }
 }
