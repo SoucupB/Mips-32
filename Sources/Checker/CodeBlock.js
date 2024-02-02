@@ -6,6 +6,8 @@ import { LoopBlocks } from "./LoopBlocks.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
 
 export class CodeBlock {
+  // [0] -> assignation/init/while/for/if, [1] -> assignation/init/while/for/if, .... 
+
   static chomp(str, index) {
     let openBracket = Operator.chompOpenBracket(str, index);
     if(openBracket.isInvalid()) {
