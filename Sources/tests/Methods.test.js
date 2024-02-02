@@ -8,3 +8,54 @@ test('Check Methods checker v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Check Methods checker v2', (t) => {
+  let chomp = Methods.chompDeclaration('intt someMethod(int a,int b){int b=5;}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v3', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int a,int b){int b=5;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v4', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int _dafb){int b=5;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v5', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int 43_dafb){int b=5;}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v6', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int _dafb){int b=5;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 46, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v7', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int _dafb){int b=5;}dafafagag', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 46, 'returns');
+  t.end();
+});
+
+test('Check Methods checker v8', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int _dafb){int b=5;dafafagag', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

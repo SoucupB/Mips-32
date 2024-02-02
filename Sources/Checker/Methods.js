@@ -31,7 +31,6 @@ export class Methods {
     }
     index = methodParams.index;
 
-    console.log(index, str[index]);
     let closeParanth = Operator.chompCloseParanth(str, index);
     if(closeParanth.isInvalid()) {
       return Chomp.invalid();
