@@ -210,3 +210,45 @@ test('Check expression v38', (t) => {
   t.equal(chomp.toString(), '(((((5)))))', 'returns');
   t.end();
 });
+
+test('Check with methods v1', (t) => {
+  let chomp = Expression.chomp('a+b+f(2)', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 8, 'returns');
+  t.end();
+});
+
+test('Check with methods v2', (t) => {
+  let chomp = Expression.chomp('a+b+f(2,a+b,b-c)+d', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 18, 'returns');
+  t.end();
+});
+
+test('Check with methods v3', (t) => {
+  let chomp = Expression.chomp('a+b+f(2,a+b,b-c+d', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 5, 'returns');
+  t.end();
+});
+
+test('Check with methods v4', (t) => {
+  let chomp = Expression.chomp('a+b+f2,a+b,b-c)+d', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 6, 'returns');
+  t.end();
+});
+
+test('Check with methods v5', (t) => {
+  let chomp = Expression.chomp('a+b+f(2,a+b,b-c)+3d', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 18, 'returns');
+  t.end();
+});
+
+test('Check with methods v6', (t) => {
+  let chomp = Expression.chomp('a+b+f(2,a+b,b-c)+-5d', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 16, 'returns');
+  t.end();
+});
