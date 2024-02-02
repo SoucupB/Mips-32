@@ -252,3 +252,10 @@ test('Check with methods v6', (t) => {
   t.equal(chomp.index, 16, 'returns');
   t.end();
 });
+
+test('Check with methods v7', (t) => {
+  let chomp = Expression.chomp('a+b+f(2,a+b+g(5-3,222),b-c)+-5d', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 27, 'returns');
+  t.end();
+});
