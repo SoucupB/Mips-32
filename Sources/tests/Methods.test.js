@@ -183,3 +183,10 @@ test('Check Methods checker v25', (t) => {
   t.equal(chomp.index, 27, 'returns');
   t.end();
 });
+
+test('Check Methods checker v26', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int a=5){int b=0;}fafafa', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

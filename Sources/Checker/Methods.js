@@ -143,7 +143,7 @@ export class Methods {
     index = methodName.index;
 
     let chomp = new Chomp(methodName.buffer, index, null);
-    chomp.childrenChomps = [methodType];
+    chomp.childrenChomps = [methodType, methodName];
 
     return chomp;
   }
