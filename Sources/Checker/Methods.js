@@ -277,7 +277,7 @@ export class Methods {
     if(alreadyDefinedVariables.length) {
       return [[], alreadyDefinedVariables];
     }
-
+    Methods.pushMethodParams(methodName.buffer, methodParams, stackDeclaration);
     stackDeclaration.freeze();
     Methods.pushParams(methodParams, stackDeclaration);
 
