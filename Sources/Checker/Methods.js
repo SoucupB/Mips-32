@@ -27,6 +27,20 @@ export class MethodCall {
 
     return undefinedVariables;
   }
+
+  static doesMethodHaveAllTheParametersPresent(chomp, stackDeclaration) {
+    let children = chomp.childrenChomps;
+
+    let methodName = children[0].buffer;
+    let params = children[1].childrenChomps;
+
+    const paramsCalled = stackDeclaration.getArgsFromMethodName(methodName);
+    if(paramsCalled && paramsCalled.length == params.length) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 export class MethodDefinitionAndName {

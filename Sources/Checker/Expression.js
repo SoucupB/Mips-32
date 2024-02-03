@@ -137,6 +137,10 @@ class Expression {
           for(let i = 0, c = paramsUndefinedVariables.length; i < c; i++) {
             undefinedVariables.push(paramsUndefinedVariables[i])
           }
+          let paramsChecker = MethodCall.doesMethodHaveAllTheParametersPresent(children[i], stackDeclaration);
+          if(paramsChecker) {
+            undefinedVariables.push('unmatched number of params!')
+          }
           break;
         }
 

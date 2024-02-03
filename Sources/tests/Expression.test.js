@@ -275,6 +275,10 @@ test('Check with methods v1 stack', (t) => {
 test('Check with methods v2 stack', (t) => {
   let chomp = Expression.chomp('a+b+f(z)', 0);
   let stackDeclaration = new StackDeclarations();
+  stackDeclaration.pushMethod('f', [{
+    name: 'a',
+    type: 'char'
+  }])
 
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 
@@ -289,6 +293,11 @@ test('Check with methods v3 stack', (t) => {
   stackDeclaration.push('a')
   stackDeclaration.push('b')
   stackDeclaration.push('z')
+  stackDeclaration.pushMethod('f', [{
+    name: 'a',
+    type: 'char'
+  }])
+
 
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 
@@ -300,6 +309,23 @@ test('Check with methods v3 stack', (t) => {
 test('Check with methods v4 stack', (t) => {
   let chomp = Expression.chomp('a+b+f(z,g(ff-dd),pp)', 0);
   let stackDeclaration = new StackDeclarations();
+  stackDeclaration.pushMethod('f', [{
+    name: 'a',
+    type: 'char'
+  },
+  {
+    name: 'b',
+    type: 'char'
+  },
+  {
+    name: 'c',
+    type: 'char'
+  }])
+  stackDeclaration.pushMethod('g', [{
+    name: 'a',
+    type: 'char'
+  }])
+
 
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 

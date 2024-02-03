@@ -20,6 +20,16 @@ export class StackDeclarations {
     })
   }
 
+  getArgsFromMethodName(methodName) {
+    for(let i = 0, c = this.methods.length; i < c; i++) {
+      if(this.methods[i].type == 'method' && methodName == this.methods[i].value) {
+        return this.methods[i].params;
+      }
+    }
+
+    return null;
+  }
+
   isMethodDefined(methodDefined) {
     for(let i = 0, c = this.methods.length; i < c; i++) {
       if(this.methods[i].type == 'method' && methodDefined == this.methods[i].value) {
