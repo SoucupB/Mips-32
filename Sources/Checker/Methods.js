@@ -58,14 +58,17 @@ export class ReturnMethod {
       return Chomp.invalid();
     }
     index = returnKeyword.index;
+    if(index >= str.length || !Character.isSeparator(str[index])) {
+      return Chomp.invalid();
+    }
+    index++;
 
     let expression = Expression.chomp(str, index);
     if(expression.isInvalid()) {
       return Chomp.invalid();
     }
     index = expression.index;
-
-    if(str.length >= index || !Character.isAssignationEnding(str[index])) {
+    if(index >= str.length || !Character.isAssignationEnding(str[index])) {
       return Chomp.invalid();
     }
     index++;

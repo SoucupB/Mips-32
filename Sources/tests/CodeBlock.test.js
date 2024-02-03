@@ -348,3 +348,26 @@ test('Check CodeBlock internal stack validity v20', (t) => {
   t.equal(variablesErrors[1].length, 1, 'returns');
   t.end();
 });
+
+test('Check CodeBlock return types v1', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;}', 0, true);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 10, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock return types v2', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;return yolo;}', 0, true);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 22, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock return types v3', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;return yolo;}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
