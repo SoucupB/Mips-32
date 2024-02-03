@@ -233,3 +233,19 @@ test('Check Initialization checker v35 (undefined variables)', (t) => {
   t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 1, 'returns');
   t.end();
 });
+
+test('Check Initialization checker v36 (undefined variables)', (t) => {
+  const chomp = Initialization.chomp('int a,adafg=a+2;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 0, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v37 (undefined variables)', (t) => {
+  const chomp = Initialization.chomp('int a,adafg=b+2;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 1, 'returns');
+  t.end();
+});

@@ -74,7 +74,10 @@ export class Initialization {
     index = assignerVariable.index;
     let expression = Expression.chomp(str, index);
     if(expression.isInvalid()) {
-      return assignerVariable;
+      let chompResponse = new Chomp(null, index, InitializationTuple, true);
+      chompResponse.childrenChomps = [assignerVariable];
+
+      return chompResponse;
     }
     index = expression.index;
     let chompResponse = new Chomp(null, index, InitializationTuple, true);
@@ -161,19 +164,44 @@ export class Initialization {
     }
   }
 
+  static addToStackMultipleDeclarations(chomp, stackDeclaration) {
+    let allInitializedTuples = Helper.searchChompByType(chomp, {
+      type: InitializationTuple
+    });
+    let multipleDefinitions = [];
+    for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
+      let variableDefiner = Helper.searchChompByType(allInitializedTuples[i], {
+        type: Variable
+      });
+      for(let j = 0, z = variableDefiner.length; j < z; j++) {
+        if(stackDeclaration.isVariableDefined(variableDefiner[i].buffer)) {
+          multipleDefinitions.push(variableDefiner[i].buffer);
+        }
+      }
+    }
+
+    return multipleDefinitions;
+  }
+
   static addToStackAndVerify(chomp, stackDeclaration) {
     let allInitializedTuples = Helper.searchChompByType(chomp, {
       type: InitializationTuple
     });
     // child 0, is the initializer, child 1 is the expression.
     for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
-      let initializedVariable = allInitializedTuples[i].childrenChomps[0];
-      let expression = allInitializedTuples[i].childrenChomps[1];
+      let initChildren = allInitializedTuples[i].childrenChomps;
+
+      let initializedVariable = initChildren[0];
 
       Initialization.initializeVariable(initializedVariable, stackDeclaration);
-      let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
-      if(undefinedVariables.length) {
-        return undefinedVariables;
+
+      // when the variable insertion has an expression
+      if(initChildren.length > 1) {
+        let expression = allInitializedTuples[i].childrenChomps[1];
+        let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
+        if(undefinedVariables.length) {
+          return undefinedVariables;
+        }
       }
     }
     return [];
