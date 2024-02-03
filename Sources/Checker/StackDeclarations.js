@@ -1,6 +1,6 @@
 export class StackDeclarations {
   constructor() {
-    this.index = 0;
+    this.index = [];
     this.variables = [];
   }
 
@@ -17,14 +17,22 @@ export class StackDeclarations {
     return false;
   }
 
+  top() {
+    return this.variables[this.variables.length - 1];
+  }
+
   freeze() {
-    this.index = this.variables.length;
+    this.index.push(this.variables.length);
   }
 
   pop() {
-    for(let i = this.variables.length - 1; i >= this.index; i--) {
+    if(!this.index.length) {
+      return ;
+    }
+    for(let i = this.variables.length - 1; i >= this.index[this.index.length - 1]; i--) {
       this.variables.pop();
     }
+    this.index.pop();
   }
 
 }

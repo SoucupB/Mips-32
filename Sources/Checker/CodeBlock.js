@@ -92,9 +92,9 @@ export class CodeBlock {
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
-    StackDeclarations.freeze();
+    stackDeclaration.freeze();
     let response = CodeBlock.addToStackAndVerify_t(chomp, stackDeclaration);
-    StackDeclarations.pop();
+    stackDeclaration.pop();
     return response;
   }
 }
