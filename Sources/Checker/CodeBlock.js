@@ -85,6 +85,10 @@ export class CodeBlock {
           break;
         }
         case ConditionalBlocks: {
+          let conditionalBlock = ConditionalBlocks.addToStackAndVerify(currentChild, stackDeclaration);
+          if(conditionalBlock[0].length || conditionalBlock[1].length) {
+            return conditionalBlock;
+          }
           break;
         }
 

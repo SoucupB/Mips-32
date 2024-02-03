@@ -65,7 +65,7 @@ export class ConditionalBlocks {
     const block = children[1];
     let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
     if(undefinedVariables.length) {
-      return undefinedVariables;
+      return [undefinedVariables, []];
     }
     return CodeBlock.addToStackAndVerify(block, stackDeclaration);
   }
