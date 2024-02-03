@@ -79,3 +79,43 @@ test('Check Program checker (block in static space) v3', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Program checker (block space) v1', (t) => {
+  let program = new Program('int a=0;int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Program checker (block space) v2', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Program checker (block space) v3', (t) => {
+  let program = new Program('int a=0;int coco(int a,int t){}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Program checker (block space) v4', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int z;}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Program checker (block space) v5', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
