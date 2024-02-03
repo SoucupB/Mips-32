@@ -213,7 +213,7 @@ test('Check Initialization checker v33 (undefined variables)', (t) => {
   let stackDeclaration = new StackDeclarations();
 
   t.equal(Initialization.display(chomp), 'int -> adafg=a+b-2', 'returns');
-  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 2, 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[0].length, 2, 'returns');
   t.end();
 });
 
@@ -222,7 +222,7 @@ test('Check Initialization checker v34 (undefined variables)', (t) => {
   let stackDeclaration = new StackDeclarations();
 
   t.equal(Initialization.display(chomp), 'int -> a=5 -> b=6 -> adafg=a+b-2', 'returns');
-  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 0, 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[0].length, 0, 'returns');
   t.end();
 });
 
@@ -230,7 +230,7 @@ test('Check Initialization checker v35 (undefined variables)', (t) => {
   const chomp = Initialization.chomp('int a=5,b=6,adafg=a+b-2,c=p+2;', 0)
   let stackDeclaration = new StackDeclarations();
 
-  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 1, 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[0].length, 1, 'returns');
   t.end();
 });
 
@@ -238,7 +238,7 @@ test('Check Initialization checker v36 (undefined variables)', (t) => {
   const chomp = Initialization.chomp('int a,adafg=a+2;', 0)
   let stackDeclaration = new StackDeclarations();
 
-  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 0, 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[0].length, 0, 'returns');
   t.end();
 });
 
@@ -246,6 +246,56 @@ test('Check Initialization checker v37 (undefined variables)', (t) => {
   const chomp = Initialization.chomp('int a,adafg=b+2;', 0)
   let stackDeclaration = new StackDeclarations();
 
-  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 1, 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[0].length, 1, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v38 (multiple definitions)', (t) => {
+  const chomp = Initialization.chomp('int a,adafg=b+2;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v39 (multiple definitions)', (t) => {
+  const chomp = Initialization.chomp('int a,adafg=a+2,a=3;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration)[1].length, 1, 'returns');
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 20, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v40 (multiple definitions)', (t) => {
+  const chomp1 = Initialization.chomp('int a,adafg=a+2;', 0)
+  const chomp2 = Initialization.chomp('int b=2,c=adafg+3;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  let chomp1Variables = Initialization.addToStackAndVerify(chomp1, stackDeclaration);
+  let chomp2Variables = Initialization.addToStackAndVerify(chomp2, stackDeclaration);
+
+  t.equal(chomp1Variables[0].length, 0, 'returns');
+  t.equal(chomp1Variables[1].length, 0, 'returns');
+
+  t.equal(chomp2Variables[0].length, 0, 'returns');
+  t.equal(chomp2Variables[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v41 (multiple definitions)', (t) => {
+  const chomp1 = Initialization.chomp('int a,adafg=a+2;', 0)
+  const chomp2 = Initialization.chomp('int b=2,c=adafg+3,a=50;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  let chomp1Variables = Initialization.addToStackAndVerify(chomp1, stackDeclaration);
+  let chomp2Variables = Initialization.addToStackAndVerify(chomp2, stackDeclaration);
+
+  t.equal(chomp1Variables[0].length, 0, 'returns');
+  t.equal(chomp1Variables[1].length, 0, 'returns');
+
+  t.equal(chomp2Variables[0].length, 0, 'returns');
+  t.equal(chomp2Variables[1].length, 1, 'returns');
   t.end();
 });

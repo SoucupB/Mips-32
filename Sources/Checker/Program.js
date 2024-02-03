@@ -89,8 +89,12 @@ export class Program {
         }
         case Initialization: {
           let undefinedVariables = Initialization.addToStackAndVerify(currentInstruction, stackDeclaration);
-          if(undefinedVariables.length) {
-            this.errors.push(`Undefined variables ${undefinedVariables.join(',')}`);
+          if(undefinedVariables[0].length) {
+            this.errors.push(`Undefined variables ${undefinedVariables[0].join(',')}`);
+            return false;
+          }
+          if(undefinedVariables[1].length) {
+            this.errors.push(`Multiple definitions for variables ${undefinedVariables[1].join(',')}`);
             return false;
           }
           break;

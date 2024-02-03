@@ -163,24 +163,18 @@ export class Initialization {
       stackDeclaration.push(inits[i].buffer);
     }
   }
-
-  static addToStackMultipleDeclarations(chomp, stackDeclaration) {
-    let allInitializedTuples = Helper.searchChompByType(chomp, {
-      type: InitializationTuple
+  
+  static hasVariableAlreadyBeenDefined(chomp, stackDeclaration) {
+    let variables = Helper.searchChompByType(chomp, {
+      type: Variable
     });
-    let multipleDefinitions = [];
-    for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
-      let variableDefiner = Helper.searchChompByType(allInitializedTuples[i], {
-        type: Variable
-      });
-      for(let j = 0, z = variableDefiner.length; j < z; j++) {
-        if(stackDeclaration.isVariableDefined(variableDefiner[i].buffer)) {
-          multipleDefinitions.push(variableDefiner[i].buffer);
-        }
+
+    for(let i = 0, c = variables.length; i < c; i++) {
+      if(stackDeclaration.isVariableDefined(variables[i].buffer)) {
+        return true;
       }
     }
-
-    return multipleDefinitions;
+    return false;
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
@@ -190,20 +184,23 @@ export class Initialization {
     // child 0, is the initializer, child 1 is the expression.
     for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
       let initChildren = allInitializedTuples[i].childrenChomps;
+      let variableToBeInitialized = initChildren[0];
 
-      let initializedVariable = initChildren[0];
+      if(Initialization.hasVariableAlreadyBeenDefined(variableToBeInitialized, stackDeclaration)) {
+        return [[], [variableToBeInitialized.buffer]];
+      }
 
-      Initialization.initializeVariable(initializedVariable, stackDeclaration);
+      Initialization.initializeVariable(variableToBeInitialized, stackDeclaration);
 
       // when the variable insertion has an expression
       if(initChildren.length > 1) {
-        let expression = allInitializedTuples[i].childrenChomps[1];
+        let expression = initChildren[1];
         let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
         if(undefinedVariables.length) {
-          return undefinedVariables;
+          return [undefinedVariables, []];
         }
       }
     }
-    return [];
+    return [[], []];
   }
 }
