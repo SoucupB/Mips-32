@@ -337,3 +337,14 @@ test('Check CodeBlock internal stack validity v19', (t) => {
   t.equal(variablesErrors[1].length, 0, 'returns');
   t.end();
 });
+
+test('Check CodeBlock internal stack validity v20', (t) => {
+  let chomp = CodeBlock.chomp('{int i=3;for(int i=0,c=15;i<5;i=i+1){while(c>0){int j=i+c;}}}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.end();
+});
