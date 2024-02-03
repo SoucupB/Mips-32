@@ -283,5 +283,30 @@ test('Check with methods v2 stack', (t) => {
   t.end();
 });
 
+test('Check with methods v3 stack', (t) => {
+  let chomp = Expression.chomp('a+b+f(z)', 0);
+  let stackDeclaration = new StackDeclarations();
+  stackDeclaration.push('a')
+  stackDeclaration.push('b')
+  stackDeclaration.push('z')
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.length, 0, 'returns');
+  t.end();
+});
+
+test('Check with methods v4 stack', (t) => {
+  let chomp = Expression.chomp('a+b+f(z,g(ff-dd),pp)', 0);
+  let stackDeclaration = new StackDeclarations();
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.length, 6, 'returns');
+  t.end();
+});
+
 
 // Add expression tests with missing variables.
