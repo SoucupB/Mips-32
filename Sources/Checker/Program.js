@@ -12,12 +12,24 @@ import { ConditionalBlocks } from "./ConditionalBlocks.js";
 import { LoopBlocks } from "./LoopBlocks.js";
 
 export class Program {
-  constructor(code) {
+  constructor(code, errors = []) {
     this.code = code;
+    this.errors = errors;
   }
 
   chomp() {
-    return this._chomp(this.code, 0);
+    let chomp = this._chomp(this.code, 0);
+    if(chomp.isInvalid()) {
+      this.errors.push('Compilation error!');
+      return Chomp.invalid();
+    }
+
+    if(!Methods.searchMethodByName(chomp, 'main').length) {
+      this.errors.push('Missing main method!');
+      return Chomp.invalid();
+    }
+
+    return chomp;
   }
 
   _chomp(str, index) {
