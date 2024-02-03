@@ -205,4 +205,74 @@ export class Methods {
       type: Methods
     });
   }
+
+  static pushMethodParams(methodName, methodParams, stackDeclaration) {
+    const params = methodParams.childrenChomps;
+    let paramsVariables = [];
+
+    for(let i = 0, c = params.length; i < c; i++) {
+      const varType = params[i].childrenChomps[0];
+      const varName = params[i].childrenChomps[1];
+      paramsVariables.push({
+        type: varType,
+        name: varName
+      });
+    }
+    stackDeclaration.pushMethod(methodName, paramsVariables);
+
+    return ;
+  }
+
+  static checkParamsAndPush(methodParams, stackDeclaration) {
+    const params = methodParams.childrenChomps;
+    let alreadyDefinedVariables = [];
+
+    for(let i = 0, c = params.length; i < c; i++) {
+      const varName = params[i].childrenChomps[1];
+
+      if(stackDeclaration.isVariableDefined(varName)) {
+        alreadyDefinedVariables.push(varName);
+      }
+    }
+
+    return alreadyDefinedVariables;
+  }
+
+  static pushParams(methodParams, stackDeclaration) {
+    const params = methodParams.childrenChomps;
+    for(let i = 0, c = params.length; i < c; i++) {
+      const varName = params[i].childrenChomps[1];
+      stackDeclaration.push(varName);
+    }
+  }
+
+  static addToStackAndVerify(chomp, stackDeclaration) {
+    let children = chomp.children;
+
+    const methodHeader = children[0];
+    const methodParams = children[1];
+    const block = children[2];
+
+    const methodName = methodHeader.children[1];
+    
+    if(stackDeclaration.isMethodDefined(methodName.buffer)) {
+      return [[], [methodName.buffer]]
+    }
+
+    let alreadyDefinedVariables = Methods.checkParamsAndPush(methodParams, stackDeclaration);
+    if(alreadyDefinedVariables.length) {
+      return [[], alreadyDefinedVariables];
+    }
+
+    stackDeclaration.freeze();
+    Methods.pushParams(methodParams);
+
+    let blockVariables = CodeBlock.addToStackAndVerify(block, stackDeclaration);
+    if(blockVariables[0].length || blockVariables[1].length) {
+      return blockVariables;
+    }
+    stackDeclaration.pop();
+
+    return [[], []];
+  }
 }

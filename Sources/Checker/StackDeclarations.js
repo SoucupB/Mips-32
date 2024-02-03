@@ -2,6 +2,7 @@ export class StackDeclarations {
   constructor() {
     this.index = [0];
     this.variables = [];
+    this.methods = [];
   }
 
   push(variable) {
@@ -9,6 +10,23 @@ export class StackDeclarations {
       type: 'variable',
       value: variable
     });
+  }
+
+  pushMethod(methodName, params) {
+    this.methods.push({
+      type: 'method',
+      value: methodName,
+      params: params
+    })
+  }
+
+  isMethodDefined(methodDefined) {
+    for(let i = 0, c = this.methods.length; i < c; i++) {
+      if(this.methods[i].type == 'method' && methodDefined == this.methods[i].value) {
+        return true;
+      }
+    }
+    return false;
   }
 
   isVariableDefined(variable) {
