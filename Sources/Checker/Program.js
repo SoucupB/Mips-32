@@ -11,6 +11,7 @@ import { Initialization } from "./Initialization.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
 import { LoopBlocks } from "./LoopBlocks.js";
 import { StackDeclarations } from "./StackDeclarations.js";
+import { Helper } from "./Helper.js";
 
 export class Program {
   constructor(code, errors = []) {
@@ -44,8 +45,34 @@ export class Program {
     if(!this.validateMethodsUniqueness(chomp)) {
       return false;
     }
+    if(!this.validateVariableNonKeywords(chomp)) {
+      return false;
+    }
     if(!this.validateStackVariables(chomp)) {
       return false;
+    }
+
+    return true;
+  }
+
+  validateVariableNonKeywords(chomp) {
+    let allVariableNames = Helper.searchChompByType(chomp, {
+      type: Variable
+    });
+
+    const cKeywords = [
+      "auto", "break", "case", "char", "const", "continue", "default", "do",
+      "double", "else", "enum", "extern", "float", "for", "goto", "if", "int",
+      "long", "register", "return", "short", "signed", "sizeof", "static",
+      "struct", "switch", "typedef", "union", "unsigned", "void", "volatile",
+      "while"
+    ];
+
+    for(let i = 0, c = allVariableNames.length; i < c; i++) {
+      if(cKeywords.includes(allVariableNames[i].buffer)) {
+        this.errors.push(`Variable ${allVariableNames[i].buffer} is a predefined keyword!`);
+        return false;
+      }
     }
 
     return true;

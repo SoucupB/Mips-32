@@ -127,3 +127,27 @@ test('Check Program checker (block space) v6', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Program checker (reserved keywords) v1', (t) => {
+  let program = new Program('int int=0;int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Program checker (reserved keywords) v2', (t) => {
+  let program = new Program('int for=0;int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Program checker (reserved keywords) v3', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;if(a==b){z=1;int if=0;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
