@@ -161,7 +161,7 @@ export class Methods {
     while(index < str.length) {
       let currentParamDeclaration = MethodsParams.chomp(str, index);
       if(!firstParamPresence && currentParamDeclaration.isInvalid()) {
-        return Chomp.invalid();
+        return Methods.arrayToChomp(str, index);
       }
       params.push(currentParamDeclaration);
       index = currentParamDeclaration.index;

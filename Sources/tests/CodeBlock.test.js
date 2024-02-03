@@ -106,3 +106,10 @@ test('Check CodeBlock checker v15', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check CodeBlock checker v16', (t) => {
+  let chomp = CodeBlock.chomp('', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
