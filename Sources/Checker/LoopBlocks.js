@@ -127,4 +127,83 @@ export class LoopBlocks {
     }
     return Chomp.invalid();
   }
+
+  static addToStackAndVerify_While(chomp, stackDeclaration) {
+    const children = chomp.childrenChomps;
+
+    let expression = children[0];
+    let expressionUndefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
+    if(expressionUndefinedVariables.length) {
+      return [expressionUndefinedVariables, []];
+    }
+    if(children.length < 2) {
+      return [[], []];
+    }
+    let block = children[1];
+    return CodeBlock.addToStackAndVerify(block, stackDeclaration);
+  }
+
+  static addToStackAndVerify_For(chomp, stackDeclaration) {
+    const children = chomp.childrenChomps;
+
+    let startingCondition = children[0];
+    let testingCondition = children[1];
+    let stateChange = children[2];
+
+    switch(stackDeclaration.type) {
+      case Assignation: {
+        let assignationVariableErrors = Assignation.findUnassignedVariables(startingCondition, stackDeclaration);
+        if(assignationVariableErrors.length) {
+          return [assignationVariableErrors, []];
+        }
+        break;
+      }
+      case Initialization: {
+        let initializationVariableErrors = Initialization.addToStackAndVerify(startingCondition, stackDeclaration);
+        if(initializationVariableErrors[0].length || initializationVariableErrors[1].length) {
+          return initializationVariableErrors;
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    const testingConditionStackDeclaration = Expression.checkStackInitialization(testingCondition, stackDeclaration);
+    if(testingConditionStackDeclaration.length) {
+      return [testingConditionStackDeclaration, []];
+    }
+
+    const stateChangeStackDeclaration = Expression.checkStackInitialization(stateChange, stackDeclaration);
+    if(stateChangeStackDeclaration.length) {
+      return [stateChangeStackDeclaration, []];
+    }
+    // No condition
+    if(children.length <= 3) {
+      return [[], []];
+    }
+    const block = children[3];
+    
+    return CodeBlock.addToStackAndVerify(block, stackDeclaration);
+  }
+
+  static addToStackAndVerify(chomp, stackDeclaration) {
+    switch(chomp.buffer) {
+      case 'while': {
+        return LoopBlocks.addToStackAndVerify_While(chomp, stackDeclaration);
+      }
+      case 'for': {
+        stackDeclaration.freeze();
+        let variableErrors = LoopBlocks.addToStackAndVerify_For(chomp, stackDeclaration);
+        stackDeclaration.pop();
+        return variableErrors;
+      }
+      default: {
+        break;
+      }
+    }
+
+    return [[], []];
+  }
 }

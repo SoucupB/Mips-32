@@ -78,7 +78,11 @@ export class CodeBlock {
           break;
         }
         case LoopBlocks: {
-
+          let loopBlocks = CodeBlock.addToStackAndVerify(currentChild, stackDeclaration);
+          if(loopBlocks[0].length || loopBlocks[1].length) {
+            return loopBlocks;
+          }
+          break;
         }
         case ConditionalBlocks: {
 
