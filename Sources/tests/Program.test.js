@@ -159,3 +159,27 @@ test('Check Program checker (method calls) v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Check Program checker (method calls) v2', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;int fp=coco(5,6,7);if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.equal(program.errors.length, 1, 'returns');
+  t.end();
+});
+
+test('Check Program checker (method calls) v3', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;int fp=coco(5,coco(7));if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.equal(program.errors.length, 1, 'returns');
+  t.end();
+});
+
+test('Check Program checker (method calls) v4', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt;}int main(){int z=0;int b=0;int c=0;int fp=coco(5,coco(6,7));if(a==b){z=1;}}int test(int z){int c=0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(program.errors.length, 0, 'returns');
+  t.end();
+});
