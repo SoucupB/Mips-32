@@ -247,13 +247,13 @@ export class Methods {
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
-    let children = chomp.children;
+    let children = chomp.childrenChomps;
 
     const methodHeader = children[0];
     const methodParams = children[1];
     const block = children[2];
 
-    const methodName = methodHeader.children[1];
+    const methodName = methodHeader.childrenChomps[1];
     
     if(stackDeclaration.isMethodDefined(methodName.buffer)) {
       return [[], [methodName.buffer]]
@@ -265,7 +265,7 @@ export class Methods {
     }
 
     stackDeclaration.freeze();
-    Methods.pushParams(methodParams);
+    Methods.pushParams(methodParams, stackDeclaration);
 
     let blockVariables = CodeBlock.addToStackAndVerify(block, stackDeclaration);
     if(blockVariables[0].length || blockVariables[1].length) {

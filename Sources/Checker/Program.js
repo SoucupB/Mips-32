@@ -78,7 +78,7 @@ export class Program {
     let instructions = chomp.childrenChomps;
     for(let i = 0, c = instructions.length; i < c; i++) {
       const currentInstruction = instructions[i];
-      switch(currentInstruction) {
+      switch(currentInstruction.type) {
         case Assignation: {
           const undefinedVariables = Assignation.findUnassignedVariables(currentInstruction, stackDeclaration);
           if(undefinedVariables.length) {
@@ -100,6 +100,15 @@ export class Program {
           break;
         }
         case Methods: {
+          let methodsDefines = Methods.addToStackAndVerify(currentInstruction, stackDeclaration);
+          if(methodsDefines[0].length) {
+            this.errors.push(`Undefined variables: ${methodsDefines[0].join(',')}`);
+            return false;
+          }
+          if(methodsDefines[1].length) {
+            this.errors.push(`Multiple definitions for variables: ${methodsDefines[1].join(',')}`);
+            return false;
+          }
           break;
         }
 
