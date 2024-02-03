@@ -122,7 +122,7 @@ class Expression {
     });
     let undefinedVariables = [];
     for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
-      if(stackDeclaration.isVariableDefined(allInitializedTuples[i].buffer)) {
+      if(!stackDeclaration.isVariableDefined(allInitializedTuples[i].buffer)) {
         undefinedVariables.push(allInitializedTuples[i].buffer)
       }
     }

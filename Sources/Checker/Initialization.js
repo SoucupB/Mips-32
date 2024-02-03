@@ -77,7 +77,7 @@ export class Initialization {
       return assignerVariable;
     }
     index = expression.index;
-    let chompResponse = new Chomp('', index, InitializationTuple, true);
+    let chompResponse = new Chomp(null, index, InitializationTuple, true);
     chompResponse.childrenChomps = [assignerVariable, expression];
 
     return chompResponse;

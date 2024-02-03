@@ -1,6 +1,7 @@
 import tap from 'tap'
 const { test } = tap;
 import { Initialization, Keyword } from '../Checker/Initialization.js';
+import { StackDeclarations } from '../Checker/StackDeclarations.js';
 
 test('Check Initialization checker v1', (t) => {
   t.equal(Initialization.isValid('a'), false, 'returns');
@@ -204,5 +205,31 @@ test('Check Initialization checker v32', (t) => {
   t.equal(Initialization.display(chomp1), 'int -> adafg=a+b-2', 'returns');
   t.equal(chomp1.index, 16, 'returns');
   t.equal(Initialization.display(chomp2), 'int -> yolo=33+22-a', 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v33 (undefined variables)', (t) => {
+  const chomp = Initialization.chomp('int adafg=a+b-2;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.display(chomp), 'int -> adafg=a+b-2', 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 2, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v34 (undefined variables)', (t) => {
+  const chomp = Initialization.chomp('int a=5,b=6,adafg=a+b-2;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.display(chomp), 'int -> a=5 -> b=6 -> adafg=a+b-2', 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 0, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker v35 (undefined variables)', (t) => {
+  const chomp = Initialization.chomp('int a=5,b=6,adafg=a+b-2,c=p+2;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).length, 1, 'returns');
   t.end();
 });
