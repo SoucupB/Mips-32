@@ -142,7 +142,7 @@ export class Methods {
     }
     index = methodName.index;
 
-    let chomp = new Chomp(methodName, index, null);
+    let chomp = new Chomp(methodName.buffer, index, null);
     chomp.childrenChomps = [methodType];
 
     return chomp;
@@ -162,19 +162,19 @@ export class Methods {
     while(index < str.length) {
       let currentParamDeclaration = MethodsParams.chomp(str, index);
       if(!firstParamPresence && currentParamDeclaration.isInvalid()) {
-        return Methods.arrayToChomp(str, index);
+        return Methods.arrayToChomp(params, index);
       }
       params.push(currentParamDeclaration);
       index = currentParamDeclaration.index;
       firstParamPresence = true;
 
       if(index >= str.length || !Character.isCommaSeparator(str[index])) {
-        return Methods.arrayToChomp(str, index);
+        return Methods.arrayToChomp(params, index);
       }
       index++;
     }
 
-    return Methods.arrayToChomp(str, index);
+    return Methods.arrayToChomp(params, index);
   }
 
   static searchMethodByName(chomp, name) {

@@ -5,16 +5,27 @@ export class Helper {
     return responseList;
   }
 
-  static searchChompByType_t(chomp, filter, responseList) {
-    for(const [key, value] of Object.entries(filter)) {
-      let filterFullfilled = true;
+  static chompToDictionary(chomp) {
+    const dictionary = {};
 
-      if(!(key in chomp && value == filter[key])) {
+    Object.keys(chomp).forEach((key) => {
+      dictionary[key] = chomp[key];
+    });
+
+    return dictionary;
+  }
+
+  static searchChompByType_t(chomp, filter, responseList) {
+    let chompKeys = Helper.chompToDictionary(chomp);
+    let filterFullfilled = true;
+    for(const [key, value] of Object.entries(filter)) {
+      if(key in chompKeys && value != chompKeys[key]) {
         filterFullfilled = false;
+        break;
       }
-      if(filterFullfilled) {
-        responseList.push(chomp);
-      }
+    }
+    if(filterFullfilled) {
+      responseList.push(chomp);
     }
 
     let childrenChomps = chomp.childrenChomps;
