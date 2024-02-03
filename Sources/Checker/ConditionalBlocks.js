@@ -43,7 +43,7 @@ export class ConditionalBlocks {
     }
     index = block.index;
     let responseChomp = new Chomp(null, index, ConditionalBlocks)
-    responseChomp.childrenChomps = [conditionalBlock, expression];
+    responseChomp.childrenChomps = [expression, block];
     return responseChomp;
   }
 
@@ -56,5 +56,17 @@ export class ConditionalBlocks {
     }
 
     return Chomp.invalid();
+  }
+
+  static addToStackAndVerify(chomp, stackDeclaration) {
+    let children = chomp.childrenChomps;
+
+    const expression = children[0];
+    const block = children[1];
+    let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
+    if(undefinedVariables.length) {
+      return undefinedVariables;
+    }
+    return CodeBlock.addToStackAndVerify(block, stackDeclaration);
   }
 }
