@@ -31,7 +31,6 @@ export class Program {
   }
 
   validateChomp(chomp) {
-    let stackDeclaration = new StackDeclarations();
     let mainDeclarations = Methods.searchMethodByName(chomp, 'main');
 
     if(!mainDeclarations.length) {
@@ -42,7 +41,42 @@ export class Program {
       this.errors.push('Multiple main definitions!');
       return false;
     }
+    if(!this.validateMethodsUniqueness(chomp)) {
+      return false;
+    }
+    if(!this.validateStackVariables(chomp)) {
+      return false;
+    }
 
+    return true;
+  }
+
+  validateMethodsUniqueness(chomp) {
+    let allMethods = Methods.searchAllMethods(chomp);
+    let methodNames = {};
+    for(let i = 0, c = allMethods.length; i < c; i++) {
+      if(!(allMethods[i].buffer in methodNames)) {
+        methodNames[allMethods[i].buffer] = 0;
+      }
+
+      methodNames[allMethods[i].buffer]++;
+
+      if(methodNames[allMethods[i].buffer] > 1) {
+        this.errors.push(`Multiple methods with name ${allMethods[i].buffer} detected!`);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  validateStackVariables(chomp) {
+    let stackDeclaration = new StackDeclarations();
+
+    let instructions = chomp.childrenChomps;
+    for(let i = 0, c = instructions.length; i < c; i++) {
+      // iterate through instructions and find instructions that have multiple definitions.
+    }
     return true;
   }
 

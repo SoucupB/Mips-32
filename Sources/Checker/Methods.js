@@ -183,4 +183,10 @@ export class Methods {
       type: Methods
     });
   }
+
+  static searchAllMethods(chomp) {
+    return Helper.searchChompByType(chomp, {
+      type: Methods
+    });
+  }
 }

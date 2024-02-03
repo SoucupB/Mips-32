@@ -4,7 +4,7 @@ import { Program } from '../Checker/Program.js';
 import { Methods } from '../Checker/Methods.js';
 
 test('Check Program checker (valid) v1', (t) => {
-  let program = new Program('int a=0;int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}');
+  let program = new Program('int a=0;int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}');
   let chomp = program.chomp();
 
   t.equal(chomp.isInvalid(), false, 'returns');
@@ -23,6 +23,15 @@ test('Check Program checker (missing main method) v2', (t) => {
 
 test('Check Program checker (multiple main definitions) v3', (t) => {
   let program = new Program('int a=0;int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int main(){int t=0;}');
+  let chomp = program.chomp();
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.equal(program.errors.length, 1, 'returns');
+  t.end();
+});
+
+test('Check Program checker (multiple definition of test method) v4', (t) => {
+  let program = new Program('int a=0;int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}}int test(int z){int c=0;}int test(int z, int d){int c=0;}');
   let chomp = program.chomp();
 
   t.equal(chomp.isInvalid(), true, 'returns');
