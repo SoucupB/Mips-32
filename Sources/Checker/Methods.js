@@ -5,6 +5,7 @@ import { MethodsParams } from "./MethodsParam.js";
 import { CodeBlock } from "./CodeBlock.js";
 import Operator from "./Operator.js";
 import Expression from "./Expression.js";
+import { Helper } from "./Helper.js";
 
 export class MethodsKeywords {
   static keyWords() {
@@ -48,7 +49,7 @@ export class Methods {
     }
     index = methodBlock.index;
 
-    let chompResponse = new Chomp(null, index, Methods);
+    let chompResponse = new Chomp(methodDeclaration.buffer, index, Methods);
     chompResponse.childrenChomps = [methodDeclaration, methodParams, methodBlock];
 
     return chompResponse;
@@ -135,14 +136,14 @@ export class Methods {
     }
     index++;
 
-    let variable = Variable.chomp(str, index);
-    if(variable.isInvalid()) {
+    let methodName = Variable.chomp(str, index);
+    if(methodName.isInvalid()) {
       return Chomp.invalid();
     }
-    index = variable.index;
+    index = methodName.index;
 
-    let chomp = new Chomp(null, index, null);
-    chomp.childrenChomps = [methodType, variable];
+    let chomp = new Chomp(methodName, index, null);
+    chomp.childrenChomps = [methodType];
 
     return chomp;
   }
@@ -174,5 +175,12 @@ export class Methods {
     }
 
     return Methods.arrayToChomp(str, index);
+  }
+
+  static searchMethodByName(chomp, name) {
+    return Helper.searchChompByType(chomp, {
+      buffer: name,
+      type: Methods
+    });
   }
 }
