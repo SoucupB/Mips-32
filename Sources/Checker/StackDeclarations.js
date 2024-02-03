@@ -17,4 +17,14 @@ export class StackDeclarations {
     return false;
   }
 
+  freeze() {
+    this.index = this.variables.length;
+  }
+
+  pop() {
+    for(let i = this.variables.length - 1; i >= this.index; i--) {
+      this.variables.pop();
+    }
+  }
+
 }

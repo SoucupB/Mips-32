@@ -99,6 +99,9 @@ export class Program {
           }
           break;
         }
+        case CodeBlock: {
+          break;
+        }
 
         default:
           break;

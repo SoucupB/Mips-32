@@ -113,3 +113,17 @@ test('Check CodeBlock checker v16', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check CodeBlock checker v17', (t) => {
+  let chomp = CodeBlock.chomp('{}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock checker v18', (t) => {
+  let chomp = CodeBlock.chomp('{{}}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
