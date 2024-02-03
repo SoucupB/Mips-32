@@ -99,7 +99,7 @@ export class Program {
           }
           break;
         }
-        case CodeBlock: {
+        case Methods: {
           break;
         }
 
@@ -112,7 +112,7 @@ export class Program {
   }
 
   _chomp(str, index) {
-    let testingMethods = [Methods.chompDeclaration, Assignation.chomp, Initialization.chomp, ConditionalBlocks.chomp];
+    let testingMethods = [Methods.chompDeclaration, Assignation.chomp, Initialization.chomp];
     let response = [];
 
     while(index < str.length) {
