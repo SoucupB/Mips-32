@@ -1,6 +1,6 @@
 export class StackDeclarations {
   constructor() {
-    this.index = [];
+    this.index = [0];
     this.variables = [];
   }
 

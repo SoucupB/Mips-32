@@ -1,6 +1,7 @@
 import tap from 'tap'
 const { test } = tap;
 import { CodeBlock } from '../Checker/CodeBlock.js';
+import { StackDeclarations } from '../Checker/StackDeclarations.js';
 
 test('Check CodeBlock checker v1', (t) => {
   let chomp = CodeBlock.chomp('{a=b+3;}', 0);
@@ -125,5 +126,93 @@ test('Check CodeBlock checker v18', (t) => {
   let chomp = CodeBlock.chomp('{{}}', 0);
 
   t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v1', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v2', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;}}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v3', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;int a=16;}}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v4', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;c=b+a;}}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v5', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;d=b+a;}}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 1, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v6', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;c=b+a;}int c=0;}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v7', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;c=b+a;int d=7+5;}int c=0,d=17;}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack validity v8', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0;int b=5;{int c=a+b;c=b+a;int d=7+5;}int c=0,b=17;}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 1, 'returns');
   t.end();
 });

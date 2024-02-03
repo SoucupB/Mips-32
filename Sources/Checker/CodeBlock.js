@@ -89,6 +89,8 @@ export class CodeBlock {
         }
       }
     }
+
+    return [[], []]
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
