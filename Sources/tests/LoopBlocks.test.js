@@ -129,3 +129,36 @@ test('Check LoopBlocks stack declarations v3', (t) => {
   t.equal(variableErrors[1].length, 0, 'returns');
   t.end();
 });
+
+test('Check LoopBlocks stack declarations v4', (t) => {
+  let chomp = LoopBlocks.chomp('for(int i=0;i<5;i=i+1){int a=5+i+c;}', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors[0].length, 1, 'returns');
+  t.equal(variableErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks stack declarations v5', (t) => {
+  let chomp = LoopBlocks.chomp('for(int i=0,c=5;i<5;i=i+1){int a=5+i+c;}', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors[0].length, 0, 'returns');
+  t.equal(variableErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check LoopBlocks stack declarations v6', (t) => {
+  let chomp = LoopBlocks.chomp('for(i=0;i<5;i=i+1){int a=5;}', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors[0].length, 1, 'returns');
+  t.equal(variableErrors[1].length, 0, 'returns');
+  t.end();
+});

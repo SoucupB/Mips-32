@@ -150,7 +150,7 @@ export class LoopBlocks {
     let testingCondition = children[1];
     let stateChange = children[2];
 
-    switch(stackDeclaration.type) {
+    switch(startingCondition.type) {
       case Assignation: {
         let assignationVariableErrors = Assignation.findUnassignedVariables(startingCondition, stackDeclaration);
         if(assignationVariableErrors.length) {
