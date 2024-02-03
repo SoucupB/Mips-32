@@ -255,7 +255,7 @@ export class Methods {
 
     const methodName = methodHeader.childrenChomps[1];
     
-    if(stackDeclaration.isMethodDefined(methodName.buffer)) {
+    if(stackDeclaration.isMethodDefined(methodName.buffer) || stackDeclaration.isVariableDefined(methodName.buffer)) {
       return [[], [methodName.buffer]]
     }
 
