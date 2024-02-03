@@ -59,16 +59,18 @@ export class Assignation {
   }
 
   static findUnassignedVariables(chomp, stackDeclaration) {
-    let chompVariables = Helper.searchChompByType(chomp, {
-      type: Variable
-    });
-    let undefinedVariables = [];
-    for(let i = 0, c = chompVariables.length; i < c; i++) {
-      if(!stackDeclaration.isVariableDefined(chompVariables[i].buffer)) {
-        undefinedVariables.push(chompVariables[i].buffer);
-      }
-    }
+    let child = chomp.childrenChomps;
 
-    return undefinedVariables;
+    let assignerVariable = child[0];
+    let expression = child[1];
+
+    let undefinedVariables = [];
+
+    if(!stackDeclaration.isVariableDefined(assignerVariable.buffer)) {
+      undefinedVariables.push(assignerVariable.buffer);
+    }
+    let expressionUndefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
+
+    return undefinedVariables.concat(expressionUndefinedVariables);
   }
 }

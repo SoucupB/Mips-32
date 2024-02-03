@@ -52,7 +52,7 @@ class Expression {
   }
 
   static chompFromArray(chompsArray, newIndex) {
-    let chompResponse = new Chomp('', newIndex[0], Expression, true);
+    let chompResponse = new Chomp(null, newIndex[0], Expression, true);
     chompResponse.childrenChomps = chompsArray;
 
     return chompResponse;
@@ -116,16 +116,29 @@ class Expression {
     return Chomp.invalid();
   }
 
-  static checkStackInitialization(chomp, stackDeclaration) {
-    let allInitializedTuples = Helper.searchChompByType(chomp, {
-      type: Variable
-    });
-    let undefinedVariables = [];
-    for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
-      if(!stackDeclaration.isVariableDefined(allInitializedTuples[i].buffer)) {
-        undefinedVariables.push(allInitializedTuples[i].buffer)
+  static checkStackInitialization_t(chomp, stackDeclaration, undefinedVariables) {
+    const children = chomp.childrenChomps;
+
+    for(let i = 0, c = children.length; i < c; i++) {
+      switch(children[i].type) {
+        case Variable: {
+          if(!stackDeclaration.isVariableDefined(children[i].buffer)) {
+            undefinedVariables.push(children[i].buffer);
+          }
+          break;
+        }
+
+        case Expression: {
+          Expression.checkStackInitialization_t(children[i], stackDeclaration, undefinedVariables);
+          break;
+        }
       }
     }
+  }
+
+  static checkStackInitialization(chomp, stackDeclaration) {
+    let undefinedVariables = [];
+    Expression.checkStackInitialization_t(chomp, stackDeclaration, undefinedVariables);
 
     return undefinedVariables;
   }

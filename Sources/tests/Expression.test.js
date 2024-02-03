@@ -1,6 +1,7 @@
 import tap from 'tap'
 const { test } = tap;
 import Expression from '../Checker/Expression.js';
+import { StackDeclarations } from '../Checker/StackDeclarations.js';
 
 test('Check expression v1', (t) => {
   t.equal(Expression.isValid('a'), true, 'returns');
@@ -259,3 +260,28 @@ test('Check with methods v7', (t) => {
   t.equal(chomp.index, 27, 'returns');
   t.end();
 });
+
+test('Check with methods v1 stack', (t) => {
+  let chomp = Expression.chomp('a+b', 0);
+  let stackDeclaration = new StackDeclarations();
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.length, 2, 'returns');
+  t.end();
+});
+
+test('Check with methods v2 stack', (t) => {
+  let chomp = Expression.chomp('a+b+f(z)', 0);
+  let stackDeclaration = new StackDeclarations();
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.length, 3, 'returns');
+  t.end();
+});
+
+
+// Add expression tests with missing variables.
