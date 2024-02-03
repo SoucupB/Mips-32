@@ -10,6 +10,7 @@ import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
 import { LoopBlocks } from "./LoopBlocks.js";
+import { StackDeclarations } from "./StackDeclarations.js";
 
 export class Program {
   constructor(code, errors = []) {
@@ -23,13 +24,26 @@ export class Program {
       this.errors.push('Compilation error!');
       return Chomp.invalid();
     }
-
-    if(!Methods.searchMethodByName(chomp, 'main').length) {
-      this.errors.push('Missing main method!');
+    if(!this.validateChomp(chomp)) {
       return Chomp.invalid();
     }
-
     return chomp;
+  }
+
+  validateChomp(chomp) {
+    let stackDeclaration = new StackDeclarations();
+    let mainDeclarations = Methods.searchMethodByName(chomp, 'main');
+
+    if(!mainDeclarations.length) {
+      this.errors.push('Missing main method!');
+      return false;
+    }
+    if(mainDeclarations.length > 1) {
+      this.errors.push('Multiple main definitions!');
+      return false;
+    }
+
+    return true;
   }
 
   _chomp(str, index) {
