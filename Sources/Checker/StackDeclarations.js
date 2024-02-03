@@ -5,12 +5,15 @@ export class StackDeclarations {
   }
 
   push(variable) {
-    this.variables.push(variable);
+    this.variables.push({
+      type: 'variable',
+      value: variable
+    });
   }
 
   isVariableDefined(variable) {
     for(let i = 0, c = this.variables.length; i < c; i++) {
-      if(variable == this.variables[i]) {
+      if(this.variables[i].type == 'variable' && variable == this.variables[i].value) {
         return true;
       }
     }
@@ -18,7 +21,7 @@ export class StackDeclarations {
   }
 
   top() {
-    return this.variables[this.variables.length - 1];
+    return this.variables[this.variables.length - 1].value;
   }
 
   freeze() {
