@@ -17,6 +17,10 @@ export class MethodCall {
 
 }
 
+export class MethodDefinitionAndName {
+
+}
+
 export class Methods {
   static chompDeclaration(str, index) {
     let methodDeclaration = Methods.methodHeaderDeclaration(str, index);
@@ -142,7 +146,7 @@ export class Methods {
     }
     index = methodName.index;
 
-    let chomp = new Chomp(methodName.buffer, index, null);
+    let chomp = new Chomp(methodName.buffer, index, MethodDefinitionAndName);
     chomp.childrenChomps = [methodType, methodName];
 
     return chomp;
