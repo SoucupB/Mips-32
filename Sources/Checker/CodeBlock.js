@@ -85,7 +85,7 @@ export class CodeBlock {
           break;
         }
         case ConditionalBlocks: {
-
+          break;
         }
 
         default: {

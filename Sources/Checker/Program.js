@@ -112,7 +112,7 @@ export class Program {
   }
 
   _chomp(str, index) {
-    let testingMethods = [Methods.chompDeclaration, Assignation.chomp, Initialization.chomp, ConditionalBlocks.chomp, LoopBlocks.chomp, CodeBlock.chomp];
+    let testingMethods = [Methods.chompDeclaration, Assignation.chomp, Initialization.chomp, ConditionalBlocks.chomp];
     let response = [];
 
     while(index < str.length) {
