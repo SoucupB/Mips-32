@@ -88,13 +88,13 @@ export class Program {
           break;
         }
         case Initialization: {
-          let undefinedVariables = Initialization.addToStackAndVerify(currentInstruction, stackDeclaration);
-          if(undefinedVariables[0].length) {
-            this.errors.push(`Undefined variables ${undefinedVariables[0].join(',')}`);
+          let variables = Initialization.addToStackAndVerify(currentInstruction, stackDeclaration);
+          if(variables[0].length) {
+            this.errors.push(`Undefined variables: ${variables[0].join(',')}`);
             return false;
           }
-          if(undefinedVariables[1].length) {
-            this.errors.push(`Multiple definitions for variables ${undefinedVariables[1].join(',')}`);
+          if(variables[1].length) {
+            this.errors.push(`Multiple definitions for variables: ${variables[1].join(',')}`);
             return false;
           }
           break;
