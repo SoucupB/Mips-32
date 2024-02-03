@@ -47,6 +47,48 @@ export class MethodDefinitionAndName {
 
 }
 
+export class ReturnMethod {
+  static keyWords() {
+    return ['return']
+  }
+
+  static chomp(str, index) {
+    let returnKeyword = ReturnMethod.chompKeywordsInitialization(str, index);
+    if(returnKeyword.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = returnKeyword.index;
+
+    let expression = Expression.chomp(str, index);
+    if(expression.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = expression.index;
+
+    if(str.length >= index || !Character.isAssignationEnding(str[index])) {
+      return Chomp.invalid();
+    }
+    index++;
+
+    let responseChomp = new Chomp(null, index, ReturnMethod);
+    responseChomp.childrenChomps = expression;
+
+    return responseChomp;
+  }
+
+  static chompKeywordsInitialization(str, index) {
+    let keywords = ReturnMethod.keyWords();
+    for(let i = 0, c = keywords.length; i < c; i++) {
+      if(str.indexOf(keywords[i], index) == index) {
+        return new Chomp(keywords[i], index + keywords[i].length, MethodsKeywords)
+      }
+    }
+
+    return Chomp.invalid();
+  }
+
+}
+
 export class Methods {
   static chompDeclaration(str, index) {
     let methodDeclaration = Methods.methodHeaderDeclaration(str, index);

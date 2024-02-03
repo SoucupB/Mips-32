@@ -5,17 +5,18 @@ import { Initialization } from "./Initialization.js";
 import { LoopBlocks } from "./LoopBlocks.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
 import { StackDeclarations } from "./StackDeclarations.js";
+import { ReturnMethod } from "./Methods.js";
 
 export class CodeBlock {
   // [0] -> assignation/init/while/for/if, [1] -> assignation/init/while/for/if, .... 
 
-  static chomp(str, index) {
+  static chomp(str, index, withReturnStatement = false) {
     let openBracket = Operator.chompOpenBracket(str, index);
     if(openBracket.isInvalid()) {
       return Chomp.invalid();
     }
     index = openBracket.index;
-    let blockList = CodeBlock.chompBlock(str, index);
+    let blockList = CodeBlock.chompBlock(str, index, withReturnStatement);
     index = blockList.index;
     let closedBracket = Operator.chompCloseBracket(str, index);
     if(closedBracket.isInvalid()) {
@@ -26,8 +27,11 @@ export class CodeBlock {
     return responseChomp;
   }
 
-  static chompBlock(str, index) {
+  static chompBlock(str, index, withReturnStatement) {
     let availableBlocks = [Assignation.chomp, Initialization.chomp, CodeBlock.chomp, LoopBlocks.chomp, ConditionalBlocks.chomp];
+    if(withReturnStatement) {
+      availableBlocks.push(ReturnMethod.chomp);
+    }
     let responseBlocks = [];
     while(index < str.length) {
       let hasLineBeenProcessed = false;
