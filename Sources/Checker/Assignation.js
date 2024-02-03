@@ -60,7 +60,7 @@ export class Assignation {
 
   static findUnassignedVariables(chomp, stackDeclaration) {
     let chompVariables = Helper.searchChompByType(chomp, {
-      type: Assignation
+      type: Variable
     });
     let undefinedVariables = [];
     for(let i = 0, c = chompVariables.length; i < c; i++) {

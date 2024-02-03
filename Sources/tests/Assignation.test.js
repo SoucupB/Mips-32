@@ -1,6 +1,7 @@
 import tap from 'tap'
 const { test } = tap;
 import { Assignation } from '../Checker/Assignation.js';
+import { StackDeclarations } from '../Checker/StackDeclarations.js';
 
 test('Check Assignation checker v1', (t) => {
   let chomp = Assignation.chomp('a=b+3;', 0);
@@ -60,5 +61,14 @@ test('Check Assignation checker v8', (t) => {
   t.equal(Assignation.toString(chomp1), 'a=b;', 'returns');
   t.equal(Assignation.toString(chomp2), 'c=a+2;', 'returns');
   t.equal(Assignation.toString(chomp3), 't=3+2;', 'returns');
+  t.end();
+});
+
+test('Check Assignation checker v9', (t) => {
+  let chomp = Assignation.chomp('a=b+2/c-d+oop;', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(Assignation.toString(chomp), 'a=b+2/c-d+oop;', 'returns');
+  t.equal(Assignation.findUnassignedVariables(chomp, stack).length, 5, 'returns');
   t.end();
 });
