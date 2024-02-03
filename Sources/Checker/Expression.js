@@ -2,8 +2,7 @@ import Operator from "./Operator.js";
 import Constant from "./Constant.js";
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
-import { Methods } from "./Methods.js";
-import { Helper } from "./Helper.js";
+import { Methods, MethodCall } from "./Methods.js";
 
 class Expression {
   static isValid(str) {
@@ -130,6 +129,18 @@ class Expression {
 
         case Expression: {
           Expression.checkStackInitialization_t(children[i], stackDeclaration, undefinedVariables);
+          break;
+        }
+
+        case MethodCall: {
+          let paramsUndefinedVariables = MethodCall.findUnassignedVariables(children[i], stackDeclaration);
+          for(let i = 0, c = paramsUndefinedVariables.length; i < c; i++) {
+            undefinedVariables.push(paramsUndefinedVariables[i])
+          }
+          break;
+        }
+
+        default: {
           break;
         }
       }

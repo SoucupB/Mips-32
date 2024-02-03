@@ -14,7 +14,19 @@ export class MethodsKeywords {
 }
 
 export class MethodCall {
+  static findUnassignedVariables(chomp, stackDeclaration) {
+    let children = chomp.childrenChomps;
 
+    let params = children[1].childrenChomps;
+    let undefinedVariables = [];
+
+    for(let i = 0, c = params.length; i < c; i++) {
+      let paramsUndefinedVariables = Expression.checkStackInitialization(params[i], stackDeclaration);
+      undefinedVariables = undefinedVariables.concat(paramsUndefinedVariables);
+    }
+
+    return undefinedVariables;
+  }
 }
 
 export class MethodDefinitionAndName {
