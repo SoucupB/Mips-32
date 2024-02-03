@@ -3,6 +3,7 @@ import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
+import { Helper } from "./Helper.js";
 
 export class Keyword {
   static keyWords() {
@@ -148,5 +149,33 @@ export class Initialization {
       response.push(Initialization.displayComponent(children[i]));
     }
     return response.join(' -> ');
+  }
+
+  static initializeVariable(initializationChomp, stackDeclaration) {
+    let inits = Helper.searchChompByType(initializationChomp, {
+      type: Variable
+    });
+
+    for(let i = 0, c = inits.length; i < c; i++) {
+      stackDeclaration.push(inits[i].buffer);
+    }
+  }
+
+  static addToStackAndVerify(chomp, stackDeclaration) {
+    let allInitializedTuples = Helper.searchChompByType(chomp, {
+      type: InitializationTuple
+    });
+    // child 0, is the initializer, child 1 is the expression.
+    for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
+      let initializedVariable = allInitializedTuples[i].childrenChomps[0];
+      let expression = allInitializedTuples[i].childrenChomps[1];
+
+      Initialization.initializeVariable(initializedVariable, stackDeclaration);
+      let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
+      if(undefinedVariables.length) {
+        return undefinedVariables;
+      }
+    }
+    return [];
   }
 }

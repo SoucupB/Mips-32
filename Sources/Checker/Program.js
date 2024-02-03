@@ -80,7 +80,19 @@ export class Program {
       const currentInstruction = instructions[i];
       switch(currentInstruction) {
         case Assignation: {
-          
+          const undefinedVariables = Assignation.findUnassignedVariables(currentInstruction, stackDeclaration);
+          if(undefinedVariables.length) {
+            this.errors.push(`Undefined variables ${undefinedVariables.join(',')}`);
+            return false;
+          }
+          break;
+        }
+        case Initialization: {
+          let undefinedVariables = Initialization.addToStackAndVerify(currentInstruction, stackDeclaration);
+          if(undefinedVariables.length) {
+            this.errors.push(`Undefined variables ${undefinedVariables.join(',')}`);
+            return false;
+          }
           break;
         }
 

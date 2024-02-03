@@ -3,6 +3,7 @@ import Constant from "./Constant.js";
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import { Methods } from "./Methods.js";
+import { Helper } from "./Helper.js";
 
 class Expression {
   static isValid(str) {
@@ -113,6 +114,20 @@ class Expression {
       }
     }
     return Chomp.invalid();
+  }
+
+  static checkStackInitialization(chomp, stackDeclaration) {
+    let allInitializedTuples = Helper.searchChompByType(chomp, {
+      type: Variable
+    });
+    let undefinedVariables = [];
+    for(let i = 0, c = allInitializedTuples.length; i < c; i++) {
+      if(stackDeclaration.isVariableDefined(allInitializedTuples[i].buffer)) {
+        undefinedVariables.push(allInitializedTuples[i].buffer)
+      }
+    }
+
+    return undefinedVariables;
   }
 }
 

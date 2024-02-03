@@ -72,3 +72,17 @@ test('Check Assignation checker v9', (t) => {
   t.equal(Assignation.findUnassignedVariables(chomp, stack).length, 5, 'returns');
   t.end();
 });
+
+test('Check Assignation checker v10', (t) => {
+  let chomp = Assignation.chomp('a=b+2/c-d+oop;', 0);
+  let stack = new StackDeclarations();
+  stack.push('a');
+  stack.push('b');
+  stack.push('c');
+  stack.push('d');
+  stack.push('oop');
+
+  t.equal(Assignation.toString(chomp), 'a=b+2/c-d+oop;', 'returns');
+  t.equal(Assignation.findUnassignedVariables(chomp, stack).length, 0, 'returns');
+  t.end();
+});
