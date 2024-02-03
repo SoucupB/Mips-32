@@ -3,6 +3,7 @@ import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
+import { Helper } from "./Helper.js";
 
 export class Assignation {
   static chomp(str, index, withEnding = true) {
@@ -55,5 +56,19 @@ export class Assignation {
     response += chomp.childrenChomps[1].toString();
     response += ';';
     return response;
+  }
+
+  static findUnassignedVariables(chomp, stackDeclaration) {
+    let chompVariables = Helper.searchChompByType(chomp, {
+      type: Assignation
+    });
+    let undefinedVariables = [];
+    for(let i = 0, c = chompVariables.length; i < c; i++) {
+      if(!stackDeclaration.isVariableDefined(chompVariables[i].buffer)) {
+        undefinedVariables.push(chompVariables[i].buffer);
+      }
+    }
+
+    return undefinedVariables;
   }
 }

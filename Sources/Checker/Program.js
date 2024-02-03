@@ -71,10 +71,22 @@ export class Program {
   }
 
   validateStackVariables(chomp) {
-    let stackDeclaration = new StackDeclarations();
+    return this.validateStackVariables_t(chomp, new StackDeclarations())
+  }
 
+  validateStackVariables_t(chomp, stackDeclaration) {
     let instructions = chomp.childrenChomps;
     for(let i = 0, c = instructions.length; i < c; i++) {
+      const currentInstruction = instructions[i];
+      switch(currentInstruction) {
+        case Assignation: {
+          
+          break;
+        }
+
+        default:
+          break;
+      }
       // iterate through instructions and find instructions that have multiple definitions.
     }
     return true;
