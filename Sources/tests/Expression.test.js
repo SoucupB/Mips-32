@@ -1,8 +1,8 @@
 import tap from 'tap'
 const { test } = tap;
-import Expression from '../Checker/Expression.js';
-import { StackDeclarations } from '../Checker/StackDeclarations.js';
-import { ErrorTypes } from '../Checker/CompilationErrors.js';
+import Expression from '../AST/Expression.js';
+import { StackDeclarations } from '../AST/StackDeclarations.js';
+import { ErrorTypes } from '../AST/CompilationErrors.js';
 
 test('Check expression v1', (t) => {
   t.equal(Expression.isValid('a'), true, 'returns');

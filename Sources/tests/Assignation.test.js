@@ -1,8 +1,8 @@
 import tap from 'tap'
 const { test } = tap;
-import { Assignation } from '../Checker/Assignation.js';
-import { StackDeclarations } from '../Checker/StackDeclarations.js';
-import { ErrorTypes } from '../Checker/CompilationErrors.js';
+import { Assignation } from '../AST/Assignation.js';
+import { StackDeclarations } from '../AST/StackDeclarations.js';
+import { ErrorTypes } from '../AST/CompilationErrors.js';
 
 test('Check Assignation checker v1', (t) => {
   let chomp = Assignation.chomp('a=b+3;', 0);

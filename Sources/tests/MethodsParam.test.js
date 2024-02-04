@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { MethodsParams } from '../Checker/MethodsParam.js';
+import { MethodsParams } from '../AST/MethodsParam.js';
 
 test('Check MethodsParams checker v1', (t) => {
   let chomp = MethodsParams.chomp('int _yolo', 0);

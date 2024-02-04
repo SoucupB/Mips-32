@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { StackDeclarations } from '../Checker/StackDeclarations.js';
+import { StackDeclarations } from '../AST/StackDeclarations.js';
 
 test('Stack spec v1', (t) => {
   let stack = new StackDeclarations();

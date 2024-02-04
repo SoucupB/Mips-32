@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import Operator from '../Checker/Operator.js';
+import Operator from '../AST/Operator.js';
 
 test('Check operator is correct v1', (t) => {
   t.equal(Operator.isValid('+'), true, 'returns true');

@@ -1,8 +1,8 @@
 import tap from 'tap'
 const { test } = tap;
-import { CodeBlock } from '../Checker/CodeBlock.js';
-import { StackDeclarations } from '../Checker/StackDeclarations.js';
-import { ErrorTypes } from '../Checker/CompilationErrors.js';
+import { CodeBlock } from '../AST/CodeBlock.js';
+import { StackDeclarations } from '../AST/StackDeclarations.js';
+import { ErrorTypes } from '../AST/CompilationErrors.js';
 
 test('Check CodeBlock checker v1', (t) => {
   let chomp = CodeBlock.chomp('{a=b+3;}', 0);
