@@ -310,25 +310,17 @@ export class Methods {
     }
   }
 
-  static findReturnTypeAndItsExpressionInStack(methodReturnType, block, stackDeclaration) {
+  static doesReturnNeedsToBe(methodReturnType, block) {
     const returnWord = Helper.searchChompByType(block, {
       type: ReturnMethod
     });
-
-    if(methodReturnType == 'void') {
-      return [[], []];
+    if(methodReturnType == 'void' && returnWord.length) {
+      return false;
     }
-
-    for(let i = 0, c = returnWord.length; i < c; i++) {
-      let expressionUndefinedVariables = Expression.checkStackInitialization(returnWord[i].childrenChomps, stackDeclaration);
-
-      console.log(expressionUndefinedVariables, stackDeclaration)
-      if(expressionUndefinedVariables.length) {
-        return [expressionUndefinedVariables, []]
-      }
+    if(methodReturnType != 'void' && !returnWord.length) {
+      return false;
     }
-
-    return [[], []];
+    return true;
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
@@ -339,6 +331,7 @@ export class Methods {
     const block = children[2];
 
     const methodName = methodHeader.childrenChomps[1];
+    const methodType = methodHeader.childrenChomps[0].buffer;
     
     if(stackDeclaration.isMethodDefined(methodName.buffer) || stackDeclaration.isVariableDefined(methodName.buffer)) {
       return [[], [methodName.buffer]]
@@ -348,6 +341,10 @@ export class Methods {
     if(alreadyDefinedVariables.length) {
       return [[], alreadyDefinedVariables];
     }
+    if(!Methods.doesReturnNeedsToBe(methodType, block)) {
+      return [['Return statement invalid'], []];
+    }
+
     Methods.pushMethodParams(methodName.buffer, methodParams, stackDeclaration);
     stackDeclaration.freeze();
     Methods.pushParams(methodParams, stackDeclaration);
