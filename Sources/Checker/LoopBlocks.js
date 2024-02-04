@@ -14,17 +14,17 @@ export class LoopKeywords {
 }
 
 export class LoopBlocks {
-  static chomp(str, index) {
+  static chomp(str, index, withReturnStatement = false) {
     let loopBlock = LoopBlocks.chompKeywordsInitialization(str, index);
     if(loopBlock.isInvalid()) {
       return Chomp.invalid();
     }
     index = loopBlock.index;
     if(loopBlock.buffer == 'while') {
-      return LoopBlocks.chompWhileBlock(str, index);
+      return LoopBlocks.chompWhileBlock(str, index, withReturnStatement);
     }
     if(loopBlock.buffer == 'for') {
-      return LoopBlocks.chompForBlock(str, index);
+      return LoopBlocks.chompForBlock(str, index, withReturnStatement);
     }
 
     return Chomp.invalid();
@@ -41,7 +41,7 @@ export class LoopBlocks {
     return Chomp.invalid();
   }
 
-  static chompWhileBlock(str, index) {
+  static chompWhileBlock(str, index, withReturnStatement) {
     let openParanth = Operator.chompOpenParanth(str, index);
     if(openParanth.isInvalid()) {
       return Chomp.invalid();
@@ -58,7 +58,7 @@ export class LoopBlocks {
     }
     index = closeParanth.index;
 
-    let blockChomp = CodeBlock.chomp(str, index);
+    let blockChomp = CodeBlock.chomp(str, index, withReturnStatement);
     if(blockChomp.isInvalid()) {
       return Chomp.invalid();
     }
@@ -70,7 +70,7 @@ export class LoopBlocks {
     return loopChomp;
   }
 
-  static chompForBlock(str, index) {
+  static chompForBlock(str, index, withReturnStatement) {
     let openParanth = Operator.chompOpenParanth(str, index);
     if(openParanth.isInvalid()) {
       return Chomp.invalid();
@@ -106,7 +106,7 @@ export class LoopBlocks {
     }
     index = closeParanth.index;
 
-    let blockChomp = CodeBlock.chomp(str, index);
+    let blockChomp = CodeBlock.chomp(str, index, withReturnStatement);
     if(blockChomp.isInvalid()) {
       return Chomp.invalid();
     }

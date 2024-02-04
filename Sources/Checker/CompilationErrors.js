@@ -28,6 +28,6 @@ export class CompilationErrors {
   }
 
   toString() {
-
+    return "Error";
   }
 }

@@ -336,17 +336,14 @@ export class Methods {
     const methodType = methodHeader.childrenChomps[0].buffer;
     
     if(stackDeclaration.isMethodDefined(methodName.buffer) || stackDeclaration.isVariableDefined(methodName.buffer)) {
-      // return [[], [methodName.buffer]]
       return new CompilationErrors([methodName.buffer], ErrorTypes.VARIABLE_MULTIPLE_DEFINITION);
     }
 
     let alreadyDefinedVariables = Methods.checkParamsAndPush(methodParams, stackDeclaration);
     if(alreadyDefinedVariables.length) {
-      // return [[], alreadyDefinedVariables];
       return new CompilationErrors(alreadyDefinedVariables, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION);
     }
     if(!Methods.doesReturnNeedsToBe(methodType, block)) {
-      // return [['Return statement invalid'], []];
       return new CompilationErrors(null, ErrorTypes.INVALID_RETURN);
     }
 
@@ -358,9 +355,6 @@ export class Methods {
     if(!blockVariables.isClean()) {
       return blockVariables;
     }
-    // if(blockVariables[0].length || blockVariables[1].length) {
-    //   return blockVariables;
-    // }
     stackDeclaration.pop();
 
     return CompilationErrors.clean();

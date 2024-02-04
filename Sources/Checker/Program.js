@@ -108,7 +108,6 @@ export class Program {
         case Assignation: {
           const errors = Assignation.findUnassignedVariables(currentInstruction, stackDeclaration);
           if(!errors.isClean()) {
-            // this.errors.push(`Undefined variables ${undefinedVariables.join(',')}`);
             this.errors.push(errors);
             return false;
           }

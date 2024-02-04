@@ -1,6 +1,8 @@
 import tap from 'tap'
 const { test } = tap;
 import { Methods } from '../Checker/Methods.js';
+import { StackDeclarations } from '../Checker/StackDeclarations.js';
+import { ErrorTypes } from '../Checker/CompilationErrors.js';
 
 test('Check Methods checker v1', (t) => {
   let chomp = Methods.chompDeclaration('int someMethod(int a,int b){int b=5;}', 0);
@@ -196,5 +198,35 @@ test('Check Methods checker with return v1', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   t.equal(chomp.index, 100, 'returns');
+  t.end();
+});
+
+test('Check Methods checker with return error v1', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int _dafb){int b=5;for(int i=0;i<10;i=i+1){if(a==10){b=10;}a=b;}return a;}', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = Methods.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors.type, ErrorTypes.INVALID_RETURN, 'returns');
+  t.end();
+});
+
+test('Check Methods checker with return error v2', (t) => {
+  let chomp = Methods.chompDeclaration('int someMethod(int _aaga,int _dafb){int b=5;if(b==0){}return b;}', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = Methods.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
+  t.end();
+});
+
+test('Check Methods checker with return error v3', (t) => {
+  let chomp = Methods.chompDeclaration('int someMethod(int _aaga,int _dafb){int b=5;if(b==0){return b;}}', 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = Methods.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });

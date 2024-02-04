@@ -45,10 +45,13 @@ export class CodeBlock {
   }
 
   static chompBlock(str, index, withReturnStatement) {
-    let availableBlocks = [Assignation.chomp, Initialization.chomp, CodeBlock.chomp, LoopBlocks.chomp, ConditionalBlocks.chomp, CodeBlock.expressionChompWithLineTerminator];
+    let availableBlocks = [Assignation.chomp, Initialization.chomp, (str, index) => CodeBlock.chomp(str, index, withReturnStatement), 
+                           (str, index) => LoopBlocks.chomp(str, index, withReturnStatement), (str, index) => ConditionalBlocks.chomp(str, index, withReturnStatement), 
+                           CodeBlock.expressionChompWithLineTerminator];
     if(withReturnStatement) {
       availableBlocks.push(ReturnMethod.chomp);
     }
+    // console.log(withReturnStatement, index)
     let responseBlocks = [];
     while(index < str.length) {
       let hasLineBeenProcessed = false;
@@ -81,9 +84,6 @@ export class CodeBlock {
           if(!response.isClean()) {
             return response;
           }
-          // if(response.length) {
-          //   return [response, []]
-          // }
           break;
         }
         case Initialization: {
@@ -92,10 +92,6 @@ export class CodeBlock {
           if(!response.isClean()) {
             return response;
           }
-
-          // if(response[0].length || response[1].length) {
-          //   return response;
-          // }
           break;
         }
         case CodeBlock: {
@@ -103,9 +99,6 @@ export class CodeBlock {
           if(!codeBlockResponse.isClean()) {
             return codeBlockResponse;
           }
-          // if(codeBlockResponse[0].length || codeBlockResponse[1].length) {
-          //   return codeBlockResponse;
-          // }
           break;
         }
         case LoopBlocks: {
@@ -113,9 +106,6 @@ export class CodeBlock {
           if(!loopBlocks.isClean()) {
             return loopBlocks;
           }
-          // if(loopBlocks[0].length || loopBlocks[1].length) {
-          //   return loopBlocks;
-          // }
           break;
         }
         case ConditionalBlocks: {
@@ -123,9 +113,6 @@ export class CodeBlock {
           if(!conditionalBlock.isClean()) {
             return conditionalBlock;
           }
-          // if(conditionalBlock[0].length || conditionalBlock[1].length) {
-          //   return conditionalBlock;
-          // }
           break;
         }
         case ReturnMethod: {
@@ -133,9 +120,6 @@ export class CodeBlock {
           if(!returnBlocks.isClean()) {
             return returnBlocks;
           }
-          // if(returnBlocks.length) {
-          //   return [returnBlocks, []];
-          // }
           break;
         }
         case Expression: {
@@ -143,10 +127,6 @@ export class CodeBlock {
           if(!expressionUndefinedVariables.isClean()) {
             return expressionUndefinedVariables;
           }
-
-          // if(expressionUndefinedVariables.length) {
-          //   return [expressionUndefinedVariables, []];
-          // }
           break;
         }
 

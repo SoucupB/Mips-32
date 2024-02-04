@@ -13,7 +13,7 @@ export class ConditionalKeywords {
 export class ConditionalBlocks {
   // [0] -> expression, [1] -> block
 
-  static chomp(str, index) {
+  static chomp(str, index, withReturnStatement = false) {
     let conditionalBlock = ConditionalBlocks.chompKeywordsInitialization(str, index);
     if(conditionalBlock.isInvalid()) {
       return Chomp.invalid();
@@ -38,7 +38,7 @@ export class ConditionalBlocks {
     }
     index = closeParanth.index;
 
-    let block = CodeBlock.chomp(str, index);
+    let block = CodeBlock.chomp(str, index, withReturnStatement);
     if(block.isInvalid()) {
       return Chomp.invalid();
     }
