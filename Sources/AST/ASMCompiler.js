@@ -8,11 +8,11 @@ export class ASMCompiler {
 
   compile() {
     const program = new Program(this.code);
-    const ast = program.chomp();
-    if(ast.isInvalid()) {
+    this.ast = program.chomp();
+    if(this.ast.isInvalid()) {
       return null;
     }
 
-    return (new Compiler(ast)).compile();
+    return (new Compiler(this.ast)).compile();
   }
 }
