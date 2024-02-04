@@ -14,8 +14,11 @@ export class ExpressionTree {
     this.expressionChomp = expressionChomp;
     this.root = null;
     this.precedence = [
+      ['&&', '||'],
+      ['==', '!=', '<=', '>=', '<', '>'],
+      ['^', '&', '|', '<<', '>>'],
       ['+', '-'],
-      ['*', '/'],
+      ['*', '/', '%'],
     ];
   }
 
