@@ -1,4 +1,5 @@
 import Constant from "../AST/Constant.js";
+import Expression from "../AST/Expression.js";
 import Variable from "../AST/Variable.js";
 
 export class ExpressionNode {
@@ -43,9 +44,18 @@ export class ExpressionTree {
     return parentNode;
   }
 
+  expressionRoot(chomp) {
+    let expressionNode = new ExpressionTree(chomp);
+    expressionNode.build();
+    return expressionNode.root;
+  }
+
   build_t(depth = 0, index) {
     let children = this.expressionChomp.childrenChomps;
     if(depth >= this.precedence.length) {
+      if(children[index[0]].type == Expression) {
+        return this.expressionRoot(children[index[0]]);
+      }
       return new ExpressionNode(children[index[0]]);
     }
     let expressionNode = this.build_t(depth + 1, index);

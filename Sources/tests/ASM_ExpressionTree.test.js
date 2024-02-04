@@ -74,3 +74,11 @@ test('Check Expression true v9', (t) => {
   t.equal(expressionTree.toString(), 'a', 'returns');
   t.end();
 });
+
+test('Check Expression true v10', (t) => {
+  let chomp = Expression.chomp('(2+3)*8', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((2+3)*8)', 'returns');
+  t.end();
+});
