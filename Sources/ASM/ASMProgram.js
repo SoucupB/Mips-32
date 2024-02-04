@@ -4,6 +4,6 @@ export class ASMProgram {
   }
 
   compile() {
-    
+    console.log(this.ast)
   }
 }
