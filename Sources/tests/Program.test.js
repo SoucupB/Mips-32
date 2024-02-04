@@ -220,6 +220,20 @@ test('Check Program checker (method return) v5', (t) => {
   t.end();
 });
 
+test('Check Program checker (method return) v6', (t) => {
+  let program = new Program('int a=0;void coco(int z,int t){z=0;int frt=5;if(frt==0){return 0;}}int main(){return 0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Program checker (method return) v6', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt=5;if(frt==0){return 0;}}int main(){return 0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
 test('Check Program checker Expression call v1', (t) => {
   let program = new Program('int a=0;void coco(int z,int t){z=0;int frt=5;}int main(){coco(3,2)+a;return 0;}');
   let chomp = program.chomp();
