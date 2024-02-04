@@ -82,3 +82,27 @@ test('Check Expression true v10', (t) => {
   t.equal(expressionTree.toString(), '((2+3)*8)', 'returns');
   t.end();
 });
+
+test('Check Expression true v11', (t) => {
+  let chomp = Expression.chomp('2/((2+3)*8)', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '(2/((2+3)*8))', 'returns');
+  t.end();
+});
+
+test('Check Expression true v12', (t) => {
+  let chomp = Expression.chomp('3+4==6+7', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((3+4)==(6+7))', 'returns');
+  t.end();
+});
+
+test('Check Expression true v13', (t) => {
+  let chomp = Expression.chomp('3+(4==6)+7', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((3+(4==6))+7)', 'returns');
+  t.end();
+});
