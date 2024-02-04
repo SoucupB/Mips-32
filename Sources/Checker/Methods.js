@@ -6,6 +6,7 @@ import { CodeBlock } from "./CodeBlock.js";
 import Operator from "./Operator.js";
 import Expression from "./Expression.js";
 import { Helper } from "./Helper.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class MethodsKeywords {
   static keyWords() {
@@ -18,14 +19,15 @@ export class MethodCall {
     let children = chomp.childrenChomps;
 
     let params = children[1].childrenChomps;
-    let undefinedVariables = [];
 
     for(let i = 0, c = params.length; i < c; i++) {
       let paramsUndefinedVariables = Expression.checkStackInitialization(params[i], stackDeclaration);
-      undefinedVariables = undefinedVariables.concat(paramsUndefinedVariables);
+      if(!paramsUndefinedVariables.isClean()) {
+        return paramsUndefinedVariables;
+      }
     }
 
-    return undefinedVariables;
+    return CompilationErrors.clean();
   }
 
   static doesMethodHaveAllTheParametersPresent(chomp, stackDeclaration) {
@@ -334,15 +336,18 @@ export class Methods {
     const methodType = methodHeader.childrenChomps[0].buffer;
     
     if(stackDeclaration.isMethodDefined(methodName.buffer) || stackDeclaration.isVariableDefined(methodName.buffer)) {
-      return [[], [methodName.buffer]]
+      // return [[], [methodName.buffer]]
+      return new CompilationErrors([methodName.buffer], ErrorTypes.VARIABLE_MULTIPLE_DEFINITION);
     }
 
     let alreadyDefinedVariables = Methods.checkParamsAndPush(methodParams, stackDeclaration);
     if(alreadyDefinedVariables.length) {
-      return [[], alreadyDefinedVariables];
+      // return [[], alreadyDefinedVariables];
+      return new CompilationErrors(alreadyDefinedVariables, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION);
     }
     if(!Methods.doesReturnNeedsToBe(methodType, block)) {
-      return [['Return statement invalid'], []];
+      // return [['Return statement invalid'], []];
+      return new CompilationErrors(null, ErrorTypes.INVALID_RETURN);
     }
 
     Methods.pushMethodParams(methodName.buffer, methodParams, stackDeclaration);
@@ -350,11 +355,14 @@ export class Methods {
     Methods.pushParams(methodParams, stackDeclaration);
 
     let blockVariables = CodeBlock.addToStackAndVerify(block, stackDeclaration);
-    if(blockVariables[0].length || blockVariables[1].length) {
+    if(!blockVariables.isClean()) {
       return blockVariables;
     }
+    // if(blockVariables[0].length || blockVariables[1].length) {
+    //   return blockVariables;
+    // }
     stackDeclaration.pop();
 
-    return [[], []];
+    return CompilationErrors.clean();
   }
 }

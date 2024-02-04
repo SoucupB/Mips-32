@@ -5,6 +5,7 @@ import Expression from "./Expression.js";
 import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import Character from "./Character.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class LoopKeywords {
   static keyWords() {
@@ -133,11 +134,11 @@ export class LoopBlocks {
 
     let expression = children[0];
     let expressionUndefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
-    if(expressionUndefinedVariables.length) {
-      return [expressionUndefinedVariables, []];
+    if(!expressionUndefinedVariables.isClean()) {
+      return expressionUndefinedVariables;
     }
     if(children.length < 2) {
-      return [[], []];
+      return CompilationErrors.clean();
     }
     let block = children[1];
     return CodeBlock.addToStackAndVerify(block, stackDeclaration);
@@ -153,16 +154,19 @@ export class LoopBlocks {
     switch(startingCondition.type) {
       case Assignation: {
         let assignationVariableErrors = Assignation.findUnassignedVariables(startingCondition, stackDeclaration);
-        if(assignationVariableErrors.length) {
-          return [assignationVariableErrors, []];
+        if(!assignationVariableErrors.isClean()) {
+          return assignationVariableErrors
         }
         break;
       }
       case Initialization: {
         let initializationVariableErrors = Initialization.addToStackAndVerify(startingCondition, stackDeclaration);
-        if(initializationVariableErrors[0].length || initializationVariableErrors[1].length) {
+        if(!initializationVariableErrors.isClean()) {
           return initializationVariableErrors;
         }
+        // if(initializationVariableErrors[0].length || initializationVariableErrors[1].length) {
+        //   return initializationVariableErrors;
+        // }
         break;
       }
       default: {
@@ -171,17 +175,23 @@ export class LoopBlocks {
     }
 
     const testingConditionStackDeclaration = Expression.checkStackInitialization(testingCondition, stackDeclaration);
-    if(testingConditionStackDeclaration.length) {
-      return [testingConditionStackDeclaration, []];
+    if(!testingConditionStackDeclaration.isClean()) {
+      return testingConditionStackDeclaration;
     }
+    // if(testingConditionStackDeclaration.length) {
+    //   return [testingConditionStackDeclaration, []];
+    // }
 
     const stateChangeStackDeclaration = Expression.checkStackInitialization(stateChange, stackDeclaration);
-    if(stateChangeStackDeclaration.length) {
-      return [stateChangeStackDeclaration, []];
+    // if(stateChangeStackDeclaration.length) {
+    //   return [stateChangeStackDeclaration, []];
+    // }
+    if(!stateChangeStackDeclaration.isClean()) {
+      return stateChangeStackDeclaration;
     }
     // No condition
     if(children.length <= 3) {
-      return [[], []];
+      return CompilationErrors.clean();
     }
     const block = children[3];
     
@@ -204,6 +214,6 @@ export class LoopBlocks {
       }
     }
 
-    return [[], []];
+    return CompilationErrors.clean();
   }
 }

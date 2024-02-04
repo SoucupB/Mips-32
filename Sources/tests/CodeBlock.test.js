@@ -2,6 +2,7 @@ import tap from 'tap'
 const { test } = tap;
 import { CodeBlock } from '../Checker/CodeBlock.js';
 import { StackDeclarations } from '../Checker/StackDeclarations.js';
+import { ErrorTypes } from '../Checker/CompilationErrors.js';
 
 test('Check CodeBlock checker v1', (t) => {
   let chomp = CodeBlock.chomp('{a=b+3;}', 0);
@@ -135,8 +136,7 @@ test('Check CodeBlock internal stack validity v1', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -146,8 +146,7 @@ test('Check CodeBlock internal stack validity v2', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -157,8 +156,7 @@ test('Check CodeBlock internal stack validity v3', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
   t.end();
 });
 
@@ -168,8 +166,7 @@ test('Check CodeBlock internal stack validity v4', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -179,8 +176,9 @@ test('Check CodeBlock internal stack validity v5', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 1, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
+  // t.equal(variablesErrors[0].length, 1, 'returns');
+  // t.equal(variablesErrors[1].length, 0, 'returns');
   t.end();
 });
 
@@ -190,8 +188,7 @@ test('Check CodeBlock internal stack validity v6', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -201,8 +198,7 @@ test('Check CodeBlock internal stack validity v7', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -212,8 +208,7 @@ test('Check CodeBlock internal stack validity v8', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
   t.end();
 });
 
@@ -223,8 +218,9 @@ test('Check CodeBlock internal stack validity v9', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
+  // t.equal(variablesErrors[0].length, 0, 'returns');
+  // t.equal(variablesErrors[1].length, 0, 'returns');
   t.end();
 });
 
@@ -234,8 +230,9 @@ test('Check CodeBlock internal stack validity v10', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
+  // t.equal(variablesErrors[0].length, 0, 'returns');
+  // t.equal(variablesErrors[1].length, 1, 'returns');
   t.end();
 });
 
@@ -245,8 +242,7 @@ test('Check CodeBlock internal stack validity v11', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -256,8 +252,7 @@ test('Check CodeBlock internal stack validity v12', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
   t.end();
 });
 
@@ -267,8 +262,7 @@ test('Check CodeBlock internal stack validity v13', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -278,8 +272,7 @@ test('Check CodeBlock internal stack validity v14', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -289,8 +282,7 @@ test('Check CodeBlock internal stack validity v15', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -300,8 +292,7 @@ test('Check CodeBlock internal stack validity v16', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 1, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -311,8 +302,7 @@ test('Check CodeBlock internal stack validity v17', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -322,8 +312,7 @@ test('Check CodeBlock internal stack validity v18', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -333,8 +322,7 @@ test('Check CodeBlock internal stack validity v19', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 1, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -344,8 +332,7 @@ test('Check CodeBlock internal stack validity v20', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 1, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
   t.end();
 });
 
@@ -392,8 +379,7 @@ test('Check CodeBlock internal stack Expression validity v1', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 0, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -403,7 +389,6 @@ test('Check CodeBlock internal stack Expression validity v2', (t) => {
   let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variablesErrors[0].length, 1, 'returns');
-  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.equal(variablesErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });

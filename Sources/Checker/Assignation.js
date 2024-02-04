@@ -3,7 +3,7 @@ import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
-import { Helper } from "./Helper.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class Assignation {
   static chomp(str, index, withEnding = true) {
@@ -69,8 +69,15 @@ export class Assignation {
     if(!stackDeclaration.isVariableDefined(assignerVariable.buffer)) {
       undefinedVariables.push(assignerVariable.buffer);
     }
+    if(undefinedVariables.length) {
+      return new CompilationErrors(undefinedVariables, ErrorTypes.VARIABLE_NOT_DEFINED);
+    }
     let expressionUndefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
+    if(!expressionUndefinedVariables.isClean()) {
+      return expressionUndefinedVariables;
+    }
+    // undefinedVariables = undefinedVariables.concat(expressionUndefinedVariables);
 
-    return undefinedVariables.concat(expressionUndefinedVariables);
+    return CompilationErrors.clean();
   }
 }

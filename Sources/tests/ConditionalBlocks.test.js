@@ -2,6 +2,7 @@ import tap from 'tap'
 const { test } = tap;
 import { ConditionalBlocks } from '../Checker/ConditionalBlocks.js';
 import { StackDeclarations } from '../Checker/StackDeclarations.js';
+import { ErrorTypes } from '../Checker/CompilationErrors.js';
 
 test('Check ConditionalBlocks checker v1', (t) => {
   let chomp = ConditionalBlocks.chomp('if(a<3){a=b+3;}', 0);
@@ -42,8 +43,7 @@ test('Check ConditionalBlocks stack checker v1', (t) => {
   let variableErrors = ConditionalBlocks.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variableErrors[0].length, 0, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -54,8 +54,7 @@ test('Check ConditionalBlocks stack checker v2', (t) => {
   let variableErrors = ConditionalBlocks.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variableErrors[0].length, 3, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -71,8 +70,7 @@ test('Check ConditionalBlocks stack checker v3', (t) => {
   let variableErrors = ConditionalBlocks.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variableErrors[0].length, 0, 'returns');
-  t.equal(variableErrors[1].length, 1, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
   t.end();
 });
 
@@ -87,8 +85,7 @@ test('Check ConditionalBlocks stack checker v4', (t) => {
   let variableErrors = ConditionalBlocks.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variableErrors[0].length, 0, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -103,7 +100,8 @@ test('Check ConditionalBlocks stack checker v5', (t) => {
   let variableErrors = ConditionalBlocks.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(variableErrors[0].length, 1, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  // t.equal(variableErrors[0].length, 1, 'returns');
+  // t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });

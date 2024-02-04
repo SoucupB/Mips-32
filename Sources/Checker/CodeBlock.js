@@ -4,10 +4,10 @@ import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import { LoopBlocks } from "./LoopBlocks.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
-import { StackDeclarations } from "./StackDeclarations.js";
 import { ReturnMethod } from "./Methods.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class CodeBlock {
   // [0] -> assignation/init/while/for/if, [1] -> assignation/init/while/for/if, .... 
@@ -78,52 +78,75 @@ export class CodeBlock {
       switch(currentChild.type) {
         case Assignation: {
           let response = Assignation.findUnassignedVariables(currentChild, stackDeclaration);
-          if(response.length) {
-            return [response, []]
+          if(!response.isClean()) {
+            return response;
           }
+          // if(response.length) {
+          //   return [response, []]
+          // }
           break;
         }
         case Initialization: {
           let response = Initialization.addToStackAndVerify(currentChild, stackDeclaration);
           // If there are either undefined or multiple definitions.
-          if(response[0].length || response[1].length) {
+          if(!response.isClean()) {
             return response;
           }
+
+          // if(response[0].length || response[1].length) {
+          //   return response;
+          // }
           break;
         }
         case CodeBlock: {
           let codeBlockResponse = CodeBlock.addToStackAndVerify(currentChild, stackDeclaration);
-          if(codeBlockResponse[0].length || codeBlockResponse[1].length) {
+          if(!codeBlockResponse.isClean()) {
             return codeBlockResponse;
           }
+          // if(codeBlockResponse[0].length || codeBlockResponse[1].length) {
+          //   return codeBlockResponse;
+          // }
           break;
         }
         case LoopBlocks: {
           let loopBlocks = LoopBlocks.addToStackAndVerify(currentChild, stackDeclaration);
-          if(loopBlocks[0].length || loopBlocks[1].length) {
+          if(!loopBlocks.isClean()) {
             return loopBlocks;
           }
+          // if(loopBlocks[0].length || loopBlocks[1].length) {
+          //   return loopBlocks;
+          // }
           break;
         }
         case ConditionalBlocks: {
           let conditionalBlock = ConditionalBlocks.addToStackAndVerify(currentChild, stackDeclaration);
-          if(conditionalBlock[0].length || conditionalBlock[1].length) {
+          if(!conditionalBlock.isClean()) {
             return conditionalBlock;
           }
+          // if(conditionalBlock[0].length || conditionalBlock[1].length) {
+          //   return conditionalBlock;
+          // }
           break;
         }
         case ReturnMethod: {
           let returnBlocks = ReturnMethod.addToStackAndVerify(currentChild, stackDeclaration);
-          if(returnBlocks.length) {
-            return [returnBlocks, []];
+          if(!returnBlocks.isClean()) {
+            return returnBlocks;
           }
+          // if(returnBlocks.length) {
+          //   return [returnBlocks, []];
+          // }
           break;
         }
         case Expression: {
           let expressionUndefinedVariables = Expression.checkStackInitialization(currentChild, stackDeclaration);
-          if(expressionUndefinedVariables.length) {
-            return [expressionUndefinedVariables, []];
+          if(!expressionUndefinedVariables.isClean()) {
+            return expressionUndefinedVariables;
           }
+
+          // if(expressionUndefinedVariables.length) {
+          //   return [expressionUndefinedVariables, []];
+          // }
           break;
         }
 
@@ -133,7 +156,7 @@ export class CodeBlock {
       }
     }
 
-    return [[], []]
+    return CompilationErrors.clean();
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {

@@ -2,6 +2,7 @@ import tap from 'tap'
 const { test } = tap;
 import { LoopBlocks } from '../Checker/LoopBlocks.js';
 import { StackDeclarations } from '../Checker/StackDeclarations.js';
+import { ErrorTypes } from '../Checker/CompilationErrors.js';
 
 test('Check LoopBlocks checker v1', (t) => {
   let chomp = LoopBlocks.chomp('{a=b+3;}', 0);
@@ -102,8 +103,7 @@ test('Check LoopBlocks stack declarations v1', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
-  t.equal(variableErrors[0].length, 1, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -114,8 +114,7 @@ test('Check LoopBlocks stack declarations v2', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
-  t.equal(variableErrors[0].length, 0, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -125,8 +124,7 @@ test('Check LoopBlocks stack declarations v3', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
-  t.equal(variableErrors[0].length, 0, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -136,8 +134,7 @@ test('Check LoopBlocks stack declarations v4', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
-  t.equal(variableErrors[0].length, 1, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -147,8 +144,7 @@ test('Check LoopBlocks stack declarations v5', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
-  t.equal(variableErrors[0].length, 0, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -158,7 +154,6 @@ test('Check LoopBlocks stack declarations v6', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   let variableErrors = LoopBlocks.addToStackAndVerify(chomp, stack);
-  t.equal(variableErrors[0].length, 1, 'returns');
-  t.equal(variableErrors[1].length, 0, 'returns');
+  t.equal(variableErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });

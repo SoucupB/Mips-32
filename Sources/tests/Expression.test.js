@@ -2,6 +2,7 @@ import tap from 'tap'
 const { test } = tap;
 import Expression from '../Checker/Expression.js';
 import { StackDeclarations } from '../Checker/StackDeclarations.js';
+import { ErrorTypes } from '../Checker/CompilationErrors.js';
 
 test('Check expression v1', (t) => {
   t.equal(Expression.isValid('a'), true, 'returns');
@@ -268,7 +269,7 @@ test('Check with methods v1 stack', (t) => {
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(stackResponse.length, 2, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -283,7 +284,7 @@ test('Check with methods v2 stack', (t) => {
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(stackResponse.length, 3, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 
@@ -302,7 +303,7 @@ test('Check with methods v3 stack', (t) => {
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(stackResponse.length, 0, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
 
@@ -330,7 +331,7 @@ test('Check with methods v4 stack', (t) => {
   let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  t.equal(stackResponse.length, 6, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
 

@@ -5,6 +5,7 @@ import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import { StackDeclarations } from "./StackDeclarations.js";
 import { Helper } from "./Helper.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class Program {
   constructor(code, errors = []) {
@@ -15,7 +16,8 @@ export class Program {
   chomp() {
     let chomp = this._chomp(this.code, 0);
     if(chomp.isInvalid()) {
-      this.errors.push('Compilation error!');
+      // this.errors.push('Compilation error!');
+      this.errors.push(new CompilationErrors(null, ErrorTypes.PARSE_ERROR))
       return Chomp.invalid();
     }
     if(!this.validateChomp(chomp)) {
@@ -28,11 +30,13 @@ export class Program {
     let mainDeclarations = Methods.searchMethodByName(chomp, 'main');
 
     if(!mainDeclarations.length) {
-      this.errors.push('Missing main method!');
+      // this.errors.push('Missing main method!');
+      this.errors.push(new CompilationErrors(null, ErrorTypes.MISSING_MAIN_METHOD))
       return false;
     }
     if(mainDeclarations.length > 1) {
-      this.errors.push('Multiple main definitions!');
+      // this.errors.push('Multiple main definitions!');
+      this.errors.push(new CompilationErrors(null, ErrorTypes.MULTIPLE_MAIN_METHODS))
       return false;
     }
     if(!this.validateMethodsUniqueness(chomp)) {
@@ -63,7 +67,8 @@ export class Program {
 
     for(let i = 0, c = allVariableNames.length; i < c; i++) {
       if(cKeywords.includes(allVariableNames[i].buffer)) {
-        this.errors.push(`Variable ${allVariableNames[i].buffer} is a predefined keyword!`);
+        // this.errors.push(`Variable ${allVariableNames[i].buffer} is a predefined keyword!`);
+        this.errors.push(new CompilationErrors(allVariableNames[i].buffer, ErrorTypes.PREDEFINED_VALUE));
         return false;
       }
     }
@@ -82,7 +87,8 @@ export class Program {
       methodNames[allMethods[i].buffer]++;
 
       if(methodNames[allMethods[i].buffer] > 1) {
-        this.errors.push(`Multiple methods with name ${allMethods[i].buffer} detected!`);
+        // this.errors.push(`Multiple methods with name ${allMethods[i].buffer} detected!`);
+        this.errors.push(new CompilationErrors(allMethods[i].buffer, ErrorTypes.METHOD_MULTIPLE_DEFINITION))
         return false;
       }
     }
@@ -100,35 +106,44 @@ export class Program {
       const currentInstruction = instructions[i];
       switch(currentInstruction.type) {
         case Assignation: {
-          const undefinedVariables = Assignation.findUnassignedVariables(currentInstruction, stackDeclaration);
-          if(undefinedVariables.length) {
-            this.errors.push(`Undefined variables ${undefinedVariables.join(',')}`);
+          const errors = Assignation.findUnassignedVariables(currentInstruction, stackDeclaration);
+          if(!errors.isClean()) {
+            // this.errors.push(`Undefined variables ${undefinedVariables.join(',')}`);
+            this.errors.push(errors);
             return false;
           }
           break;
         }
         case Initialization: {
-          let variables = Initialization.addToStackAndVerify(currentInstruction, stackDeclaration);
-          if(variables[0].length) {
-            this.errors.push(`Undefined variables: ${variables[0].join(',')}`);
+          const errors = Initialization.addToStackAndVerify(currentInstruction, stackDeclaration);
+          if(!errors.isClean()) {
+            this.errors.push(errors);
             return false;
           }
-          if(variables[1].length) {
-            this.errors.push(`Multiple definitions for variables: ${variables[1].join(',')}`);
-            return false;
-          }
+          // if(variables[0].length) {
+          //   this.errors.push(`Undefined variables: ${variables[0].join(',')}`);
+          //   return false;
+          // }
+          // if(variables[1].length) {
+          //   this.errors.push(`Multiple definitions for variables: ${variables[1].join(',')}`);
+          //   return false;
+          // }
           break;
         }
         case Methods: {
-          let methodsDefines = Methods.addToStackAndVerify(currentInstruction, stackDeclaration);
-          if(methodsDefines[0].length) {
-            this.errors.push(`Undefined variables: ${methodsDefines[0].join(',')}`);
+          const errors = Methods.addToStackAndVerify(currentInstruction, stackDeclaration);
+          if(!errors.isClean()) {
+            this.errors.push(errors);
             return false;
           }
-          if(methodsDefines[1].length) {
-            this.errors.push(`Multiple definitions for variables: ${methodsDefines[1].join(',')}`);
-            return false;
-          }
+          // if(methodsDefines[0].length) {
+          //   this.errors.push(`Undefined variables: ${methodsDefines[0].join(',')}`);
+          //   return false;
+          // }
+          // if(methodsDefines[1].length) {
+          //   this.errors.push(`Multiple definitions for variables: ${methodsDefines[1].join(',')}`);
+          //   return false;
+          // }
           break;
         }
 

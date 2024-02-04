@@ -4,6 +4,7 @@ import Variable from "./Variable.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
 import { Helper } from "./Helper.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class Keyword {
   static keyWords() {
@@ -187,7 +188,7 @@ export class Initialization {
       let variableToBeInitialized = initChildren[0];
 
       if(Initialization.hasVariableAlreadyBeenDefined(variableToBeInitialized, stackDeclaration)) {
-        return [[], [variableToBeInitialized.buffer]];
+        return new CompilationErrors([variableToBeInitialized.buffer], ErrorTypes.VARIABLE_MULTIPLE_DEFINITION);
       }
 
       Initialization.initializeVariable(variableToBeInitialized, stackDeclaration);
@@ -195,12 +196,12 @@ export class Initialization {
       // when the variable insertion has an expression
       if(initChildren.length > 1) {
         let expression = initChildren[1];
-        let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
-        if(undefinedVariables.length) {
-          return [undefinedVariables, []];
+        let errors = Expression.checkStackInitialization(expression, stackDeclaration);
+        if(!errors.isClean()) {
+          return errors;
         }
       }
     }
-    return [[], []];
+    return CompilationErrors.clean();
   }
 }

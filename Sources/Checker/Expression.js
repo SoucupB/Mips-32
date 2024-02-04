@@ -3,6 +3,7 @@ import Constant from "./Constant.js";
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import { Methods, MethodCall } from "./Methods.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 class Expression {
   static isValid(str) {
@@ -115,31 +116,31 @@ class Expression {
     return Chomp.invalid();
   }
 
-  static checkStackInitialization_t(chomp, stackDeclaration, undefinedVariables) {
+  static checkStackInitialization_t(chomp, stackDeclaration) {
     const children = chomp.childrenChomps;
 
     for(let i = 0, c = children.length; i < c; i++) {
       switch(children[i].type) {
         case Variable: {
           if(!stackDeclaration.isVariableDefined(children[i].buffer)) {
-            undefinedVariables.push(children[i].buffer);
+            return new CompilationErrors([children[i].buffer], ErrorTypes.VARIABLE_NOT_DEFINED)
           }
           break;
         }
 
         case Expression: {
-          Expression.checkStackInitialization_t(children[i], stackDeclaration, undefinedVariables);
+          Expression.checkStackInitialization_t(children[i], stackDeclaration);
           break;
         }
 
         case MethodCall: {
           let paramsUndefinedVariables = MethodCall.findUnassignedVariables(children[i], stackDeclaration);
-          for(let i = 0, c = paramsUndefinedVariables.length; i < c; i++) {
-            undefinedVariables.push(paramsUndefinedVariables[i])
+          if(!paramsUndefinedVariables.isClean()) {
+            return paramsUndefinedVariables;
           }
           let paramsChecker = MethodCall.doesMethodHaveAllTheParametersPresent(children[i], stackDeclaration);
           if(paramsChecker) {
-            undefinedVariables.push('unmatched number of params!')
+            return new CompilationErrors('Wrong number of arguments of method!', ErrorTypes.WRONG_NUMBER_OF_PARAMETERS);
           }
           break;
         }
@@ -149,13 +150,12 @@ class Expression {
         }
       }
     }
+
+    return CompilationErrors.clean();
   }
 
   static checkStackInitialization(chomp, stackDeclaration) {
-    let undefinedVariables = [];
-    Expression.checkStackInitialization_t(chomp, stackDeclaration, undefinedVariables);
-
-    return undefinedVariables;
+    return Expression.checkStackInitialization_t(chomp, stackDeclaration);
   }
 }
 

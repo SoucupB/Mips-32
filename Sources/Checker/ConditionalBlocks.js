@@ -2,6 +2,7 @@ import Operator from "./Operator.js";
 import Chomp from "./Chomp.js";
 import { CodeBlock } from "./CodeBlock.js";
 import Expression from "./Expression.js";
+import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
 export class ConditionalKeywords {
   static keyWords() {
@@ -63,9 +64,9 @@ export class ConditionalBlocks {
 
     const expression = children[0];
     const block = children[1];
-    let undefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
-    if(undefinedVariables.length) {
-      return [undefinedVariables, []];
+    let errors = Expression.checkStackInitialization(expression, stackDeclaration);
+    if(!errors.isClean()) {
+      return errors;
     }
     return CodeBlock.addToStackAndVerify(block, stackDeclaration);
   }
