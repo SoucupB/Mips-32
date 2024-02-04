@@ -6,6 +6,8 @@ import { LoopBlocks } from "./LoopBlocks.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
 import { StackDeclarations } from "./StackDeclarations.js";
 import { ReturnMethod } from "./Methods.js";
+import Expression from "./Expression.js";
+import Character from "./Character.js";
 
 export class CodeBlock {
   // [0] -> assignation/init/while/for/if, [1] -> assignation/init/while/for/if, .... 
@@ -27,8 +29,23 @@ export class CodeBlock {
     return responseChomp;
   }
 
+  static expressionChompWithLineTerminator(str, index) {
+    let expression = Expression.chomp(str, index);
+    if(expression.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = expression.index;
+
+    if(index >= str.index || !Character.isAssignationEnding(str[index])) {
+      return Chomp.invalid();
+    }
+    expression.index++;
+
+    return expression;
+  }
+
   static chompBlock(str, index, withReturnStatement) {
-    let availableBlocks = [Assignation.chomp, Initialization.chomp, CodeBlock.chomp, LoopBlocks.chomp, ConditionalBlocks.chomp];
+    let availableBlocks = [Assignation.chomp, Initialization.chomp, CodeBlock.chomp, LoopBlocks.chomp, ConditionalBlocks.chomp, CodeBlock.expressionChompWithLineTerminator];
     if(withReturnStatement) {
       availableBlocks.push(ReturnMethod.chomp);
     }
@@ -99,6 +116,13 @@ export class CodeBlock {
           let returnBlocks = ReturnMethod.addToStackAndVerify(currentChild, stackDeclaration);
           if(returnBlocks.length) {
             return [returnBlocks, []];
+          }
+          break;
+        }
+        case Expression: {
+          let expressionUndefinedVariables = Expression.checkStackInitialization(currentChild, stackDeclaration);
+          if(expressionUndefinedVariables.length) {
+            return [expressionUndefinedVariables, []];
           }
           break;
         }

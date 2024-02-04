@@ -371,3 +371,39 @@ test('Check CodeBlock return types v3', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check CodeBlock checker with Expression v1', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;int a=10;a+c;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock checker with Expression v2', (t) => {
+  let chomp = CodeBlock.chomp('{int c=0;int a=10;a+c}', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack Expression validity v1', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0,b=5;for(int i=0,c=15;i<5;i=i+1){while(c>0){int j=i+c;}}a+b;}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 0, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock internal stack Expression validity v2', (t) => {
+  let chomp = CodeBlock.chomp('{int a=0,b=5;for(int i=0,c=15;i<5;i=i+1){while(c>0){int j=i+c;}}a+c;}', 0);
+  let stackDeclaration = new StackDeclarations();
+  let variablesErrors = CodeBlock.addToStackAndVerify(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(variablesErrors[0].length, 1, 'returns');
+  t.equal(variablesErrors[1].length, 0, 'returns');
+  t.end();
+});
