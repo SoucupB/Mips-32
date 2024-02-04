@@ -14,7 +14,7 @@ Compiling the code will transform it into temporary ASM code
 ```
 MOV $a, $b (a -> register, b -> register)
 MOV [$a + constant], $b ([a] -> memory block at register + constant, b -> register)
-MOV [$a + constant], $b (a -> register, [b] -> memory block at register + constant)
+MOV $a, [$b + constant] (a -> register, [b] -> memory block at register + constant)
 
 push $a (pushes value of a onto the stack)
 pop $a (pops value from the stack)
