@@ -177,8 +177,6 @@ test('Check CodeBlock internal stack validity v5', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   t.equal(variablesErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
-  // t.equal(variablesErrors[0].length, 1, 'returns');
-  // t.equal(variablesErrors[1].length, 0, 'returns');
   t.end();
 });
 
@@ -219,8 +217,6 @@ test('Check CodeBlock internal stack validity v9', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   t.equal(variablesErrors.type, ErrorTypes.NO_ERRORS, 'returns');
-  // t.equal(variablesErrors[0].length, 0, 'returns');
-  // t.equal(variablesErrors[1].length, 0, 'returns');
   t.end();
 });
 
@@ -231,8 +227,6 @@ test('Check CodeBlock internal stack validity v10', (t) => {
 
   t.equal(chomp.isInvalid(), false, 'returns');
   t.equal(variablesErrors.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
-  // t.equal(variablesErrors[0].length, 0, 'returns');
-  // t.equal(variablesErrors[1].length, 1, 'returns');
   t.end();
 });
 

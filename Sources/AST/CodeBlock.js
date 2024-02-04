@@ -51,7 +51,6 @@ export class CodeBlock {
     if(withReturnStatement) {
       availableBlocks.push(ReturnMethod.chomp);
     }
-    // console.log(withReturnStatement, index)
     let responseBlocks = [];
     while(index < str.length) {
       let hasLineBeenProcessed = false;

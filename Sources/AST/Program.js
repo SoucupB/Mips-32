@@ -16,7 +16,6 @@ export class Program {
   chomp() {
     let chomp = this._chomp(this.code, 0);
     if(chomp.isInvalid()) {
-      // this.errors.push('Compilation error!');
       this.errors.push(new CompilationErrors(null, ErrorTypes.PARSE_ERROR))
       return Chomp.invalid();
     }
@@ -30,12 +29,10 @@ export class Program {
     let mainDeclarations = Methods.searchMethodByName(chomp, 'main');
 
     if(!mainDeclarations.length) {
-      // this.errors.push('Missing main method!');
       this.errors.push(new CompilationErrors(null, ErrorTypes.MISSING_MAIN_METHOD))
       return false;
     }
     if(mainDeclarations.length > 1) {
-      // this.errors.push('Multiple main definitions!');
       this.errors.push(new CompilationErrors(null, ErrorTypes.MULTIPLE_MAIN_METHODS))
       return false;
     }
@@ -67,7 +64,6 @@ export class Program {
 
     for(let i = 0, c = allVariableNames.length; i < c; i++) {
       if(cKeywords.includes(allVariableNames[i].buffer)) {
-        // this.errors.push(`Variable ${allVariableNames[i].buffer} is a predefined keyword!`);
         this.errors.push(new CompilationErrors(allVariableNames[i].buffer, ErrorTypes.PREDEFINED_VALUE));
         return false;
       }
@@ -87,7 +83,6 @@ export class Program {
       methodNames[allMethods[i].buffer]++;
 
       if(methodNames[allMethods[i].buffer] > 1) {
-        // this.errors.push(`Multiple methods with name ${allMethods[i].buffer} detected!`);
         this.errors.push(new CompilationErrors(allMethods[i].buffer, ErrorTypes.METHOD_MULTIPLE_DEFINITION))
         return false;
       }
@@ -119,14 +114,6 @@ export class Program {
             this.errors.push(errors);
             return false;
           }
-          // if(variables[0].length) {
-          //   this.errors.push(`Undefined variables: ${variables[0].join(',')}`);
-          //   return false;
-          // }
-          // if(variables[1].length) {
-          //   this.errors.push(`Multiple definitions for variables: ${variables[1].join(',')}`);
-          //   return false;
-          // }
           break;
         }
         case Methods: {
@@ -135,14 +122,6 @@ export class Program {
             this.errors.push(errors);
             return false;
           }
-          // if(methodsDefines[0].length) {
-          //   this.errors.push(`Undefined variables: ${methodsDefines[0].join(',')}`);
-          //   return false;
-          // }
-          // if(methodsDefines[1].length) {
-          //   this.errors.push(`Multiple definitions for variables: ${methodsDefines[1].join(',')}`);
-          //   return false;
-          // }
           break;
         }
 

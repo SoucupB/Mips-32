@@ -76,7 +76,6 @@ export class Assignation {
     if(!expressionUndefinedVariables.isClean()) {
       return expressionUndefinedVariables;
     }
-    // undefinedVariables = undefinedVariables.concat(expressionUndefinedVariables);
 
     return CompilationErrors.clean();
   }

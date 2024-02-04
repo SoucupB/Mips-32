@@ -100,8 +100,6 @@ test('Check ConditionalBlocks stack checker v5', (t) => {
   let variableErrors = ConditionalBlocks.addToStackAndVerify(chomp, stackDeclaration);
 
   t.equal(chomp.isInvalid(), false, 'returns');
-  // t.equal(variableErrors[0].length, 1, 'returns');
-  // t.equal(variableErrors[1].length, 0, 'returns');
   t.equal(variableErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });

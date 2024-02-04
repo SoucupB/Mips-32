@@ -164,9 +164,6 @@ export class LoopBlocks {
         if(!initializationVariableErrors.isClean()) {
           return initializationVariableErrors;
         }
-        // if(initializationVariableErrors[0].length || initializationVariableErrors[1].length) {
-        //   return initializationVariableErrors;
-        // }
         break;
       }
       default: {
@@ -178,14 +175,8 @@ export class LoopBlocks {
     if(!testingConditionStackDeclaration.isClean()) {
       return testingConditionStackDeclaration;
     }
-    // if(testingConditionStackDeclaration.length) {
-    //   return [testingConditionStackDeclaration, []];
-    // }
 
     const stateChangeStackDeclaration = Expression.checkStackInitialization(stateChange, stackDeclaration);
-    // if(stateChangeStackDeclaration.length) {
-    //   return [stateChangeStackDeclaration, []];
-    // }
     if(!stateChangeStackDeclaration.isClean()) {
       return stateChangeStackDeclaration;
     }
