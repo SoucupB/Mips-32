@@ -95,6 +95,13 @@ export class CodeBlock {
           }
           break;
         }
+        case ReturnMethod: {
+          let returnBlocks = ReturnMethod.addToStackAndVerify(currentChild, stackDeclaration);
+          if(returnBlocks.length) {
+            return [returnBlocks, []];
+          }
+          break;
+        }
 
         default: {
           break;

@@ -190,3 +190,11 @@ test('Check Methods checker v26', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Methods checker with return v1', (t) => {
+  let chomp = Methods.chompDeclaration('void someMethod(int _aaga,int _dafb){int b=5;for(int i=0;i<10;i=i+1){if(a==10){b=10;}a=b;}return a;}', 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 100, 'returns');
+  t.end();
+});

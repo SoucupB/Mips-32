@@ -183,3 +183,11 @@ test('Check Program checker (method calls) v4', (t) => {
   t.equal(program.errors.length, 0, 'returns');
   t.end();
 });
+
+test('Check Program checker (method return) v1', (t) => {
+  let program = new Program('int a=0;int coco(int z,int t){z=0;int frt=5;return frt+z;}int main(){return 0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(program.errors.length, 0, 'returns');
+  t.end();
+});

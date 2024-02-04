@@ -90,6 +90,11 @@ export class ReturnMethod {
     return Chomp.invalid();
   }
 
+  static addToStackAndVerify(chomp, stackDeclaration) {
+    const expression = chomp.childrenChomps;
+
+    return Expression.checkStackInitialization(expression, stackDeclaration);
+  }
 }
 
 export class Methods {
@@ -118,7 +123,7 @@ export class Methods {
     }
     index = closeParanth.index;
 
-    let methodBlock = CodeBlock.chomp(str, index);
+    let methodBlock = CodeBlock.chomp(str, index, true);
     if(methodBlock.isInvalid()) {
       return Chomp.invalid();
     }
@@ -287,7 +292,7 @@ export class Methods {
     let alreadyDefinedVariables = [];
 
     for(let i = 0, c = params.length; i < c; i++) {
-      const varName = params[i].childrenChomps[1];
+      const varName = params[i].childrenChomps[1].buffer;
 
       if(stackDeclaration.isVariableDefined(varName)) {
         alreadyDefinedVariables.push(varName);
@@ -301,8 +306,29 @@ export class Methods {
     const params = methodParams.childrenChomps;
     for(let i = 0, c = params.length; i < c; i++) {
       const varName = params[i].childrenChomps[1];
-      stackDeclaration.push(varName);
+      stackDeclaration.push(varName.buffer);
     }
+  }
+
+  static findReturnTypeAndItsExpressionInStack(methodReturnType, block, stackDeclaration) {
+    const returnWord = Helper.searchChompByType(block, {
+      type: ReturnMethod
+    });
+
+    if(methodReturnType == 'void') {
+      return [[], []];
+    }
+
+    for(let i = 0, c = returnWord.length; i < c; i++) {
+      let expressionUndefinedVariables = Expression.checkStackInitialization(returnWord[i].childrenChomps, stackDeclaration);
+
+      console.log(expressionUndefinedVariables, stackDeclaration)
+      if(expressionUndefinedVariables.length) {
+        return [expressionUndefinedVariables, []]
+      }
+    }
+
+    return [[], []];
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
