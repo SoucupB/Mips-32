@@ -13,12 +13,9 @@ export class ExpressionTree {
   constructor(expressionChomp) {
     this.expressionChomp = expressionChomp;
     this.root = null;
-  }
-
-  static precedenceOperations() {
-    return [
+    this.precedence = [
+      ['+', '-'],
       ['*', '/'],
-      ['+', '-']
     ];
   }
 
@@ -35,24 +32,39 @@ export class ExpressionTree {
     return this.toString_t(this.root);
   }
 
-  build() {
+  createNode(left, right, sign) {
+    let parentNode = new ExpressionNode(sign);
+    parentNode.left = left;
+    parentNode.right = right;
+
+    return parentNode;
+  }
+
+  build_t(depth = 0, index) {
     let children = this.expressionChomp.childrenChomps;
-    let index = 0;
-    let expressionNode = new ExpressionNode(children[index]);
-    index++;
-    while(index < children.length) {
-      const currentSign = children[index];
-      index++;
-      const nextOperand = children[index];
-      let nextNode = new ExpressionNode(currentSign);
-      nextNode.left = expressionNode;
-      nextNode.right = new ExpressionNode(nextOperand);
-
-      expressionNode = nextNode;
-
-      index++;
+    if(depth >= this.precedence.length) {
+      return new ExpressionNode(children[index[0]]);
     }
+    let expressionNode = this.build_t(depth + 1, index);
+    while(index[0] + 1 < children.length) {
+      const currentSign = children[index[0] + 1];
+      let hasOperationBeenFound = false;
+      for(let i = 0, c = this.precedence[depth].length; i < c; i++) {
+        if(this.precedence[depth][i] == currentSign.buffer) {
+          index[0] += 2;
+          const nextNode = this.build_t(depth + 1, index);
+          expressionNode = this.createNode(expressionNode, nextNode, currentSign);
+          hasOperationBeenFound = true;
+        }
+      }
+      if(!hasOperationBeenFound) {
+        break;
+      }
+    }
+    return expressionNode;
+  }
 
-    this.root = expressionNode;
+  build() {
+    this.root = this.build_t(0, [0]);
   }
 }
