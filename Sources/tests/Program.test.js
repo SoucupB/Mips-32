@@ -1,7 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
 import { Program } from '../Checker/Program.js';
-import { Methods } from '../Checker/Methods.js';
 
 test('Check Program checker (valid) v1', (t) => {
   let program = new Program('int a=0;int main(){int z=0;int b=0;int c=0;if(a==b){z=1;}return 0;}int test(int z){int c=0;return 0;}');
