@@ -1,12 +1,16 @@
 import Constant from "../AST/Constant.js";
 import Expression from "../AST/Expression.js";
 import Variable from "../AST/Variable.js";
+import { Add, Mov, MovTypes, Mul, Sub } from "./Register.js";
+
+let nodeID = 0;
 
 export class ExpressionNode {
   constructor(chomp) {
     this.chomp = chomp;
     this.left = null;
     this.right = null;
+    this.nodeID++;
   }
 }
 
@@ -42,6 +46,58 @@ export class ExpressionTree {
     parentNode.right = right;
 
     return parentNode;
+  }
+
+  addInstructionToBlock_t(node, block, registerMem, registerStack) {
+    if(!node.left && !node.right) {
+      return ;
+    }
+
+    this.addInstructionToBlock_t(node.left, block, registerMem, registerStack);
+    this.addInstructionToBlock_t(node.right, block, registerMem, registerStack);
+    if(node.chomp.buffer == '+') {
+      let freeRegisterSrc = registerMem.findUnusedRegister();
+      let freeRegisterDst = registerMem.findUnusedRegister();
+      block.push(new Mov(freeRegisterSrc, node.left.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, node.right.buffer, MovTypes.NUMBER_TO_REG))
+
+      let freeBufferRegister = registerMem.findUnusedRegister();
+      registerMem.saveRegisterID(node.nodeID);
+      block.push(new Add(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
+
+      registerMem.freeRegister(freeRegisterSrc);
+      registerMem.freeRegister(freeRegisterDst);
+    }
+    if(node.chomp.buffer == '-') {
+      let freeRegisterSrc = registerMem.findUnusedRegister();
+      let freeRegisterDst = registerMem.findUnusedRegister();
+      block.push(new Mov(freeRegisterSrc, node.left.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, node.right.buffer, MovTypes.NUMBER_TO_REG))
+
+      let freeBufferRegister = registerMem.findUnusedRegister();
+      registerMem.saveRegisterID(node.nodeID);
+      block.push(new Sub(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
+
+      registerMem.freeRegister(freeRegisterSrc);
+      registerMem.freeRegister(freeRegisterDst);
+    }
+    if(node.chomp.buffer == '*') {
+      let freeRegisterSrc = registerMem.findUnusedRegister();
+      let freeRegisterDst = registerMem.findUnusedRegister();
+      block.push(new Mov(freeRegisterSrc, node.left.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, node.right.buffer, MovTypes.NUMBER_TO_REG))
+
+      let freeBufferRegister = registerMem.findUnusedRegister();
+      registerMem.saveRegisterID(node.nodeID);
+      block.push(new Mul(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
+
+      registerMem.freeRegister(freeRegisterSrc);
+      registerMem.freeRegister(freeRegisterDst);
+    }
+  }
+
+  addInstructionToBlock(block, registerMem, registerStack) {
+    this.addInstructionToBlock_t(this.root, block, registerMem, registerStack);
   }
 
   expressionRoot(chomp) {

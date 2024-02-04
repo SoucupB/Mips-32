@@ -53,7 +53,7 @@ export class Initialization {
       if(currentChomp.isInvalid()) {
         break;
       }
-      initializers.push(currentChomp)
+      initializers.push(currentChomp);
       index = currentChomp.index;
       if(Character.isCommaSeparator(str[index])) {
         index++;
@@ -62,7 +62,7 @@ export class Initialization {
     if(!Character.isAssignationEnding(str[index])) {
       return Chomp.invalid();
     }
-    let chompResponse = new Chomp('', index + 1, Initialization, true);
+    let chompResponse = new Chomp(null, index + 1, Initialization, true);
     chompResponse.childrenChomps = initializers;
     return chompResponse;
   }

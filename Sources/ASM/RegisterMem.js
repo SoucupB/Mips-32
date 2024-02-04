@@ -2,6 +2,7 @@ export class RegisterMem {
   constructor() {
     this.registerMem = {};
     this.maxRegisters = 32;
+    this.registerWithNodeID = {};
   }
 
   findUnusedRegister() {
@@ -12,6 +13,14 @@ export class RegisterMem {
     }
 
     return null;
+  }
+
+  saveRegisterID(register, id) {
+    this.registerWithNodeID[id] = register;
+  }
+
+  getRegisterFromID(id) {
+    return this.registerWithNodeID[id];
   }
 
   freeRegister(reg) {
