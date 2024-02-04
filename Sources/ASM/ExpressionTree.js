@@ -22,7 +22,7 @@ export class ExpressionTree {
     let index = 0;
     let expressionNode = new ExpressionNode(children[index]);
     index++;
-    while(index < children.left) {
+    while(index < children.length) {
       const currentSign = children[index];
       index++;
       const nextOperand = children[index];
