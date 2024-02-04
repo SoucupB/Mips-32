@@ -66,3 +66,11 @@ test('Check Expression true v8', (t) => {
   t.equal(expressionTree.toString(), '((((2*3)+5)<((7/4)-2))&&(2==a))', 'returns');
   t.end();
 });
+
+test('Check Expression true v9', (t) => {
+  let chomp = Expression.chomp('a', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), 'a', 'returns');
+  t.end();
+});
