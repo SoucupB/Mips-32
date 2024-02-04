@@ -6,6 +6,8 @@ class Chomp {
     this.type = type;
     this.childrenChomps = [];
     this.isParent = isParent;
+
+    this.expressionTree = null;
   }
 
   static invalid() {

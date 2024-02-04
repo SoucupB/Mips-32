@@ -1,9 +1,8 @@
-export class ASMProgram {
+export class Compiler {
   constructor(ast) {
     this.ast = ast;
   }
 
   compile() {
-    console.log(this.ast)
   }
 }

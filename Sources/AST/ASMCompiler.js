@@ -1,4 +1,4 @@
-import { ASMProgram } from "../ASM/ASMProgram.js";
+import { Compiler } from "../ASM/Compiler.js";
 import { Program } from "./Program.js";
 
 export class ASMCompiler {
@@ -13,6 +13,6 @@ export class ASMCompiler {
       return null;
     }
 
-    return (new ASMProgram(ast)).compile();
+    return (new Compiler(ast)).compile();
   }
 }
