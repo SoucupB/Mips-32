@@ -1,15 +1,8 @@
 import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
-import Character from "./Character.js";
-import { MethodsParams } from "./MethodsParam.js";
-import { CodeBlock } from "./CodeBlock.js";
-import Operator from "./Operator.js";
-import Expression from "./Expression.js";
 import { Methods } from "./Methods.js";
 import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
-import { ConditionalBlocks } from "./ConditionalBlocks.js";
-import { LoopBlocks } from "./LoopBlocks.js";
 import { StackDeclarations } from "./StackDeclarations.js";
 import { Helper } from "./Helper.js";
 
