@@ -18,3 +18,27 @@ test('Check Expression true v2', (t) => {
   t.equal(expressionTree.toString(), '(3+(4*5))', 'returns');
   t.end();
 });
+
+test('Check Expression true v3', (t) => {
+  let chomp = Expression.chomp('3+4*5/6', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '(3+((4*5)/6))', 'returns');
+  t.end();
+});
+
+test('Check Expression true v4', (t) => {
+  let chomp = Expression.chomp('3+4*5+2/6', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((3+(4*5))+(2/6))', 'returns');
+  t.end();
+});
+
+test('Check Expression true v5', (t) => {
+  let chomp = Expression.chomp('3+4-5+6-7', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((((3+4)-5)+6)-7)', 'returns');
+  t.end();
+});
