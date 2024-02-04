@@ -42,3 +42,27 @@ test('Check Expression true v5', (t) => {
   t.equal(expressionTree.toString(), '((((3+4)-5)+6)-7)', 'returns');
   t.end();
 });
+
+test('Check Expression true v6', (t) => {
+  let chomp = Expression.chomp('3+5==7-2', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((3+5)==(7-2))', 'returns');
+  t.end();
+});
+
+test('Check Expression true v7', (t) => {
+  let chomp = Expression.chomp('2*3+5==7/4-2', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '(((2*3)+5)==((7/4)-2))', 'returns');
+  t.end();
+});
+
+test('Check Expression true v8', (t) => {
+  let chomp = Expression.chomp('2*3+5<7/4-2&&2==a', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((((2*3)+5)<((7/4)-2))&&(2==a))', 'returns');
+  t.end();
+});
