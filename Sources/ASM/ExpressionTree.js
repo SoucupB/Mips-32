@@ -7,14 +7,32 @@ export class ExpressionNode {
     this.left = null;
     this.right = null;
   }
-
-
 }
 
 export class ExpressionTree {
   constructor(expressionChomp) {
     this.expressionChomp = expressionChomp;
     this.root = null;
+  }
+
+  static precedenceOperations() {
+    return [
+      ['*', '/'],
+      ['+', '-']
+    ];
+  }
+
+  toString_t(node) {
+    if(!node.left && !node.right) {
+      return node.chomp.buffer;
+    }
+    let left = this.toString_t(node.left);
+    let right = this.toString_t(node.right);
+    return `(${left + node.chomp.buffer + right})`;
+  }
+
+  toString() {
+    return this.toString_t(this.root);
   }
 
   build() {
@@ -28,7 +46,7 @@ export class ExpressionTree {
       const nextOperand = children[index];
       let nextNode = new ExpressionNode(currentSign);
       nextNode.left = expressionNode;
-      nextNode.right = nextOperand;
+      nextNode.right = new ExpressionNode(nextOperand);
 
       expressionNode = nextNode;
 
