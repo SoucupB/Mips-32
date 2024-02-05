@@ -21,6 +21,7 @@ export const MovTypes = {
 
 export class Mov extends Register {
   constructor(dst, src, type) {
+    super();
     this.dst = dst;
     this.src = src;
     this.type = type;
@@ -29,6 +30,7 @@ export class Mov extends Register {
 
 export class Add extends Register {
   constructor(dst, b, c) {
+    super();
     this.dst = dst;
     this.b = b;
     this.c = c;
@@ -37,6 +39,7 @@ export class Add extends Register {
 
 export class Sub extends Register {
   constructor(dst, b, c) {
+    super();
     this.dst = dst;
     this.b = b;
     this.c = c;
@@ -45,6 +48,7 @@ export class Sub extends Register {
 
 export class Mul extends Register {
   constructor(dst, b, c) {
+    super();
     this.dst = dst;
     this.b = b;
     this.c = c;
@@ -53,6 +57,7 @@ export class Mul extends Register {
 
 export class Push extends Register {
   constructor(register) {
+    super();
     this.register = register;
   }
 }

@@ -10,7 +10,7 @@ export class ExpressionNode {
     this.chomp = chomp;
     this.left = null;
     this.right = null;
-    this.nodeID++;
+    this.nodeID = nodeID++;
   }
 }
 
@@ -48,6 +48,16 @@ export class ExpressionTree {
     return parentNode;
   }
 
+  findRegisterForNode(node, registerMem) {
+    const returnedData = registerMem.isNodeIDUsed(node.nodeID);
+    if(returnedData) {
+      return returnedData
+    }
+    const freeRegister = registerMem.findUnusedRegister();
+    registerMem.saveRegisterID(freeRegister, node.nodeID);
+    return freeRegister;
+  }
+
   addInstructionToBlock_t(node, block, registerMem, registerStack) {
     if(!node.left && !node.right) {
       return ;
@@ -56,39 +66,36 @@ export class ExpressionTree {
     this.addInstructionToBlock_t(node.left, block, registerMem, registerStack);
     this.addInstructionToBlock_t(node.right, block, registerMem, registerStack);
     if(node.chomp.buffer == '+') {
-      let freeRegisterSrc = registerMem.findUnusedRegister();
-      let freeRegisterDst = registerMem.findUnusedRegister();
-      block.push(new Mov(freeRegisterSrc, node.left.buffer, MovTypes.NUMBER_TO_REG))
-      block.push(new Mov(freeRegisterDst, node.right.buffer, MovTypes.NUMBER_TO_REG))
+      let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
+      let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+      block.push(new Mov(freeRegisterSrc, node.left.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, node.right.chomp.buffer, MovTypes.NUMBER_TO_REG))
 
-      let freeBufferRegister = registerMem.findUnusedRegister();
-      registerMem.saveRegisterID(node.nodeID);
+      let freeBufferRegister = this.findRegisterForNode(node, registerMem);
       block.push(new Add(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
 
       registerMem.freeRegister(freeRegisterSrc);
       registerMem.freeRegister(freeRegisterDst);
     }
     if(node.chomp.buffer == '-') {
-      let freeRegisterSrc = registerMem.findUnusedRegister();
-      let freeRegisterDst = registerMem.findUnusedRegister();
-      block.push(new Mov(freeRegisterSrc, node.left.buffer, MovTypes.NUMBER_TO_REG))
-      block.push(new Mov(freeRegisterDst, node.right.buffer, MovTypes.NUMBER_TO_REG))
+      let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
+      let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+      block.push(new Mov(freeRegisterSrc, node.left.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, node.right.chomp.buffer, MovTypes.NUMBER_TO_REG))
 
-      let freeBufferRegister = registerMem.findUnusedRegister();
-      registerMem.saveRegisterID(node.nodeID);
+      let freeBufferRegister = this.findRegisterForNode(node, registerMem);
       block.push(new Sub(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
 
       registerMem.freeRegister(freeRegisterSrc);
       registerMem.freeRegister(freeRegisterDst);
     }
     if(node.chomp.buffer == '*') {
-      let freeRegisterSrc = registerMem.findUnusedRegister();
-      let freeRegisterDst = registerMem.findUnusedRegister();
-      block.push(new Mov(freeRegisterSrc, node.left.buffer, MovTypes.NUMBER_TO_REG))
-      block.push(new Mov(freeRegisterDst, node.right.buffer, MovTypes.NUMBER_TO_REG))
+      let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
+      let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+      block.push(new Mov(freeRegisterSrc, node.left.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, node.right.chomp.buffer, MovTypes.NUMBER_TO_REG))
 
-      let freeBufferRegister = registerMem.findUnusedRegister();
-      registerMem.saveRegisterID(node.nodeID);
+      let freeBufferRegister = this.findRegisterForNode(node, registerMem);
       block.push(new Mul(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
 
       registerMem.freeRegister(freeRegisterSrc);

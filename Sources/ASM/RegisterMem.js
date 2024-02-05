@@ -1,13 +1,13 @@
 export class RegisterMem {
   constructor() {
-    this.registerMem = {};
+    this.registerToID = {};
     this.maxRegisters = 32;
-    this.registerWithNodeID = {};
+    this.IDToRegisters = {};
   }
 
   findUnusedRegister() {
     for(let i = 0; i < this.maxRegisters; i++) {
-      if(!(i in this.registerMem)) {
+      if(!(i in this.registerToID)) {
         return i;
       }
     }
@@ -15,8 +15,16 @@ export class RegisterMem {
     return null;
   }
 
+  isNodeIDUsed(nodeID) {
+    if(nodeID in this.IDToRegisters) {
+      return this.IDToRegisters[nodeID];
+    }
+    return null;
+  }
+
   saveRegisterID(register, id) {
-    this.registerWithNodeID[id] = register;
+    this.registerToID[register] = id;
+    this.IDToRegisters[id] = register;
   }
 
   getRegisterFromID(id) {
@@ -24,6 +32,7 @@ export class RegisterMem {
   }
 
   freeRegister(reg) {
-    delete this.registerMem[reg];
+    delete this.registerToID[reg];
+    delete this.IDToRegisters[this.registerToID[reg]];
   }
 }

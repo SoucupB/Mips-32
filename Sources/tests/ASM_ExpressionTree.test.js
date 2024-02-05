@@ -2,6 +2,9 @@ import tap from 'tap'
 const { test } = tap;
 import { ExpressionNode, ExpressionTree } from '../ASM/ExpressionTree.js';
 import Expression from '../AST/Expression.js';
+import { RegisterMem } from '../ASM/RegisterMem.js';
+import { RegisterStack } from '../ASM/RegisterStack.js';
+import { RegisterBlock } from '../ASM/Register.js';
 
 test('Check Expression true v1', (t) => {
   let chomp = Expression.chomp('3+4+5+6+7', 0); 
@@ -104,5 +107,20 @@ test('Check Expression true v13', (t) => {
   let expressionTree = new ExpressionTree(chomp);
   expressionTree.build();
   t.equal(expressionTree.toString(), '((3+(4==6))+7)', 'returns');
+  t.end();
+});
+
+test('Check Expression true ASM v1', (t) => {
+  let chomp = Expression.chomp('3+45', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+
+  console.log(asmBlock)
+  // t.equal(expressionTree.toString(), '((3+(4==6))+7)', 'returns');
   t.end();
 });
