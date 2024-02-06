@@ -171,7 +171,6 @@ test('Check Expression true ASM v3', (t) => {
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
 
   t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 4', 'MOV $1 5', 'MUL $2 $0 $1', 'MOV $0 3', 'ADD $1 $0 $2' ].toString(), 'returns');
-  // console.log(asmBlock.toStringArray())
   t.end();
 });
 
