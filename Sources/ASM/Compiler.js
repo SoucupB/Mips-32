@@ -63,33 +63,31 @@ export class Compiler {
   createAssignation(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
-    for(let i = 1, c = children.length; i < c; i++) {
-      const declaration = children[i];
-
-      const assignerName = declaration.childrenChomps[0];
-      const expressionChomp = declaration.childrenChomps[1];
-
-      this.createExpressionAsm(expressionChomp, block);
-      this.loadExpressionOnStack(expressionChomp, assignerName, block);
-    }
+    this.createExpressionAsm(children[1], block);
+    this.loadExpressionOnStack(children[1], children[0], block);
     return block;
   }
 
   compileBlock(chomp) {
     let block = new RegisterBlock();
     this.buildExpressionTrees(chomp);
+    const children = chomp.childrenChomps;
 
-    switch(chomp.type) {
-      case Assignation: {
-        block.push(this.createAssignation(chomp));
-        break;
-      }
-      case Initialization: {
-        block.push(this.createInitialization(chomp))
-        break;
-      }
-      default: {
-        break;
+    for(let i = 0, c = children.length; i < c; i++) {
+      const child = children[i];
+
+      switch(child.type) {
+        case Assignation: {
+          block.push(this.createAssignation(child));
+          break;
+        }
+        case Initialization: {
+          block.push(this.createInitialization(child))
+          break;
+        }
+        default: {
+          break;
+        }
       }
     }
     return block;
