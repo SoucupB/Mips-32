@@ -36,6 +36,14 @@ export class Compiler {
     this.registerMem.freeRegister(topRegister);
   }
 
+  loadExpressionOnStack(expressionChomp, assignerName, block) {
+    const topRegister = this.registerMem.registerFromID(expressionChomp.expressionTree.root.nodeID);
+    const stackPointerForVariable = this.registerStack.getStackOffset(assignerName.buffer)
+
+    block.push(new Mov(stackPointerForVariable, topRegister, MovTypes.REG_TO_STACK));
+    this.registerMem.freeRegister(topRegister);
+  }
+
   createInitialization(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
@@ -52,12 +60,28 @@ export class Compiler {
     return block;
   }
 
-  createBlock(chomp) {
+  createAssignation(chomp) {
+    const children = chomp.childrenChomps;
+    let block = new RegisterBlock();
+    for(let i = 1, c = children.length; i < c; i++) {
+      const declaration = children[i];
+
+      const assignerName = declaration.childrenChomps[0];
+      const expressionChomp = declaration.childrenChomps[1];
+
+      this.createExpressionAsm(expressionChomp, block);
+      this.loadExpressionOnStack(expressionChomp, assignerName, block);
+    }
+    return block;
+  }
+
+  compileBlock(chomp) {
     let block = new RegisterBlock();
     this.buildExpressionTrees(chomp);
 
     switch(chomp.type) {
       case Assignation: {
+        block.push(this.createAssignation(chomp));
         break;
       }
       case Initialization: {

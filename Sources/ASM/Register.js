@@ -76,6 +76,17 @@ export class Mov extends Register {
 
         return `MOV $${this.dst} [$st-${this.src}]`
       }
+      case MovTypes.REG_TO_STACK: {
+        if(this.src == 0) {
+          return `MOV [$st] $${this.dst}`
+        }
+
+        return `MOV [$st-${this.src}] $${this.dst}`
+      }
+
+      default: {
+        break;
+      }
     }
   }
 }
