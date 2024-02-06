@@ -120,7 +120,71 @@ test('Check Expression true ASM v1', (t) => {
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
 
-  console.log(asmBlock)
-  // t.equal(expressionTree.toString(), '((3+(4==6))+7)', 'returns');
+  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 45', 'ADD $2 $0 $1' ].toString(), 'returns');
+  t.end();
+});
+
+test('Check Expression true ASM v2', (t) => {
+  let chomp = Expression.chomp('3+4+5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+
+  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 4', 'ADD $2 $0 $1', 'MOV $0 5', 'ADD $1 $2 $0' ].toString(), 'returns');
+  t.end();
+});
+
+test('Check Expression true ASM v2', (t) => {
+  let chomp = Expression.chomp('3+4+5+6+7+8', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+
+  // console.log(asmBlock.toStringArray())
+  t.equal(asmBlock.toStringArray().toString(), [
+    'MOV $0 3',     'MOV $1 4',
+    'ADD $2 $0 $1', 'MOV $0 5',
+    'ADD $1 $2 $0', 'MOV $0 6',
+    'ADD $2 $1 $0', 'MOV $0 7',
+    'ADD $1 $2 $0', 'MOV $0 8',
+    'ADD $2 $1 $0'
+  ].toString(), 'returns');
+  t.end();
+});
+
+test('Check Expression true ASM v3', (t) => {
+  let chomp = Expression.chomp('3+4*5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+
+  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 4', 'MOV $1 5', 'MUL $2 $0 $1', 'MOV $0 3', 'ADD $1 $0 $2' ].toString(), 'returns');
+  // console.log(asmBlock.toStringArray())
+  t.end();
+});
+
+test('Check Expression true ASM v4', (t) => {
+  let chomp = Expression.chomp('(3+4)*5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+
+  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 4', 'ADD $2 $0 $1', 'MOV $0 5', 'MUL $1 $2 $0' ].toString(), 'returns');
   t.end();
 });

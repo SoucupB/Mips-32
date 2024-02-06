@@ -3,13 +3,42 @@ export class RegisterBlock {
     this.block = [];
   }
 
+  toString_t(instruction) {
+    if(instruction instanceof RegisterBlock) {
+      return this.toStringArray_t(instruction)
+    }
+    return [instruction.toString()];
+  }
+
+  toStringArray_t(block) {
+    let response = [];
+    for(let i = 0, c = block.length; i < c; i++) {
+      let currentInstructionArray = this.toString_t(block[i]);
+      for(let j = 0, t = currentInstructionArray.length; j < t; j++) {
+        response.push(currentInstructionArray[j]);
+      }
+    }
+
+    return response;
+  }
+
+  toStringArray() {
+    return this.toStringArray_t(this.block);
+  }
+
+  toString() {
+    return this.toStringArray_t(this.block).join('\n');
+  }
+
   push(instruction) {
     this.block.push(instruction);
   }
 }
 
 export class Register {
-  
+  toString() {
+    return `UNDEFINED REGISTER`;
+  }
 }
 
 export const MovTypes = {
@@ -26,6 +55,20 @@ export class Mov extends Register {
     this.src = src;
     this.type = type;
   }
+
+  toString() {
+    switch(this.type) {
+      case MovTypes.NUMBER_TO_REG: {
+        return `MOV $${this.dst} ${this.src}`
+      }
+      case MovTypes.REG_TO_REG: {
+        return `MOV $${this.dst} $${this.src}`
+      }
+      case MovTypes.MEM_TO_REG: {
+        return `MOV $${this.dst} [${this.src}]`
+      }
+    }
+  }
 }
 
 export class Add extends Register {
@@ -34,6 +77,10 @@ export class Add extends Register {
     this.dst = dst;
     this.b = b;
     this.c = c;
+  }
+
+  toString() {
+    return `ADD $${this.dst} $${this.b} $${this.c}`
   }
 }
 
@@ -44,6 +91,10 @@ export class Sub extends Register {
     this.b = b;
     this.c = c;
   }
+
+  toString() {
+    return `SUB $${this.dst} $${this.b} $${this.c}`
+  }
 }
 
 export class Mul extends Register {
@@ -53,11 +104,19 @@ export class Mul extends Register {
     this.b = b;
     this.c = c;
   }
+
+  toString() {
+    return `MUL $${this.dst} $${this.b} $${this.c}`
+  }
 }
 
 export class Push extends Register {
   constructor(register) {
     super();
     this.register = register;
+  }
+
+  toString() {
+    return `PUSH $${this.register}`
   }
 }
