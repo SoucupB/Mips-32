@@ -2,7 +2,7 @@ export class RegisterStack {
   constructor() {
     this.stackValues = [];
     this.offset = {};
-    this.stackOffset = 0;
+    this.stackOffset = [];
   }
 
   push(variable, size) {
@@ -10,6 +10,14 @@ export class RegisterStack {
       stack_offset: this.stackOffset,
       size: size
     };
-    this.stackOffset += size;
+    this.stackOffset.push(size);
+  }
+
+  getStackOffset(variable) {
+    if(variable in this.offset) {
+      return this.offset[variable].stack_offset
+    }
+
+    return null;
   }
 }

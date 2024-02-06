@@ -48,6 +48,27 @@ export class ExpressionTree {
     return parentNode;
   }
 
+  isNodeVariable(node) {
+    return node.chomp.type == Variable;
+  }
+
+  getNodeValue(node, registerStack) {
+    const isVariable = this.isNodeVariable(node);
+    if(!isVariable) {
+      return node.chomp.buffer;
+    }
+    return registerStack.getStackOffset(node.chomp.buffer);
+  }
+
+  getNodeMovType(node) {
+    const isVariable = this.isNodeVariable(node);
+    if(isVariable) {
+      return MovTypes.MEM_TO_REG;
+    }
+
+    return MovTypes.NUMBER_TO_REG;
+  }
+
   findRegisterForNode(node, registerMem) {
     const returnedData = registerMem.isNodeIDUsed(node.nodeID);
     if(returnedData) {
@@ -67,10 +88,10 @@ export class ExpressionTree {
     let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
     
     if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, node.left.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, registerStack), this.getNodeMovType(node.left)));
     }
     if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, node.right.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, registerStack), this.getNodeMovType(node.right)))
     }
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
@@ -85,10 +106,10 @@ export class ExpressionTree {
     let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
     
     if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, node.left.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, registerStack), this.getNodeMovType(node.left)));
     }
     if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, node.right.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, registerStack), this.getNodeMovType(node.right)))
     }
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
@@ -103,11 +124,11 @@ export class ExpressionTree {
     let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
 
     if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, node.left.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, registerStack), this.getNodeMovType(node.left)));
     }
     
     if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, node.right.chomp.buffer, MovTypes.NUMBER_TO_REG))
+      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, registerStack), this.getNodeMovType(node.right)))
     }
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
