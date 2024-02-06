@@ -7,8 +7,32 @@ import { CodeBlock } from '../AST/CodeBlock.js';
 test('Check Compiler checker v1', (t) => {
   const chomp = CodeBlock.chomp('{int adafg=3+4;int c=5+6;c=adafg*5;}', 0)
   let program = new Compiler(null);
-  let block = program.compileBlock(chomp);
-  console.log(block.toString())
+  let asmBlock = program.compileBlock(chomp);
+  t.equal(asmBlock.toStringArray().toString(), [
+    'MOV $0 3',       'MOV $1 4',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'MOV $0 5',       'MOV $1 6',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'MOV $0 [$st-8]', 'MOV $1 5',
+    'MUL $2 $0 $1',   'MOV [$st-4] $2'
+  ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v2', (t) => {
+  const chomp = CodeBlock.chomp('{int a=3+4;int c=(a*a)+2;int b=c+a;}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  t.equal(asmBlock.toStringArray().toString(), [
+    'MOV $0 3',       'MOV $1 4',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'MOV $0 [$st-4]', 'MOV $1 [$st-4]',
+    'MUL $2 $0 $1',   'MOV $0 2',
+    'ADD $1 $2 $0',   'PUSH $1',
+    'MOV $0 [$st-4]', 'MOV $1 [$st-8]',
+    'ADD $2 $0 $1',   'PUSH $2'
+  ].toString(), 'returns');
 
   t.end();
 });
