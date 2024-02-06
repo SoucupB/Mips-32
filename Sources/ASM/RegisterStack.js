@@ -22,7 +22,7 @@ export class RegisterStack {
 
   getStackOffset(variable) {
     if(variable in this.offset) {
-      return this.offset[variable].stack_offset;
+      return this.getStackLastIndex() - this.offset[variable].stack_offset;
     }
     return null;
   }

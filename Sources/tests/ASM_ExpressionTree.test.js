@@ -221,7 +221,7 @@ test('Check Expression true ASM v6', (t) => {
   registerStack.push('b', 4);
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
 
-  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 [$st]', 'MOV $1 [$st-4]', 'ADD $2 $0 $1' ].toString(), 'returns');
+  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 [$st-8]', 'MOV $1 [$st-4]', 'ADD $2 $0 $1' ].toString(), 'returns');
   t.end();
 });
 
@@ -239,13 +239,13 @@ test('Check Expression true ASM v7', (t) => {
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
 
   t.equal(asmBlock.toStringArray().toString(), [
-    'MOV $0 [$st]',
-    'MOV $1 [$st-4]',
+    'MOV $0 [$st-12]',
+    'MOV $1 [$st-8]',
     'ADD $2 $0 $1',
     'MOV $0 2',
     'MUL $1 $2 $0',
-    'MOV $0 [$st-4]',
-    'MOV $2 [$st-8]',
+    'MOV $0 [$st-8]',
+    'MOV $2 [$st-4]',
     'ADD $3 $0 $2',
     'MOV $0 3',
     'MUL $2 $3 $0',
