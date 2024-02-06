@@ -33,17 +33,15 @@ export class Compiler {
   createInitialization(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
-
-    // first param is the type and the rest are tuples...
     for(let i = 1, c = children.length; i < c; i++) {
       const declaration = children[i];
 
-      const variableName = children[i].childrenChomps[0];
-      const expression = children[i].childrenChomps[1];
+      const variableName = declaration.childrenChomps[0];
+      const expression = declaration.childrenChomps[1];
 
+      this.registerStack.push(variableName.buffer, 4);
       this.createExpressionAsm(expression, block);
     }
-
     return block;
   }
 
