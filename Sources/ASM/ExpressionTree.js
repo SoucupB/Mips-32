@@ -63,7 +63,7 @@ export class ExpressionTree {
   getNodeMovType(node) {
     const isVariable = this.isNodeVariable(node);
     if(isVariable) {
-      return MovTypes.MEM_TO_REG;
+      return MovTypes.STACK_TO_REG;
     }
 
     return MovTypes.NUMBER_TO_REG;

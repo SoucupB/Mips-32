@@ -5,9 +5,17 @@ export class RegisterStack {
     this.stackOffset = [];
   }
 
+  getStackOffset() {
+    if(!this.stackOffset.length) {
+      return 0;
+    }
+
+    return this.stackOffset[this.stackOffset.length - 1];
+  }
+
   push(variable, size) {
     this.offset[variable] = {
-      stack_offset: this.stackOffset,
+      stack_offset: this.getStackOffset(),
       size: size
     };
     this.stackOffset.push(size);
@@ -15,9 +23,8 @@ export class RegisterStack {
 
   getStackOffset(variable) {
     if(variable in this.offset) {
-      return this.offset[variable].stack_offset
+      return this.offset[variable].stack_offset;
     }
-
     return null;
   }
 }

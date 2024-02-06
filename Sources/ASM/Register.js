@@ -45,7 +45,8 @@ export const MovTypes = {
   MEM_TO_REG: 1,
   REG_TO_REG: 2,
   REG_TO_MEM: 3,
-  NUMBER_TO_REG: 4
+  NUMBER_TO_REG: 4,
+  STACK_TO_REG: 5
 }
 
 export class Mov extends Register {
@@ -66,6 +67,9 @@ export class Mov extends Register {
       }
       case MovTypes.MEM_TO_REG: {
         return `MOV $${this.dst} [${this.src}]`
+      }
+      case MovTypes.STACK_TO_REG: {
+        return `MOV $${this.dst} [$st - ${this.src}]`
       }
     }
   }
