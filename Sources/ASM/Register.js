@@ -73,7 +73,7 @@ export class Mov extends Register {
           return `MOV $${this.dst} [$st]`
         }
 
-        return `MOV $${this.dst} [$st - ${this.src}]`
+        return `MOV $${this.dst} [$st-${this.src}]`
       }
     }
   }

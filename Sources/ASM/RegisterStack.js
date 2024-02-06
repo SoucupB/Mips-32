@@ -17,7 +17,7 @@ export class RegisterStack {
       stack_offset: this.getStackLastIndex(),
       size: size
     };
-    this.stackOffset.push(size);
+    this.stackOffset.push(this.getStackLastIndex() + size);
   }
 
   getStackOffset(variable) {
