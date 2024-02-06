@@ -5,7 +5,7 @@ export class RegisterBlock {
 
   toString_t(instruction) {
     if(instruction instanceof RegisterBlock) {
-      return this.toStringArray_t(instruction)
+      return this.toStringArray_t(instruction.block)
     }
     return [instruction.toString()];
   }
@@ -46,7 +46,8 @@ export const MovTypes = {
   REG_TO_REG: 2,
   REG_TO_MEM: 3,
   NUMBER_TO_REG: 4,
-  STACK_TO_REG: 5
+  STACK_TO_REG: 5,
+  REG_TO_STACK: 6
 }
 
 export class Mov extends Register {

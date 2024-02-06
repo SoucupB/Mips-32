@@ -3,7 +3,7 @@ import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { ExpressionTree } from "./ExpressionTree.js";
-import { RegisterBlock } from "./Register.js";
+import { Mov, MovTypes, Push, RegisterBlock } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
 import { RegisterStack } from "./RegisterStack.js";
 
@@ -14,8 +14,8 @@ export class Compiler {
     this.registerStack = new RegisterStack();
   }
 
-  buildExpressionTrees() {
-    let allExpressions = Helper.searchChompByType(this.ast, {
+  buildExpressionTrees(chomp) {
+    let allExpressions = Helper.searchChompByType(chomp, {
       type: Expression
     });
 
@@ -30,6 +30,12 @@ export class Compiler {
     expressionChomp.expressionTree.addInstructionToBlock(block, this.registerMem, this.registerStack);
   }
 
+  saveExpressionResult(expressionChomp, block) {
+    const topRegister = this.registerMem.registerFromID(expressionChomp.expressionTree.root.nodeID);
+    block.push(new Push(topRegister));
+    this.registerMem.freeRegister(topRegister);
+  }
+
   createInitialization(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
@@ -37,34 +43,34 @@ export class Compiler {
       const declaration = children[i];
 
       const variableName = declaration.childrenChomps[0];
-      const expression = declaration.childrenChomps[1];
+      const expressionChomp = declaration.childrenChomps[1];
 
+      this.createExpressionAsm(expressionChomp, block);
       this.registerStack.push(variableName.buffer, 4);
-      this.createExpressionAsm(expression, block);
+      this.saveExpressionResult(expressionChomp, block);
     }
     return block;
   }
 
   createBlock(chomp) {
     let block = new RegisterBlock();
+    this.buildExpressionTrees(chomp);
 
     switch(chomp.type) {
       case Assignation: {
         break;
       }
       case Initialization: {
-        this.block(this.createInitializationBlock(chomp))
+        block.push(this.createInitialization(chomp))
         break;
       }
       default: {
         break;
       }
     }
-
     return block;
   }
 
   compile() {
-    this.buildExpressionTrees();
   }
 }

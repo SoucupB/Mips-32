@@ -15,6 +15,10 @@ export class RegisterMem {
     return null;
   }
 
+  registerFromID(nodeID) {
+    return this.IDToRegisters[nodeID];
+  }
+
   isNodeIDUsed(nodeID) {
     if(nodeID in this.IDToRegisters) {
       return this.IDToRegisters[nodeID];
