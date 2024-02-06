@@ -187,3 +187,24 @@ test('Check Expression true ASM v4', (t) => {
   t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 4', 'ADD $2 $0 $1', 'MOV $0 5', 'MUL $1 $2 $0' ].toString(), 'returns');
   t.end();
 });
+
+test('Check Expression true ASM v5', (t) => {
+  let chomp = Expression.chomp('(3+4)*5+5*(6+7)', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+
+  t.equal(asmBlock.toStringArray().toString(), [
+    'MOV $0 3',     'MOV $1 4',
+    'ADD $2 $0 $1', 'MOV $0 5',
+    'MUL $1 $2 $0', 'MOV $0 6',
+    'MOV $2 7',     'ADD $3 $0 $2',
+    'MOV $0 5',     'MUL $2 $0 $3',
+    'ADD $0 $1 $2'
+  ].toString(), 'returns');
+  t.end();
+});
