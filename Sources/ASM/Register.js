@@ -140,3 +140,14 @@ export class Push extends Register {
     return `PUSH $${this.register}`
   }
 }
+
+export class Pop extends Register {
+  constructor(bytes) {
+    super();
+    this.bytes = bytes;
+  }
+
+  toString() {
+    return `POP ${this.bytes}`
+  }
+}

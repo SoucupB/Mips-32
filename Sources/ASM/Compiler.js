@@ -4,7 +4,7 @@ import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { ExpressionTree } from "./ExpressionTree.js";
-import { Mov, MovTypes, Push, RegisterBlock } from "./Register.js";
+import { Mov, MovTypes, Pop, Push, RegisterBlock } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
 import { RegisterStack } from "./RegisterStack.js";
 
@@ -69,6 +69,10 @@ export class Compiler {
     return block;
   }
 
+  popStackValues(block) {
+    block.push(new Pop(this.registerStack.getFreezeTopDiff()));
+  }
+
   compileBlock(chomp) {
     let block = new RegisterBlock();
     this.buildExpressionTrees(chomp);
@@ -96,6 +100,7 @@ export class Compiler {
         }
       }
     }
+    this.popStackValues(block);
     this.registerStack.pop();
     return block;
   }

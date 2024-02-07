@@ -14,7 +14,8 @@ test('Check Compiler checker v1', (t) => {
     'MOV $0 5',       'MOV $1 6',
     'ADD $2 $0 $1',   'PUSH $2',
     'MOV $0 [$st-8]', 'MOV $1 5',
-    'MUL $2 $0 $1',   'MOV [$st-4] $2'
+    'MUL $2 $0 $1',   'MOV [$st-4] $2',
+    'POP 8'
   ].toString(), 'returns');
 
   t.end();
@@ -31,8 +32,28 @@ test('Check Compiler checker v2', (t) => {
     'MUL $2 $0 $1',   'MOV $0 2',
     'ADD $1 $2 $0',   'PUSH $1',
     'MOV $0 [$st-4]', 'MOV $1 [$st-8]',
-    'ADD $2 $0 $1',   'PUSH $2'
+    'ADD $2 $0 $1',   'PUSH $2',
+    'POP 12'
   ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v3', (t) => {
+  const chomp = CodeBlock.chomp('{int a=1+1;{int b=a+5;}int c=a;}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  console.log(asmBlock.toString())
+  // t.equal(asmBlock.toStringArray().toString(), [
+  //   'MOV $0 3',       'MOV $1 4',
+  //   'ADD $2 $0 $1',   'PUSH $2',
+  //   'MOV $0 [$st-4]', 'MOV $1 [$st-4]',
+  //   'MUL $2 $0 $1',   'MOV $0 2',
+  //   'ADD $1 $2 $0',   'PUSH $1',
+  //   'MOV $0 [$st-4]', 'MOV $1 [$st-8]',
+  //   'ADD $2 $0 $1',   'PUSH $2',
+  //   'POP 12'
+  // ].toString(), 'returns');
 
   t.end();
 });

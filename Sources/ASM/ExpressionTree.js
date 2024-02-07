@@ -166,6 +166,12 @@ export class ExpressionTree {
   }
 
   addInstructionToBlock(block, registerMem, registerStack) {
+    if(!this.root.left && !this.root.right) {
+      let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(this.root, registerStack), this.getNodeMovType(this.root)));
+      return ;
+    }
+
     this.addInstructionToBlock_t(this.root, block, registerMem, registerStack);
   }
 

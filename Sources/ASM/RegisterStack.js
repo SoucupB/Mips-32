@@ -5,6 +5,7 @@ export class RegisterStack {
     this.stackOffset = [];
     this.freezeHistory = [0];
     this.variableNames = [];
+    this.freezeChunks = [0];
   }
 
   getStackLastIndex() {
@@ -24,7 +25,8 @@ export class RegisterStack {
   }
 
   freeze() {
-    this.variableNames.push(this.getStackLastIndex());
+    this.freezeHistory.push(this.getStackLastIndex());
+    this.freezeChunks.push(this.freezeChunks[this.freezeChunks.length - 1] + 1)
   }
 
   topVariableName() {
@@ -39,12 +41,19 @@ export class RegisterStack {
     if(!this.freezeHistory.length) {
       return ;
     }
-    for(let i = this.freezeHistory.length - 1; i >= this.freezeHistory[this.freezeHistory.length - 1]; i--) {
+    for(let i = this.freezeChunks.length - 1; i >= this.freezeChunks[this.freezeChunks.length - 1]; i--) {
       this.stackOffset.pop();
       const variableName = this.topVariableName();
       delete this.offset[variableName];
     }
     this.freezeHistory.pop();
+  }
+
+  getFreezeTopDiff() {
+    if(!this.freezeHistory.length) {
+      return this.getStackLastIndex();
+    }
+    return this.getStackLastIndex() - this.freezeHistory[this.freezeHistory.length - 1];
   }
 
   getStackOffset(variable) {
