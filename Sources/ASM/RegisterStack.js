@@ -3,6 +3,8 @@ export class RegisterStack {
     this.stackValues = [];
     this.offset = {};
     this.stackOffset = [];
+    this.freezeHistory = [0];
+    this.variableNames = [];
   }
 
   getStackLastIndex() {
@@ -18,6 +20,31 @@ export class RegisterStack {
       size: size
     };
     this.stackOffset.push(this.getStackLastIndex() + size);
+    // this.variableNames.push(variable);
+  }
+
+  freeze() {
+    this.variableNames.push(this.getStackLastIndex());
+  }
+
+  topVariableName() {
+    if(!this.variableNames.length) {
+      return null;
+    }
+
+    return this.variableNames[this.variableNames.length - 1];
+  }
+
+  pop() {
+    if(!this.freezeHistory.length) {
+      return ;
+    }
+    for(let i = this.freezeHistory.length - 1; i >= this.freezeHistory[this.freezeHistory.length - 1]; i--) {
+      this.stackOffset.pop();
+      const variableName = this.topVariableName();
+      delete this.offset[variableName];
+    }
+    this.freezeHistory.pop();
   }
 
   getStackOffset(variable) {

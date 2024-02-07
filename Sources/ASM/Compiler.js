@@ -1,4 +1,5 @@
 import { Assignation } from "../AST/Assignation.js";
+import { CodeBlock } from "../AST/CodeBlock.js";
 import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
@@ -73,6 +74,7 @@ export class Compiler {
     this.buildExpressionTrees(chomp);
     const children = chomp.childrenChomps;
 
+    this.registerStack.freeze();
     for(let i = 0, c = children.length; i < c; i++) {
       const child = children[i];
 
@@ -85,11 +87,16 @@ export class Compiler {
           block.push(this.createInitialization(child))
           break;
         }
+        case CodeBlock: {
+          block.push(this.compileBlock(child))
+          break;
+        }
         default: {
           break;
         }
       }
     }
+    this.registerStack.pop();
     return block;
   }
 
