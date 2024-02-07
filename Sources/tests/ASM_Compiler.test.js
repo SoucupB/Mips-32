@@ -43,17 +43,32 @@ test('Check Compiler checker v3', (t) => {
   const chomp = CodeBlock.chomp('{int a=1+1;{int b=a+5;}int c=a;}', 0)
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
-  console.log(asmBlock.toString())
-  // t.equal(asmBlock.toStringArray().toString(), [
-  //   'MOV $0 3',       'MOV $1 4',
-  //   'ADD $2 $0 $1',   'PUSH $2',
-  //   'MOV $0 [$st-4]', 'MOV $1 [$st-4]',
-  //   'MUL $2 $0 $1',   'MOV $0 2',
-  //   'ADD $1 $2 $0',   'PUSH $1',
-  //   'MOV $0 [$st-4]', 'MOV $1 [$st-8]',
-  //   'ADD $2 $0 $1',   'PUSH $2',
-  //   'POP 12'
-  // ].toString(), 'returns');
+  t.equal(asmBlock.toStringArray().toString(),[
+    'MOV $0 1',       'MOV $1 1',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'MOV $0 [$st-4]', 'MOV $1 5',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'POP 4',          'MOV $0 [$st-4]',
+    'PUSH $0',        'POP 8'
+  ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v4', (t) => {
+  const chomp = CodeBlock.chomp('{int a=1+1;{int b=a+5;int c=10+b;}int c=a;}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  t.equal(asmBlock.toStringArray().toString(),[
+    'MOV $0 1',       'MOV $1 1',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'MOV $0 [$st-4]', 'MOV $1 5',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'MOV $0 10',      'MOV $1 [$st-4]',
+    'ADD $2 $0 $1',   'PUSH $2',
+    'POP 8',          'MOV $0 [$st-4]',
+    'PUSH $0',        'POP 8'
+  ].toString(), 'returns');
 
   t.end();
 });
