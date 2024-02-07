@@ -178,6 +178,30 @@ export class ExpressionTree {
     registerMem.freeRegister(freeRegisterDst);
   }
 
+  more_InstructionSet(node, block, registerMem, registerStack) {
+    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
+    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+
+    if(this.isLeaf(node.left)) {
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, registerStack), this.getNodeMovType(node.left)));
+    }
+    
+    if(this.isLeaf(node.right)) {
+      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, registerStack), this.getNodeMovType(node.right)))
+    }
+
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+    block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
+
+    registerMem.freeRegister(freeRegisterSrc);
+    registerMem.freeRegister(freeRegisterDst);
+    
+    let swapingBuffer = this.findRegisterForNode(node, registerMem); // x = 1 - x in order to invert the flag value.
+    block.push(new Mov(swapingBuffer, '1', MovTypes.NUMBER_TO_REG));
+    block.push(new Sub(freeBufferRegister, swapingBuffer, 'CF'));
+    registerMem.freeRegister(swapingBuffer);
+  }
+
   addInstructionToBlock_t(node, block, registerMem, registerStack) {
     if(!node.left && !node.right) {
       return ;
@@ -204,6 +228,10 @@ export class ExpressionTree {
       }
       case '<': {
         this.less_InstructionSet(node, block, registerMem, registerStack);
+        break;
+      }
+      case '>': {
+        this.more_InstructionSet(node, block, registerMem, registerStack);
         break;
       }
 

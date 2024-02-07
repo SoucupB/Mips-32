@@ -77,7 +77,6 @@ test('Check Compiler checker v5', (t) => {
   const chomp = CodeBlock.chomp('{int a=1==4;}', 0)
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
-  // console.log(asmBlock.toString())
 
   t.equal(asmBlock.toStringArray().toString(),[
     'MOV $0 1',
@@ -95,13 +94,49 @@ test('Check Compiler checker v6', (t) => {
   const chomp = CodeBlock.chomp('{int a=1<4;}', 0)
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
+
+  t.equal(asmBlock.toStringArray().toString(),[
+    'MOV $0 1',
+    'MOV $1 4',
+    'CMP $0 $1',
+    'MOV $2 $CF',
+    'PUSH $2',
+    'POP 4'
+  ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v7', (t) => {
+  const chomp = CodeBlock.chomp('{int a=1>4;}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  
+  t.equal(asmBlock.toStringArray().toString(),[
+    'MOV $0 1',
+    'MOV $1 4',
+    'CMP $0 $1',
+    'MOV $2 1',
+    'SUB $2 $2 $CF',
+    'PUSH $2',
+    'POP 4'
+  ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v8', (t) => {
+  const chomp = CodeBlock.chomp('{int a=1>4;}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
   console.log(asmBlock.toString())
 
   // t.equal(asmBlock.toStringArray().toString(),[
   //   'MOV $0 1',
   //   'MOV $1 4',
   //   'CMP $0 $1',
-  //   'MOV $2 $ZF',
+  //   'MOV $2 1',
+  //   'SUB $2 $2 $CF',
   //   'PUSH $2',
   //   'POP 4'
   // ].toString(), 'returns');
