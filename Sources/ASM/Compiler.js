@@ -3,8 +3,9 @@ import { CodeBlock } from "../AST/CodeBlock.js";
 import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
+import { LoopBlocks } from "../AST/LoopBlocks.js";
 import { ExpressionTree } from "./ExpressionTree.js";
-import { Mov, MovTypes, Pop, Push, RegisterBlock } from "./Register.js";
+import { Jmp, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
 import { RegisterStack } from "./RegisterStack.js";
 
@@ -38,14 +39,14 @@ export class Compiler {
   }
 
   loadExpressionOnStack(expressionChomp, assignerName, block) {
-    const topRegister = this.registerMem.registerFromID(expressionChomp.expressionTree.root.nodeID);
+    const topRegister = this.getExpressionRegister(expressionChomp);
     const stackPointerForVariable = this.registerStack.getStackOffset(assignerName.buffer)
 
     block.push(new Mov(stackPointerForVariable, topRegister, MovTypes.REG_TO_STACK));
     this.registerMem.freeRegister(topRegister);
   }
 
-  createInitialization(chomp) {
+  compileInitialization(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
     for(let i = 1, c = children.length; i < c; i++) {
@@ -61,7 +62,7 @@ export class Compiler {
     return block;
   }
 
-  createAssignation(chomp) {
+  compileAssignation(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
     this.createExpressionAsm(children[1], block);
@@ -70,7 +71,57 @@ export class Compiler {
   }
 
   popStackValues(block) {
-    block.push(new Pop(this.registerStack.getFreezeTopDiff()));
+    const popValue = this.registerStack.getFreezeTopDiff();
+
+    if(popValue) {
+      block.push(new Pop(popValue));
+    }
+  }
+
+  getExpressionRegister(expressionChomp) {
+    return this.registerMem.registerFromID(expressionChomp.expressionTree.root.nodeID);
+  }
+
+  _generateRandomString(length = 4) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomString = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        randomString += characters.charAt(randomIndex);
+    }
+    return randomString;
+  }
+
+  compileWhile(child) {
+    let block = new RegisterBlock();
+    const children = child.childrenChomps;
+
+    let expressionChompTester = children[0];
+    let codeBlock = children[1];
+    this.createExpressionAsm(expressionChompTester, block);
+    const responseRegister = this.getExpressionRegister(expressionChompTester);
+    const jumpOverLabel = `_label${this._generateRandomString()}`;
+    const jumpBackLabel = `_label${this._generateRandomString()}`;
+    block.push(new Test(responseRegister, responseRegister));
+    block.push(new Jz(jumpOverLabel));
+    block.push(new Label(jumpBackLabel))
+    block.push(this.compileBlock(codeBlock))
+    block.push(new Jmp(jumpBackLabel));
+    block.push(new Label(jumpOverLabel))
+    return block;
+  }
+
+  compileLoop(child) {
+    switch(child.buffer) {
+      case 'while': {
+        return this.compileWhile(child);
+      }
+      case 'for': {
+        break;
+      }
+    }
+    
+    return new RegisterBlock();
   }
 
   compileBlock(chomp) {
@@ -84,15 +135,19 @@ export class Compiler {
 
       switch(child.type) {
         case Assignation: {
-          block.push(this.createAssignation(child));
+          block.push(this.compileAssignation(child));
           break;
         }
         case Initialization: {
-          block.push(this.createInitialization(child))
+          block.push(this.compileInitialization(child))
           break;
         }
         case CodeBlock: {
           block.push(this.compileBlock(child))
+          break;
+        }
+        case LoopBlocks: {
+          block.push(this.compileLoop(child))
           break;
         }
         default: {

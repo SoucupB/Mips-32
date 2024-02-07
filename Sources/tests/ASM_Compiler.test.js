@@ -151,7 +151,7 @@ test('Check Compiler checker v9', (t) => {
 });
 
 test('Check Compiler checker v10', (t) => {
-  const chomp = CodeBlock.chomp('{int a=1>=2||2<=3;{int b=a==0;}int c=a+5*7;}', 0)
+  const chomp = CodeBlock.chomp('{int a=1,b=0;while(a==1){b=b+1;int cacat=(a+1)*3;}a=5;}', 0) // bug
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
   console.log(asmBlock.toString());

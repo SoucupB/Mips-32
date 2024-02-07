@@ -242,3 +242,36 @@ export class Setle extends Register {
     return `SETLE $${this.regA}`
   }
 }
+
+export class Jz extends Register {
+  constructor(label) {
+    super();
+    this.label = label;
+  }
+
+  toString() {
+    return `JZ ${this.label}`
+  }
+}
+
+export class Label extends Register {
+  constructor(label) {
+    super();
+    this.label = label;
+  }
+
+  toString() {
+    return `:${this.label}`
+  }
+}
+
+export class Jmp extends Register {
+  constructor(label) {
+    super();
+    this.label = label;
+  }
+
+  toString() {
+    return `JMP ${this.label}`
+  }
+}
