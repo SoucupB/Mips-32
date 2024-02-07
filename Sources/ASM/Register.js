@@ -185,3 +185,60 @@ export class Sete extends Register {
     return `SETE $${this.regA}`
   }
 }
+
+export class Test extends Register {
+  constructor(regA, regB) {
+    super();
+    this.regA = regA;
+    this.regB = regB;
+  }
+
+  toString() {
+    return `TEST $${this.regA} $${this.regB}`
+  }
+}
+
+export class Setnz extends Register {
+  constructor(regA) {
+    super();
+    this.regA = regA;
+  }
+
+  toString() {
+    return `SETNZ $${this.regA}`
+  }
+}
+
+export class Or extends Register {
+  constructor(regA, regB) {
+    super();
+    this.regA = regA;
+    this.regB = regB;
+  }
+
+  toString() {
+    return `OR $${this.regA} $${this.regB}`
+  }
+}
+
+export class Setge extends Register {
+  constructor(regA) {
+    super();
+    this.regA = regA;
+  }
+
+  toString() {
+    return `SETGE $${this.regA}`
+  }
+}
+
+export class Setle extends Register {
+  constructor(regA) {
+    super();
+    this.regA = regA;
+  }
+
+  toString() {
+    return `SETLE $${this.regA}`
+  }
+}
