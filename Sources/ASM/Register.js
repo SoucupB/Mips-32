@@ -163,3 +163,25 @@ export class Cmp extends Register {
     return `CMP $${this.regA} $${this.regB}`
   }
 }
+
+export class Setne extends Register {
+  constructor(regA) {
+    super();
+    this.regA = regA;
+  }
+
+  toString() {
+    return `SETNE $${this.regA}`
+  }
+}
+
+export class Sete extends Register {
+  constructor(regA) {
+    super();
+    this.regA = regA;
+  }
+
+  toString() {
+    return `SETE $${this.regA}`
+  }
+}

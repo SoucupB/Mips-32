@@ -1,7 +1,7 @@
 import Constant from "../AST/Constant.js";
 import Expression from "../AST/Expression.js";
 import Variable from "../AST/Variable.js";
-import { Add, Cmp, Mov, MovTypes, Mul, Sub } from "./Register.js";
+import { Add, Cmp, Mov, MovTypes, Mul, Sete, Setne, Sub } from "./Register.js";
 
 let nodeID = 0;
 
@@ -152,7 +152,27 @@ export class ExpressionTree {
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Mov(freeBufferRegister, 'ZF', MovTypes.REG_TO_REG));
+    block.push(new Sete(freeBufferRegister));
+
+    registerMem.freeRegister(freeRegisterSrc);
+    registerMem.freeRegister(freeRegisterDst);
+  }
+
+  notEqual_InstructionSet(node, block, registerMem, registerStack) {
+    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
+    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+
+    if(this.isLeaf(node.left)) {
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, registerStack), this.getNodeMovType(node.left)));
+    }
+    
+    if(this.isLeaf(node.right)) {
+      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, registerStack), this.getNodeMovType(node.right)))
+    }
+
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+    block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
+    block.push(new Setne(freeBufferRegister));
 
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
@@ -232,6 +252,10 @@ export class ExpressionTree {
       }
       case '>': {
         this.more_InstructionSet(node, block, registerMem, registerStack);
+        break;
+      }
+      case '!=': {
+        this.notEqual_InstructionSet(node, block, registerMem, registerStack);
         break;
       }
 
