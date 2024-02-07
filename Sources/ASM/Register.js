@@ -151,3 +151,15 @@ export class Pop extends Register {
     return `POP ${this.bytes}`
   }
 }
+
+export class Cmp extends Register {
+  constructor(regA, regB) {
+    super();
+    this.regA = regA;
+    this.regB = regB;
+  }
+
+  toString() {
+    return `CMP $${this.regA} $${this.regB}`
+  }
+}
