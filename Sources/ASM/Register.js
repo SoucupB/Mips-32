@@ -265,14 +265,32 @@ export class Label extends Register {
   }
 }
 
+export const JmpTypes = {
+  LABEL: 1,
+  REGISTER: 2
+}
+
 export class Jmp extends Register {
-  constructor(label) {
+  constructor(value, type = JmpTypes.LABEL) {
     super();
-    this.label = label;
+    this.value = value;
+    this.type = type;
   }
 
   toString() {
-    return `JMP ${this.label}`
+    switch(this.type) {
+      case JmpTypes.LABEL: {
+        return `JMP ${this.value}`
+      }
+
+      case JmpTypes.REGISTER: {
+        return `JMP $${this.value}`
+      }
+
+      default: {
+        break;
+      }
+    }
   }
 }
 

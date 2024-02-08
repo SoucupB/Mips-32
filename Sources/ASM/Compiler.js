@@ -6,7 +6,7 @@ import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
 import { Methods } from "../AST/Methods.js";
 import { ExpressionTree } from "./ExpressionTree.js";
-import { Jmp, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
+import { Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
 import { RegisterStack } from "./RegisterStack.js";
 
@@ -206,6 +206,7 @@ export class Compiler {
       this.registerStack.push(paramName.buffer, 4);
     }
     block.push(this.compileBlock(methodBlock));
+    block.push(new Jmp('ret', JmpTypes.REGISTER));
     this.registerStack.pop();
 
     return block;
@@ -215,6 +216,8 @@ export class Compiler {
     let children = program.childrenChomps;
     this.buildExpressionTrees(program);
     let block = new RegisterBlock();
+
+    block.push(new Jmp('_main'))
 
     for(let i = 0, c = children.length; i < c; i++) {
       const child = children[i];
