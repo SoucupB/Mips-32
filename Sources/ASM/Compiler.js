@@ -4,6 +4,7 @@ import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
+import { Methods } from "../AST/Methods.js";
 import { ExpressionTree } from "./ExpressionTree.js";
 import { Jmp, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
@@ -117,13 +118,33 @@ export class Compiler {
     return block;
   }
 
+  compileFor(child) {
+    let block = new RegisterBlock();
+    const children = child.childrenChomps;
+
+    // let expressionChompTester = children[0];
+    // let codeBlock = children[1];
+    // const jumpBackLabel = `_label${this.nextLabel()}`;
+
+    // block.push(new Label(jumpBackLabel))
+    // this.createExpressionAsm(expressionChompTester, block);
+    // const responseRegister = this.getExpressionRegister(expressionChompTester);
+    // const jumpOverLabel = `_label${this.nextLabel()}`;
+    // block.push(new Test(responseRegister, responseRegister));
+    // block.push(new Jz(jumpOverLabel));
+    // block.push(this.compileBlock(codeBlock))
+    // block.push(new Jmp(jumpBackLabel));
+    // block.push(new Label(jumpOverLabel))
+    return block;
+  }
+
   compileLoop(child) {
     switch(child.buffer) {
       case 'while': {
         return this.compileWhile(child);
       }
       case 'for': {
-        break;
+        return this.compileFor(child);
       }
     }
     
@@ -163,6 +184,56 @@ export class Compiler {
     }
     this.popStackValues(block);
     this.registerStack.pop();
+    return block;
+  }
+
+  compileMethods(method) {
+    const children = method.childrenChomps;
+    let block = new RegisterBlock();
+
+    const methodHeader = children[0];
+    const methodParams = children[1].childrenChomps;
+    const methodBlock = children[2];
+
+    const methodName = methodHeader.childrenChomps[1];
+
+    const methodBlockNameLabel = `_${methodName}`;
+    block.push(new Label(methodBlockNameLabel));
+    this.registerStack.freeze();
+    for(let i = 0; i < methodParams.length; i++) {
+      const type = methodParams[i].childrenChomps[0];
+      const paramName = methodParams[i].childrenChomps[1];
+      this.registerStack.push(paramName.buffer, 4);
+    }
+    block.push(this.compileBlock(methodBlock));
+    this.registerStack.pop();
+
+    return block;
+  }
+
+  compileProgram(program) {
+    let children = program.childrenChomps;
+    this.buildExpressionTrees(program);
+    let block = new RegisterBlock();
+
+    for(let i = 0, c = children.length; i < c; i++) {
+      const child = children[i];
+
+      switch(child.type) {
+        case Initialization: {
+          block.push(this.compileInitialization(child))
+          break;
+        }
+        case Methods: {
+          block.push(this.compileMethods(child))
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+
     return block;
   }
 

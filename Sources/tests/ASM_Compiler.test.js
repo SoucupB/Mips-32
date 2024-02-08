@@ -2,6 +2,7 @@ import tap from 'tap'
 const { test } = tap;
 import { Compiler } from '../ASM/Compiler.js';
 import { CodeBlock } from '../AST/CodeBlock.js';
+import { Program } from '../AST/Program.js';
 
 test('Check Compiler checker v1', (t) => {
   const chomp = CodeBlock.chomp('{int adafg=3+4;int c=5+6;c=adafg*5;}', 0)
@@ -195,6 +196,35 @@ test('Check Compiler checker v11 (Reverse a number).', (t) => {
     'MOV [$st-8] $3', 'JMP _label0',
     ':_label1',       'POP 8'
   ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v12 (Full Program).', (t) => {
+  const program = new Program('int a=0;int cocoJambo(int b,int c){int d=b+c;return d;}int main(){int b=17;return 0;}') // bug
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  console.log(asmBlock.toString())
+
+  // t.equal(asmBlock.toStringArray().toString(),[
+  //   'MOV $0 123',     'PUSH $0',
+  //   'MOV $0 0',       'PUSH $0',
+  //   ':_label0',       'MOV $0 [$st-8]',
+  //   'MOV $1 0',       'CMP $0 $1',
+  //   'SETNE $2',       'TEST $2 $2',
+  //   'JZ _label1',     'MOV $0 [$st-4]',
+  //   'MOV $1 10',      'MUL $3 $0 $1',
+  //   'MOV [$st-4] $3', 'MOV $0 [$st-8]',
+  //   'MOV $1 10',      'DIV $0 $1',
+  //   'MOV $3 $LO',     'MOV $0 [$st-4]',
+  //   'ADD $1 $0 $3',   'MOV [$st-4] $1',
+  //   'MOV $0 [$st-8]', 'MOV $1 10',
+  //   'DIV $0 $1',      'MOV $3 $HI',
+  //   'MOV [$st-8] $3', 'JMP _label0',
+  //   ':_label1',       'POP 8'
+  // ].toString(), 'returns');
 
   t.end();
 });
