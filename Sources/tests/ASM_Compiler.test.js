@@ -149,8 +149,34 @@ test('Check Compiler checker v9', (t) => {
   t.end();
 });
 
-test('Check Compiler checker v11', (t) => {
+test('Check Compiler checker v10', (t) => {
   const chomp = CodeBlock.chomp('{int a=1,b=0;while(a==1){b=b+1;int cacat=(a+1)*3;b=cacat;}a=5;}', 0) // bug
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  // console.log(asmBlock.toString());
+
+  // t.equal(asmBlock.toStringArray().toString(),[
+  //   'MOV $0 1',       'PUSH $0',
+  //   'MOV $0 0',       'PUSH $0',
+  //   'MOV $0 [$st-8]', 'MOV $1 1',
+  //   'CMP $0 $1',      'SETE $2',
+  //   'TEST $2 $2',     'JZ _labeljSyX',
+  //   ':_labellYVc',    'MOV $0 [$st-4]',
+  //   'MOV $1 1',       'ADD $3 $0 $1',
+  //   'MOV [$st-4] $3', 'MOV $0 [$st-8]',
+  //   'MOV $1 1',       'ADD $3 $0 $1',
+  //   'MOV $0 3',       'MUL $1 $3 $0',
+  //   'PUSH $1',        'POP 4',
+  //   'JMP _labellYVc', ':_labeljSyX',
+  //   'MOV $0 5',       'MOV [$st-8] $0',
+  //   'POP 8'
+  // ].toString(), 'returns');
+
+  t.end();
+});
+
+test('Check Compiler checker v11 (Fibbo variable).', (t) => {
+  const chomp = CodeBlock.chomp('{int a=0,b=1,n=10,i=0,result=0;while(i<n){int c=a+b;a=b;b=c;i=i+1;}result=b;}', 0) // bug
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
   console.log(asmBlock.toString());
