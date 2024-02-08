@@ -26,8 +26,10 @@ export class Compiler {
 
     for(let i = 0, c = allExpressions.length; i < c; i++) {
       let expression = new ExpressionTree(allExpressions[i]);
-      expression.build();
-      allExpressions[i].expressionTree = expression;
+      if(!allExpressions[i].expressionTree) {
+        expression.build();
+        allExpressions[i].expressionTree = expression;
+      }
     }
   }
 

@@ -305,3 +305,15 @@ export class Div extends Register {
     return `DIV $${this.a} $${this.b}`
   }
 }
+
+export class Prp extends Register { // pseudoinstruction. Sets the values of the register with the current execution pointer + offset.
+  constructor(reg, offset) {
+    super();
+    this.reg = reg;
+    this.offset = offset
+  }
+
+  toString() {
+    return `PRP $${this.reg} ${this.offset}`
+  }
+}
