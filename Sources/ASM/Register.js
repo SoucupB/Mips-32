@@ -77,7 +77,7 @@ export class Mov extends Register {
         return `MOV $${this.dst} [$st-${this.src}]`
       }
       case MovTypes.REG_TO_STACK: {
-        if(this.src == 0) {
+        if(this.dst == 0) {
           return `MOV [$st] $${this.src}`
         }
 

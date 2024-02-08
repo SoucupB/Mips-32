@@ -98,13 +98,13 @@ export class Compiler {
 
     let expressionChompTester = children[0];
     let codeBlock = children[1];
+    const jumpBackLabel = `_label${this._generateRandomString()}`;
+    block.push(new Label(jumpBackLabel))
     this.createExpressionAsm(expressionChompTester, block);
     const responseRegister = this.getExpressionRegister(expressionChompTester);
     const jumpOverLabel = `_label${this._generateRandomString()}`;
-    const jumpBackLabel = `_label${this._generateRandomString()}`;
     block.push(new Test(responseRegister, responseRegister));
     block.push(new Jz(jumpOverLabel));
-    block.push(new Label(jumpBackLabel))
     block.push(this.compileBlock(codeBlock))
     block.push(new Jmp(jumpBackLabel));
     block.push(new Label(jumpOverLabel))
