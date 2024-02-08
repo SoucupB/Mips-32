@@ -275,3 +275,15 @@ export class Jmp extends Register {
     return `JMP ${this.label}`
   }
 }
+
+export class Div extends Register {
+  constructor(a, b) {
+    super();
+    this.a = a;
+    this.b = b;
+  }
+
+  toString() {
+    return `DIV $${this.a} $${this.b}`
+  }
+}
