@@ -76,7 +76,7 @@ export class ReturnMethod {
     index++;
 
     let responseChomp = new Chomp(null, index, ReturnMethod);
-    responseChomp.childrenChomps = expression;
+    responseChomp.childrenChomps = [expression];
 
     return responseChomp;
   }
@@ -93,7 +93,7 @@ export class ReturnMethod {
   }
 
   static addToStackAndVerify(chomp, stackDeclaration) {
-    const expression = chomp.childrenChomps;
+    const expression = chomp.childrenChomps[0];
 
     return Expression.checkStackInitialization(expression, stackDeclaration);
   }

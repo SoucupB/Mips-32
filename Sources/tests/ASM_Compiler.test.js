@@ -201,7 +201,7 @@ test('Check Compiler checker v11 (Reverse a number).', (t) => {
 });
 
 test('Check Compiler checker v12 (Full Program).', (t) => {
-  const program = new Program('int a=5;int cocoJambo(int b,int c){int d=b+c+a;return d;}int main(){int frt=11;int b=17+cocoJambo(3,4);return 0;}') // bug
+  const program = new Program('int cocoJambo(int b,int c){int d=b+c;return d+1;}int main(){int frt=11;int b=17+cocoJambo(3,4);return 0;}') // bug
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);

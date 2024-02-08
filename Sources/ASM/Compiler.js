@@ -4,7 +4,7 @@ import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
-import { Methods } from "../AST/Methods.js";
+import { Methods, ReturnMethod } from "../AST/Methods.js";
 import { ExpressionTree } from "./ExpressionTree.js";
 import { Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
@@ -15,6 +15,7 @@ export class Compiler {
     this.ast = ast;
     this.registerMem = new RegisterMem();
     this.registerStack = new RegisterStack();
+    this.globalStack = new RegisterStack();
 
     this.labelID = 0;
   }
@@ -51,7 +52,7 @@ export class Compiler {
     this.registerMem.freeRegister(topRegister);
   }
 
-  compileInitialization(chomp) {
+  compileInitialization(chomp, memoryRegion = this.registerStack) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
     for(let i = 1, c = children.length; i < c; i++) {
@@ -153,6 +154,19 @@ export class Compiler {
     return new RegisterBlock();
   }
 
+  compileReturnMethod(child) {
+    const expression = child.childrenChomps[0];
+
+    let block = new RegisterBlock();
+    this.createExpressionAsm(expression, block);
+    const expressionRegister = this.getExpressionRegister(expression);
+
+    block.push(new Mov('rsp', expressionRegister, MovTypes.REG_TO_REG))
+    this.registerMem.freeRegister(expressionRegister);
+
+    return block;
+  }
+
   compileBlock(chomp) {
     let block = new RegisterBlock();
     this.buildExpressionTrees(chomp);
@@ -177,6 +191,10 @@ export class Compiler {
         }
         case LoopBlocks: {
           block.push(this.compileLoop(child))
+          break;
+        }
+        case ReturnMethod: {
+          block.push(this.compileReturnMethod(child))
           break;
         }
         default: {
@@ -220,13 +238,12 @@ export class Compiler {
     let block = new RegisterBlock();
 
     block.push(new Jmp('_main'))
-
     for(let i = 0, c = children.length; i < c; i++) {
       const child = children[i];
 
       switch(child.type) {
         case Initialization: {
-          block.push(this.compileInitialization(child));
+          // block.push(this.compileInitialization(child)); // To do on another memory region
           break;
         }
         case Methods: {
