@@ -77,7 +77,7 @@ export class ExpressionTree {
       registerStack.push(i, 4);
     }
     block.push(new Prp('ret', 2));
-    block.push(new Jmp(methodName.buffer));
+    block.push(new Jmp(`_${methodName.buffer}`));
     block.push(new Pop(registerStack.getFreezeTopDiff()));
     registerStack.pop();
     return 'rsp';
