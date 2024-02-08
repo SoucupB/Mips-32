@@ -162,6 +162,7 @@ export class Compiler {
     const expressionRegister = this.getExpressionRegister(expression);
 
     block.push(new Mov('rsp', expressionRegister, MovTypes.REG_TO_REG))
+    block.push(new Jmp('ret', JmpTypes.REGISTER));
     this.registerMem.freeRegister(expressionRegister);
 
     return block;
@@ -226,7 +227,7 @@ export class Compiler {
       this.registerStack.push(paramName.buffer, 4);
     }
     block.push(this.compileBlock(methodBlock));
-    block.push(new Jmp('ret', JmpTypes.REGISTER));
+    // block.push(new Jmp('ret', JmpTypes.REGISTER));
     this.registerStack.pop();
 
     return block;
