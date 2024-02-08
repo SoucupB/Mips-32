@@ -14,6 +14,8 @@ export class Compiler {
     this.ast = ast;
     this.registerMem = new RegisterMem();
     this.registerStack = new RegisterStack();
+
+    this.labelID = 0;
   }
 
   buildExpressionTrees(chomp) {
@@ -92,17 +94,21 @@ export class Compiler {
     return randomString;
   }
 
+  nextLabel() {
+    return this.labelID++;
+  }
+
   compileWhile(child) {
     let block = new RegisterBlock();
     const children = child.childrenChomps;
 
     let expressionChompTester = children[0];
     let codeBlock = children[1];
-    const jumpBackLabel = `_label${this._generateRandomString()}`;
+    const jumpBackLabel = `_label${this.nextLabel()}`;
     block.push(new Label(jumpBackLabel))
     this.createExpressionAsm(expressionChompTester, block);
     const responseRegister = this.getExpressionRegister(expressionChompTester);
-    const jumpOverLabel = `_label${this._generateRandomString()}`;
+    const jumpOverLabel = `_label${this.nextLabel()}`;
     block.push(new Test(responseRegister, responseRegister));
     block.push(new Jz(jumpOverLabel));
     block.push(this.compileBlock(codeBlock))
