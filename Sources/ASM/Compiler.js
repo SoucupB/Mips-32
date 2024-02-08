@@ -224,11 +224,11 @@ export class Compiler {
 
       switch(child.type) {
         case Initialization: {
-          block.push(this.compileInitialization(child))
+          block.push(this.compileInitialization(child));
           break;
         }
         case Methods: {
-          block.push(this.compileMethods(child))
+          block.push(this.compileMethods(child));
           break;
         }
         default: {
