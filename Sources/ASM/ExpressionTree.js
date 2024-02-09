@@ -76,7 +76,10 @@ export class ExpressionTree {
       registerMem.freeRegister(expressionResultRegister);
       registerStack.push(i, 4);
     }
-    block.push(new Prp('ret', 2));
+    registerStack.push('return_address_offset', 4);
+    block.push(new Prp('ret', 3));
+    // block.push(new Mov('ret', registerStack.getStackOffset('return_address'), MovTypes.STACK_TO_REG));
+    block.push(new Push('ret'));
     block.push(new Jmp(`_${methodName.buffer}`));
     block.push(new Pop(registerStack.getFreezeTopDiff()));
     registerStack.pop();

@@ -230,12 +230,12 @@ test('Check Compiler checker v12 (Full Program).', (t) => {
 });
 
 test('Check Compiler checker v13 (Full Program).', (t) => {
-  const program = new Program('int fibboRecursive(int n){while(n<2){return 0;}return n+10;}int main(){int b=fibboRecursive(10);return 0;}') // Return should jump backwards;
+  const program = new Program('int fibboRecursive(int n){while(n<2){return 0;}return fibboRecursive(n-1)+1;}int main(){int b=fibboRecursive(5);return 0;}') // Return should jump backwards;
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString())
+  console.log(asmBlock.toString());
 
   // t.equal(asmBlock.toStringArray().toString(),[
   //   'MOV $0 123',     'PUSH $0',
