@@ -161,8 +161,8 @@ export class Compiler {
     this.createExpressionAsm(expression, block);
     const expressionRegister = this.getExpressionRegister(expression);
 
+    block.push(new Mov('ret', this.registerStack.getStackOffset('return_address'), MovTypes.STACK_TO_REG));
     block.push(new Mov('rsp', expressionRegister, MovTypes.REG_TO_REG))
-    // block.push(new Mov('ret', 'something'));
     block.push(new Jmp('ret', JmpTypes.REGISTER));
     this.registerMem.freeRegister(expressionRegister);
 
