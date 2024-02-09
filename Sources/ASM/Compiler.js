@@ -239,7 +239,6 @@ export class Compiler {
     this.buildExpressionTrees(program);
     let block = new RegisterBlock();
 
-    block.push(new Push('_last'))
     block.push(new Jmp('_main'))
     for(let i = 0, c = children.length; i < c; i++) {
       const child = children[i];
@@ -251,10 +250,6 @@ export class Compiler {
         }
         case Methods: {
           block.push(this.compileMethods(child));
-          break;
-        }
-        case Expression: {
-          block.push(this.compileBlock(child));
           break;
         }
         default: {
