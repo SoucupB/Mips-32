@@ -1,6 +1,7 @@
 export class RegisterBlock {
   constructor() {
-    this.block = [];
+    this.block = []
+    this.runner = null;
   }
 
   toString_t(instruction) {
@@ -32,6 +33,130 @@ export class RegisterBlock {
 
   push(instruction) {
     this.block.push(instruction);
+  }
+
+  flatten_t(instruction, block) {
+    if(instruction instanceof RegisterBlock) {
+      for(let i = 0, c = instruction.block.length; i < c; i++) {
+        this.flatten_t(instruction.block[i], block);
+      }
+      return ;
+    }
+    block.push(instruction);
+  }
+
+  flatten() {
+    let block = new RegisterBlock();
+    this.flatten_t(this, block);
+    return block;
+  }
+
+  getRegValue(reg) {
+    return this.runner.getRegValue(reg)
+  }
+
+  run() {
+    this.runner = (new Runner(this.flatten().block));
+    this.runner.run();
+  }
+}
+
+export class Runner {
+  constructor(instructionArray) {
+    this.instructionArray = instructionArray;
+    this.register = {};
+    this.initialStackPointer = 1024 * 1024 * 2;
+    this.stackPointer = this.initialStackPointer;
+    this.memory = new Array(1024 * 1024 * 24).fill(0);
+  }
+
+  saveRegValue(dst, src) {
+    if(src.toString() in this.register) {
+      this.register[dst.toString()] = this.register[src.toString()];
+      return ;
+    }
+  }
+
+  getRegValue(reg) {
+    if(reg.toString() in this.register) {
+      return parseInt(this.register[reg.toString()]);
+    }
+    return 0;
+  }
+
+  numberToByteArray(number) {
+    const byteArray = new Array(4).fill(0);
+    byteArray[0] = number & 0xFF;
+    byteArray[1] = (number >> 8) & 0xFF;
+    byteArray[2] = (number >> 16) & 0xFF;
+    byteArray[3] = (number >> 24) & 0xFF;
+    return byteArray;
+  }
+
+  saveRegInStack(memPointer, reg) {
+    let crp = this.numberToByteArray(this.getRegValue(reg));
+    let memPointerNumber = parseInt(memPointer);
+    for(let i = 0, c = crp.length; i < c; i++) {
+      this.memory[this.stackPointer - memPointerNumber + i] = crp[i]; 
+    }
+  }
+
+  saveRegInMem(memPointer, reg) {
+    let crp = this.numberToByteArray(this.getRegValue(reg));
+    let memPointerNumber = parseInt(memPointer);
+    for(let i = 0, c = crp.length; i < c; i++) {
+      this.memory[memPointerNumber + i] = crp[i];
+    }
+  }
+
+  saveMemInReg(memPointer, reg) {
+    let memPointerNumber = parseInt(memPointer);
+    let number = this.memory[memPointerNumber] + 
+                 this.memory[memPointerNumber + 1] * 256 + 
+                 this.memory[memPointerNumber + 2] * 256 * 256 + 
+                 this.memory[memPointerNumber + 3] * 256 * 256 * 256;
+    this.register[reg.toString()] = number;
+  }
+
+  runMov(instruction) {
+    switch(instruction.type) {
+      case MovTypes.REG_TO_REG: {
+        this.saveRegValue(instruction.dst, instruction.src);
+        break;
+      }
+      case MovTypes.REG_TO_STACK: {
+        this.saveRegInStack(instruction.dst, instruction.src);
+        break;
+      }
+      case MovTypes.NUMBER_TO_REG: {
+        this.register[instruction.dst.toString()] = parseInt(instruction.src);
+        break;
+      }
+      case MovTypes.REG_TO_MEM: {
+        this.saveRegInMem(instruction.dst, instruction.src);
+        break;
+      }
+      case MovTypes.MEM_TO_REG: {
+        this.saveMemInReg(instruction.src, instruction.dst);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
+  runInstruction(instruction) {
+    if(instruction instanceof Mov) {
+      this.runMov(instruction)
+    }
+  }
+
+  run() {
+    for(let i = 0, c = this.instructionArray.length; i < c; i++) {
+      const currentInstruction = this.instructionArray[i];
+      this.runInstruction(currentInstruction);
+    }
   }
 }
 

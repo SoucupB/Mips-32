@@ -235,7 +235,7 @@ test('Check Compiler checker v13 (Full Program).', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString());
+  asmBlock.run()
 
   t.end();
 });
