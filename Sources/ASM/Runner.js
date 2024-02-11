@@ -1,4 +1,4 @@
-import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sub } from './Register.js';
+import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from './Register.js';
 
 export class Runner {
   constructor(instructionArray) {
@@ -124,6 +124,10 @@ export class Runner {
     this.stackPointer -= parseInt(instruction.bytes);
   }
 
+  jumpAtLabel(label) {
+    this.pc = this.getRegValue(label) - 1
+  }
+
   runJump(instruction) {
     switch(instruction.type) {
       case JmpTypes.LABEL: {
@@ -131,7 +135,7 @@ export class Runner {
         break;
       }
       case JmpTypes.REGISTER: {
-        this.pc = this.getRegValue(instruction.value) - 1
+        this.jumpAtLabel(instruction.value)
         break;
       }
 
@@ -166,6 +170,51 @@ export class Runner {
     this.register[instruction.reg.toString()] = this.pc + instruction.offset;
   }
 
+  booleanToNumber(instr) {
+    if(instr) {
+      return 1;
+    }
+    return 0;
+  }
+
+  runCmp(instruction) {
+    this.register['_setGe'] = this.booleanToNumber(this.getRegValue(instruction.regA) >= this.getRegValue(instruction.regB));
+    this.register['_setE'] = this.booleanToNumber(this.getRegValue(instruction.regA) == this.getRegValue(instruction.regB));
+    this.register['_setNe'] = this.booleanToNumber(this.getRegValue(instruction.regA) != this.getRegValue(instruction.regB));
+    this.register['_setLe'] = this.booleanToNumber(this.getRegValue(instruction.regA) <= this.getRegValue(instruction.regB));
+    this.register['CF'] = this.booleanToNumber(this.getRegValue(instruction.regA) < this.getRegValue(instruction.regB));
+  }
+
+  setGe(instruction) {
+    this.register[instruction.regA.toString()] = this.register['_setGe'];
+  }
+
+  setE(instruction) {
+    this.register[instruction.regA.toString()] = this.register['_setE'];
+  }
+  
+  setNe(instruction) {
+    this.register[instruction.regA.toString()] = this.register['_setNe'];
+  }
+  
+  setNz(instruction) {
+    this.register[instruction.regA.toString()] = !this.booleanToNumber(this.register[instruction.regA.toString()]);
+  }
+
+  setLe(instruction) {
+    this.register[instruction.regA.toString()] = this.register['_setLe'];
+  }
+
+  setTest(instruction) {
+    this.register['zero_reg'] = !this.getRegValue(instruction.regA) && !this.getRegValue(instruction.regB);
+  }
+
+  setJz(instruction) {
+    if('zero_reg' in this.register && !this.register['zero_reg']) {
+      this.jumpAtLabel(instruction.label)
+    }
+  }
+
   runInstruction(instruction) {
     if(instruction instanceof Mov) {
       this.runMov(instruction);
@@ -193,6 +242,32 @@ export class Runner {
     }
     if(instruction instanceof Prp) {
       this.runPrp(instruction);
+    }
+    if(instruction instanceof Cmp) {
+      this.runCmp(instruction);
+    }
+
+    if(instruction instanceof Setge) {
+      this.setGe(instruction);
+    }
+    if(instruction instanceof Sete) {
+      this.setE(instruction);
+    }
+    if(instruction instanceof Setne) {
+      this.setNe(instruction);
+    }
+    if(instruction instanceof Setnz) {
+      this.setNz(instruction);
+    }
+    if(instruction instanceof Setle) {
+      this.setLe(instruction);
+    }
+
+    if(instruction instanceof Test) {
+      this.setTest(instruction)
+    }
+    if(instruction instanceof Jz) {
+      this.setJz(instruction)
     }
   }
 

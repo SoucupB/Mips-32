@@ -132,7 +132,6 @@ test('Check Compiler checker v9', (t) => {
   const chomp = CodeBlock.chomp('{int a=2+4>=4+2;}', 0)
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
-  // console.log(asmBlock.toStringArray());
 
   t.equal(asmBlock.toStringArray().toString(),[
     'MOV $0 2',

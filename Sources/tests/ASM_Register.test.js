@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { Register } from '../ASM/Register.js';
+import { Cmp, Register, Sete, Setge, Setle, Setne } from '../ASM/Register.js';
 import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, RegisterBlock, Sub } from '../ASM/Register.js';
 
 test('Check Register compiler v1', (t) => {
@@ -221,5 +221,134 @@ test('Check Register compiler v17', (t) => {
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
   block.run();
   t.equal(block.getRegValue('3'), 3, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v1', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '6', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.run();
+  t.equal(block.getRegValue('CF'), 1, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v2', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '6', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.run();
+  t.equal(block.getRegValue('CF'), 0, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v3', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '6', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setge('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 1, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v4', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setge('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 1, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v5', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '4', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setge('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 0, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v6', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '4', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Sete('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 0, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v7', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Sete('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 1, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v8', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setne('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 0, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v9', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '2', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setle('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 1, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v10', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setle('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 1, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v11', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '6', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.push(new Setle('3'))
+  block.run();
+  t.equal(block.getRegValue('3'), 0, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v12', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Cmp('1', '2'))
+  block.run();
+  t.equal(block.getRegValue('CF'), 0, 'returns');
   t.end();
 });
