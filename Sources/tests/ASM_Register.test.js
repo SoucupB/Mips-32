@@ -1,6 +1,7 @@
 import tap from 'tap'
 const { test } = tap;
-import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sub } from '../ASM/Register.js';
+import { Register } from '../ASM/Register.js';
+import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, RegisterBlock, Sub } from '../ASM/Register.js';
 
 test('Check Register compiler v1', (t) => {
   let block = new RegisterBlock();
