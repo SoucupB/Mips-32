@@ -124,7 +124,7 @@ export class Runner {
     this.stackPointer -= parseInt(instruction.bytes);
   }
 
-  jumpAtLabel(label) {
+  jumpAtRegisterLabel(label) {
     this.pc = this.getRegValue(label) - 1
   }
 
@@ -135,7 +135,7 @@ export class Runner {
         break;
       }
       case JmpTypes.REGISTER: {
-        this.jumpAtLabel(instruction.value)
+        this.jumpAtRegisterLabel(instruction.value)
         break;
       }
 
@@ -206,12 +206,12 @@ export class Runner {
   }
 
   setTest(instruction) {
-    this.register['zero_reg'] = !this.getRegValue(instruction.regA) && !this.getRegValue(instruction.regB);
+    this.register['zero_reg'] = this.booleanToNumber(this.getRegValue(instruction.regA) && this.getRegValue(instruction.regB));
   }
 
   setJz(instruction) {
     if('zero_reg' in this.register && !this.register['zero_reg']) {
-      this.jumpAtLabel(instruction.label)
+      this.pc = this.addresses[instruction.label]
     }
   }
 

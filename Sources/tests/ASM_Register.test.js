@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { Cmp, Register, Sete, Setge, Setle, Setne } from '../ASM/Register.js';
+import { Cmp, Jz, Register, Sete, Setge, Setle, Setne, Test } from '../ASM/Register.js';
 import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, RegisterBlock, Sub } from '../ASM/Register.js';
 
 test('Check Register compiler v1', (t) => {
@@ -347,8 +347,24 @@ test('Check Register compiler compiler cmp v12', (t) => {
   let block = new RegisterBlock();
   block.push(new Mov('1', '5', MovTypes.NUMBER_TO_REG))
   block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
-  block.push(new Cmp('1', '2'))
+  block.push(new Test('1', '2'))
+  block.push(new Jz('_SomeLabel'));
+  block.push(new Mov('3', '57', MovTypes.NUMBER_TO_REG))
+  block.push(new Label('_SomeLabel'))
   block.run();
-  t.equal(block.getRegValue('CF'), 0, 'returns');
+  t.equal(block.getRegValue('3'), 57, 'returns');
+  t.end();
+});
+
+test('Check Register compiler compiler cmp v13', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '0', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Test('1', '2'))
+  block.push(new Jz('_SomeLabel'));
+  block.push(new Mov('3', '57', MovTypes.NUMBER_TO_REG))
+  block.push(new Label('_SomeLabel'))
+  block.run();
+  t.equal(block.getRegValue('3'), 0, 'returns');
   t.end();
 });
