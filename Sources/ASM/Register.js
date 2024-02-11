@@ -68,12 +68,25 @@ export class Runner {
     this.initialStackPointer = 1024 * 1024 * 2;
     this.stackPointer = this.initialStackPointer;
     this.memory = new Array(1024 * 1024 * 24).fill(0);
+    this.addresses = {};
+
+    this.pc = 0;
+    this.saveLabelAddresses();
   }
 
   saveRegValue(dst, src) {
     if(src.toString() in this.register) {
       this.register[dst.toString()] = this.register[src.toString()];
       return ;
+    }
+  }
+
+  saveLabelAddresses() {
+    for(let i = 0, c = this.instructionArray.length; i < c; i++) {
+      const instruction = this.instructionArray[i];
+      if(instruction instanceof Label) {
+        this.addresses[instruction.label] = i;
+      }
     }
   }
 
@@ -172,22 +185,74 @@ export class Runner {
     this.stackPointer -= parseInt(instruction.bytes);
   }
 
+  runJump(instruction) {
+    switch(instruction.type) {
+      case JmpTypes.LABEL: {
+        this.pc = this.addresses[instruction.value]
+        break;
+      }
+      case JmpTypes.REGISTER: {
+        this.pc = this.addresses[this.getRegValue(instruction.label)]
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
+  }
+
+  runAdd(instruction) {
+    this.register[instruction.dst.toString()] = this.getRegValue(instruction.b) + this.getRegValue(instruction.c);
+  }
+
+  runMul(instruction) {
+    this.register[instruction.dst.toString()] = this.getRegValue(instruction.b) * this.getRegValue(instruction.c);
+  }
+
+  runSub(instruction) {
+    this.register[instruction.dst.toString()] = this.getRegValue(instruction.b) - this.getRegValue(instruction.c);
+  }
+
+  runMul(instruction) {
+    this.register[instruction.dst.toString()] = this.getRegValue(instruction.b) * this.getRegValue(instruction.c);
+  }
+
+  runDivAndMod(instruction) {
+    this.register['HI'] = Math.floor(this.getRegValue(instruction.a) / this.getRegValue(instruction.b));
+    this.register['LO'] = this.getRegValue(instruction.a) % this.getRegValue(instruction.b);
+  }
+
   runInstruction(instruction) {
     if(instruction instanceof Mov) {
-      this.runMov(instruction)
+      this.runMov(instruction);
     }
     if(instruction instanceof Push) {
-      this.runPush(instruction)
+      this.runPush(instruction);
     }
     if(instruction instanceof Pop) {
-      this.runPop(instruction)
+      this.runPop(instruction);
+    }
+    if(instruction instanceof Jmp) {
+      this.runJump(instruction);
+    }
+    if(instruction instanceof Add) {
+      this.runAdd(instruction);
+    }
+    if(instruction instanceof Div) {
+      this.runDivAndMod(instruction);
+    }
+    if(instruction instanceof Sub) {
+      this.runSub(instruction);
+    }
+    if(instruction instanceof Mul) {
+      this.runMul(instruction);
     }
   }
 
   run() {
-    for(let i = 0, c = this.instructionArray.length; i < c; i++) {
-      const currentInstruction = this.instructionArray[i];
-      this.runInstruction(currentInstruction);
+    for(this.pc = 0; this.pc < this.instructionArray.length; this.pc++) {
+      this.runInstruction(this.instructionArray[this.pc]);
     }
   }
 }
