@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { Mov, MovTypes, Register, RegisterBlock } from '../ASM/Register.js';
+import { Mov, MovTypes, Pop, Push, Register, RegisterBlock } from '../ASM/Register.js';
 
 test('Check Register compiler v1', (t) => {
   let block = new RegisterBlock();
@@ -53,5 +53,46 @@ test('Check Register compiler v5', (t) => {
   block.push(new Mov('5', '5666', MovTypes.MEM_TO_REG))
   block.run();
   t.equal(block.getRegValue(5), 43252626, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v6', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('4', '43252626', MovTypes.NUMBER_TO_REG))
+  block.push(new Push('4'));
+  block.push(new Mov('5', '4', MovTypes.STACK_TO_REG))
+  block.run();
+  t.equal(block.getRegValue(5), 43252626, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v7', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('4', '43252626', MovTypes.NUMBER_TO_REG))
+  block.push(new Push('4'));
+  block.push(new Mov('5', '4', MovTypes.STACK_TO_REG))
+  block.run();
+  t.equal(block.getRegValue(5), 43252626, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v8', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('3', '556677', MovTypes.NUMBER_TO_REG))
+  block.push(new Push('1'));
+  block.push(new Push('2'));
+  block.push(new Push('3'));
+  block.push(new Mov('9', '4', MovTypes.STACK_TO_REG))
+  block.push(new Pop(4))
+  block.push(new Mov('8', '4', MovTypes.STACK_TO_REG))
+  block.push(new Pop(4))
+  block.push(new Mov('7', '4', MovTypes.STACK_TO_REG))
+  block.push(new Pop(4))
+  block.run();
+  t.equal(block.getRegValue(9), 556677, 'returns');
+  t.equal(block.getRegValue(8), 999888, 'returns');
+  t.equal(block.getRegValue(7), 42342, 'returns');
   t.end();
 });

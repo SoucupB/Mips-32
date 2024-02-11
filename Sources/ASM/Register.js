@@ -77,6 +77,10 @@ export class Runner {
     }
   }
 
+  currentStackPointer() {
+    return this.stackPointer;
+  }
+
   getRegValue(reg) {
     if(reg.toString() in this.register) {
       return parseInt(this.register[reg.toString()]);
@@ -118,6 +122,15 @@ export class Runner {
     this.register[reg.toString()] = number;
   }
 
+  saveStackInReg(memPointer, reg) {
+    let memoryStack = this.stackPointer - parseInt(memPointer)
+    let number = this.memory[memoryStack] + 
+                 this.memory[memoryStack + 1] * 256 + 
+                 this.memory[memoryStack + 2] * 256 * 256 + 
+                 this.memory[memoryStack + 3] * 256 * 256 * 256;
+    this.register[reg] = number;
+  }
+
   runMov(instruction) {
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
@@ -140,15 +153,34 @@ export class Runner {
         this.saveMemInReg(instruction.src, instruction.dst);
         break;
       }
+      case MovTypes.STACK_TO_REG: {
+        this.saveStackInReg(instruction.src, instruction.dst);
+        break;
+      }
       default: {
         break;
       }
     }
   }
 
+  runPush(instruction) {
+    this.saveRegInStack(0, instruction.register);
+    this.stackPointer += 4;
+  }
+
+  runPop(instruction) {
+    this.stackPointer -= parseInt(instruction.bytes);
+  }
+
   runInstruction(instruction) {
     if(instruction instanceof Mov) {
       this.runMov(instruction)
+    }
+    if(instruction instanceof Push) {
+      this.runPush(instruction)
+    }
+    if(instruction instanceof Pop) {
+      this.runPop(instruction)
     }
   }
 
