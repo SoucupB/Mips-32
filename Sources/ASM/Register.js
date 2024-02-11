@@ -57,6 +57,10 @@ export class RegisterBlock {
     return this.runner.getRegValue(reg)
   }
 
+  getOutputBuffer() {
+    return this.runner.getOutputBuffer();
+  }
+
   run() {
     this.runner = (new Runner(this.flatten().block));
     this.runner.run();
@@ -343,5 +347,32 @@ export class Prp extends Register { // pseudoinstruction. Sets the values of the
 
   toString() {
     return `PRP $${this.reg} ${this.offset}`
+  }
+}
+
+export const PrintTypes = {
+  MEMORY: 1,
+  REGISTER: 2
+}
+
+export class Print extends Register {
+  constructor(value, type = PrintTypes.REGISTER) {
+    super();
+    this.value = value;
+    this.type = type;
+  }
+
+  toString() {
+    switch(this.type) {
+      case PrintTypes.REGISTER: {
+        return `PRR $${this.value} 4`
+      }
+      case PrintTypes.REGISTER: {
+        return `PRR [${this.value}] 4`
+      }
+      default: {
+        break;
+      }
+    }
   }
 }

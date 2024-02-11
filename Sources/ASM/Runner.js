@@ -1,4 +1,4 @@
-import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from './Register.js';
+import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test, Print } from './Register.js';
 
 export class Runner {
   constructor(instructionArray) {
@@ -8,6 +8,8 @@ export class Runner {
     this.stackPointer = this.initialStackPointer;
     this.memory = new Array(1024 * 1024 * 24).fill(0);
     this.addresses = {};
+
+    this.outputBuffer = '' // temorary method;
 
     this.pc = 0;
     this.saveLabelAddresses();
@@ -215,6 +217,10 @@ export class Runner {
     }
   }
 
+  setPrint(instruction) {
+    this.outputBuffer += this.getRegValue(instruction.value);
+  }
+
   runInstruction(instruction) {
     if(instruction instanceof Mov) {
       this.runMov(instruction);
@@ -269,6 +275,13 @@ export class Runner {
     if(instruction instanceof Jz) {
       this.setJz(instruction)
     }
+    if(instruction instanceof Print) {
+      this.setPrint(instruction)
+    }
+  }
+
+  getOutputBuffer() {
+    return this.outputBuffer;
   }
 
   run() {

@@ -61,6 +61,10 @@ export class ExpressionTree {
     return registerMem.registerFromID(expression.expressionTree.root.nodeID)
   }
 
+  getRegister(registerMem) {
+    return registerMem.registerFromID(this.root.nodeID)
+  }
+
   getNodeMethodCallRegisterResponse(node, block, registerStack, registerMem) {
     const children = node.childrenChomps;
 
