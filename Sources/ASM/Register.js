@@ -192,7 +192,7 @@ export class Runner {
         break;
       }
       case JmpTypes.REGISTER: {
-        this.pc = this.addresses[this.getRegValue(instruction.label)]
+        this.pc = this.getRegValue(instruction.value) - 1
         break;
       }
 
@@ -223,6 +223,10 @@ export class Runner {
     this.register['LO'] = this.getRegValue(instruction.a) % this.getRegValue(instruction.b);
   }
 
+  runPrp(instruction) {
+    this.register[instruction.reg.toString()] = this.pc + instruction.offset;
+  }
+
   runInstruction(instruction) {
     if(instruction instanceof Mov) {
       this.runMov(instruction);
@@ -247,6 +251,9 @@ export class Runner {
     }
     if(instruction instanceof Mul) {
       this.runMul(instruction);
+    }
+    if(instruction instanceof Prp) {
+      this.runPrp(instruction);
     }
   }
 

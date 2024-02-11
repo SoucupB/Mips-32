@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { Add, Div, Jmp, Label, Mov, MovTypes, Mul, Pop, Push, Register, RegisterBlock, Sub } from '../ASM/Register.js';
+import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sub } from '../ASM/Register.js';
 
 test('Check Register compiler v1', (t) => {
   let block = new RegisterBlock();
@@ -116,10 +116,9 @@ test('Check Register compiler v9', (t) => {
   let block = new RegisterBlock();
   block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
-  block.push(new Jmp('_Assignation'))
-  block.push(new Label('_Assignation'));
+  block.push(new Mov('5', '4', MovTypes.NUMBER_TO_REG))
+  block.push(new Jmp('5', JmpTypes.REGISTER));
   block.push(new Mov('3', '6744', MovTypes.NUMBER_TO_REG))
-  block.push(new Label('_yolo'));
   block.push(new Mov('9', '116744', MovTypes.NUMBER_TO_REG))
   block.run();
   t.equal(block.getRegValue(9), 116744, 'returns');
@@ -131,14 +130,32 @@ test('Check Register compiler v10', (t) => {
   let block = new RegisterBlock();
   block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
-  block.push(new Div('2', '1'))
+  block.push(new Mov('5', '5', MovTypes.NUMBER_TO_REG))
+  block.push(new Jmp('5', JmpTypes.REGISTER));
+  block.push(new Mov('3', '6744', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('9', '116744', MovTypes.NUMBER_TO_REG))
   block.run();
-  t.equal(block.getRegValue('HI'), 23, 'returns');
-  t.equal(block.getRegValue('LO'), 26022, 'returns');
+  t.equal(block.getRegValue(9), 116744, 'returns');
+  t.equal(block.getRegValue(3), 0, 'returns');
   t.end();
 });
 
 test('Check Register compiler v11', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
+  block.push(new Jmp('_Assignation'))
+  block.push(new Label('_Assignation'));
+  block.push(new Mov('3', '6744', MovTypes.NUMBER_TO_REG))
+  block.push(new Label('_yolo'));
+  block.push(new Mov('9', '116744', MovTypes.NUMBER_TO_REG))
+  block.run();
+  t.equal(block.getRegValue(9), 116744, 'returns');
+  t.equal(block.getRegValue(3), 6744, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v12', (t) => {
   let block = new RegisterBlock();
   block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
@@ -149,7 +166,18 @@ test('Check Register compiler v11', (t) => {
   t.end();
 });
 
-test('Check Register compiler v12', (t) => {
+test('Check Register compiler v13', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
+  block.push(new Div('2', '1'))
+  block.run();
+  t.equal(block.getRegValue('HI'), 23, 'returns');
+  t.equal(block.getRegValue('LO'), 26022, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v14', (t) => {
   let block = new RegisterBlock();
   block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
@@ -159,7 +187,7 @@ test('Check Register compiler v12', (t) => {
   t.end();
 });
 
-test('Check Register compiler v13', (t) => {
+test('Check Register compiler v15', (t) => {
   let block = new RegisterBlock();
   block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
@@ -170,5 +198,27 @@ test('Check Register compiler v13', (t) => {
   block.run();
   t.equal(block.getRegValue('3'), 957546, 'returns');
   t.equal(block.getRegValue('7'), 15, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v16', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
+  block.push(new Prp('3', 0))
+  block.run();
+  t.equal(block.getRegValue('3'), 2, 'returns');
+  t.end();
+});
+
+test('Check Register compiler v17', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
+  block.push(new Prp('3', 1))
+  block.push(new Mov('1', '42342', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
+  block.run();
+  t.equal(block.getRegValue('3'), 3, 'returns');
   t.end();
 });
