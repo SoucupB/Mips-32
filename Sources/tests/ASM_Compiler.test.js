@@ -109,8 +109,7 @@ test('Check Compiler checker v7', (t) => {
     'MOV $0 1',
     'MOV $1 4',
     'CMP $0 $1',
-    'MOV $2 1',
-    'SUB $2 $2 $CF',
+    'MOV $2 $CT',
     'PUSH $2',
     'POP 4'
   ].toString(), 'returns');
