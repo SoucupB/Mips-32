@@ -185,6 +185,7 @@ export class Runner {
     this.register['_setNe'] = this.booleanToNumber(this.getRegValue(instruction.regA) != this.getRegValue(instruction.regB));
     this.register['_setLe'] = this.booleanToNumber(this.getRegValue(instruction.regA) <= this.getRegValue(instruction.regB));
     this.register['CF'] = this.booleanToNumber(this.getRegValue(instruction.regA) < this.getRegValue(instruction.regB));
+    this.register['CT'] = this.booleanToNumber(this.getRegValue(instruction.regA) > this.getRegValue(instruction.regB));
   }
 
   setGe(instruction) {

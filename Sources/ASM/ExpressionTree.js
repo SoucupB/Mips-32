@@ -116,7 +116,7 @@ export class ExpressionTree {
 
   findRegisterForNode(node, registerMem) {
     const returnedData = registerMem.isNodeIDUsed(node.nodeID);
-    if(returnedData) {
+    if(returnedData != null) {
       return returnedData
     }
     const freeRegister = registerMem.findUnusedRegister();
@@ -337,14 +337,10 @@ export class ExpressionTree {
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
+    block.push(new Mov(freeBufferRegister, 'CT', MovTypes.REG_TO_REG));
 
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
-    
-    let swapingBuffer = this.findRegisterForNode(node, registerMem); // x = 1 - x in order to invert the flag value.
-    block.push(new Mov(swapingBuffer, '1', MovTypes.NUMBER_TO_REG));
-    block.push(new Sub(freeBufferRegister, swapingBuffer, 'CF'));
-    registerMem.freeRegister(swapingBuffer);
   }
 
   doubleAnd_InstructionSet(node, block, registerMem, registerStack) {
