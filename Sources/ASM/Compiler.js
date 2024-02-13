@@ -155,9 +155,9 @@ export class Compiler {
     block.push(new Test(responseRegister, responseRegister));
     block.push(new Jz(jumpOverLabel));
     block.push(this.compileBlock(blockPart));
-    block.push(new Jmp(jumpBackLabel));
 
     block.push(this.compileAssignation(lastPart))
+    block.push(new Jmp(jumpBackLabel));
     block.push(new Label(jumpOverLabel))
     block.push(new Pop(this.registerStack.getFreezeTopDiff()))
     this.registerStack.pop();

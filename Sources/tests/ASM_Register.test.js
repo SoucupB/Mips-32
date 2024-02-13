@@ -741,7 +741,7 @@ test('Check Register compiler compiler Program v2', (t) => {
 });
 
 test('Check Register compiler compiler Program v3', (t) => {
-  const chomp = CodeBlock.chomp('{int a=0,b=1,n=13,result=0;for(int i=0;i<13;i=i+1){int c=a+b;a=b;b=c;i=i+1;}result=b;}', 0) // bug
+  const chomp = CodeBlock.chomp('{int a=0,b=1,n=13,result=0;for(int i=0;i<13;i=i+1){int c=a+b;a=b;b=c;}result=b;}', 0) // bug
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
   asmBlock.push(new Print('12', PrintTypes.MEMORY))
@@ -773,17 +773,17 @@ test('Check Register compiler compiler Program v5', (t) => {
   t.end();
 });
 
-test('Check Register compiler compiler Program v5', (t) => {
+test('Check Register compiler compiler Program v6', (t) => {
   const chomp = CodeBlock.chomp('{int sum=0;for(int i=0;i<100;i=i+1){if(i%2==0){sum=sum+i;}}}', 0)
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
   // asmBlock.push(new Print('12', PrintTypes.MEMORY))
-  console.log(asmBlock.toString())
-  // asmBlock.push(new Print('0', PrintTypes.MEMORY))
-  // asmBlock.run();
+  // console.log(asmBlock.toString())
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run();
   // console.log(asmBlock.runner.printPointerBytes(20))
   // console.log(asmBlock.getOutputBuffer())
-  // t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
+  t.equal(asmBlock.getOutputBuffer(), '2450', 'returns');
 
   t.end();
 });
