@@ -1,4 +1,4 @@
-import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test, Print } from './Register.js';
+import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test, Print, PrintTypes } from './Register.js';
 
 export class Runner {
   constructor(instructionArray) {
@@ -42,6 +42,15 @@ export class Runner {
     return 0;
   }
 
+  printPointerBytes(nrOfBytes) {
+    let response = [];
+    for(let i = 0; i < nrOfBytes; i++) {
+      response.push(this.memory[this.stackPointer + i]);
+    }
+
+    return response.join(' ');
+  }
+
   numberToByteArray(number) {
     const byteArray = new Array(4).fill(0);
     byteArray[0] = number & 0xFF;
@@ -83,6 +92,14 @@ export class Runner {
                  this.memory[memoryStack + 2] * 256 * 256 + 
                  this.memory[memoryStack + 3] * 256 * 256 * 256;
     this.register[reg] = number;
+  }
+
+  numberFromPointer(pointer) {
+    let number = this.memory[pointer] + 
+                 this.memory[pointer + 1] * 256 + 
+                 this.memory[pointer + 2] * 256 * 256 + 
+                 this.memory[pointer + 3] * 256 * 256 * 256;
+    return number;
   }
 
   runMov(instruction) {
@@ -219,7 +236,20 @@ export class Runner {
   }
 
   setPrint(instruction) {
-    this.outputBuffer += this.getRegValue(instruction.value);
+    switch(instruction.type) {
+      case PrintTypes.REGISTER: {
+        this.outputBuffer += this.getRegValue(instruction.value);
+        break;
+      }
+      case PrintTypes.MEMORY: {
+        this.outputBuffer += this.numberFromPointer(parseInt(instruction.value) + this.initialStackPointer);
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
   }
 
   runInstruction(instruction) {

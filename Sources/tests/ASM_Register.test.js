@@ -1,11 +1,13 @@
 import tap from 'tap'
 const { test } = tap;
-import { Cmp, Jz, Print, Register, Sete, Setge, Setle, Setne, Test } from '../ASM/Register.js';
+import { Cmp, Jz, Print, PrintTypes, Register, Sete, Setge, Setle, Setne, Test } from '../ASM/Register.js';
 import { Add, Div, Jmp, JmpTypes, Label, Mov, MovTypes, Mul, Pop, Prp, Push, RegisterBlock, Sub } from '../ASM/Register.js';
 import Expression from '../AST/Expression.js';
 import { ExpressionTree } from '../ASM/ExpressionTree.js';
 import { RegisterMem } from '../ASM/RegisterMem.js';
 import { RegisterStack } from '../ASM/RegisterStack.js';
+import { CodeBlock } from '../AST/CodeBlock.js';
+import { Compiler } from '../ASM/Compiler.js';
 
 test('Check Register compiler v1', (t) => {
   let block = new RegisterBlock();
@@ -712,6 +714,76 @@ test('Check Register compiler compiler Expression v19', (t) => {
   asmBlock.run();
 
   t.equal(asmBlock.getOutputBuffer(), '1', 'returns');
+
+  t.end();
+});
+
+test('Check Register compiler compiler Program v1', (t) => {
+  const chomp = CodeBlock.chomp('{int a=123,b=0;while(a!=0){b=b*10;b=b+a%10;a=a/10;}}', 0) // bug
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  asmBlock.push(new Print('4', PrintTypes.MEMORY))
+  asmBlock.run();
+  t.equal(asmBlock.getOutputBuffer(), '321', 'returns');
+
+  t.end();
+});
+
+test('Check Register compiler compiler Program v2', (t) => {
+  const chomp = CodeBlock.chomp('{int a=0,b=1,n=13,i=0,result=0;while(i<n){int c=a+b;a=b;b=c;i=i+1;}result=b;}', 0) // bug
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  asmBlock.push(new Print('16', PrintTypes.MEMORY))
+  asmBlock.run();
+  t.equal(asmBlock.getOutputBuffer(), '377', 'returns');
+
+  t.end();
+});
+
+test('Check Register compiler compiler Program v3', (t) => {
+  const chomp = CodeBlock.chomp('{int a=0,b=1,n=13,result=0;for(int i=0;i<13;i=i+1){int c=a+b;a=b;b=c;i=i+1;}result=b;}', 0) // bug
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  asmBlock.push(new Print('12', PrintTypes.MEMORY))
+  asmBlock.run();
+  t.equal(asmBlock.getOutputBuffer(), '377', 'returns');
+
+  t.end();
+});
+
+test('Check Register compiler compiler Program v4', (t) => {
+  const chomp = CodeBlock.chomp('{int a=0,b=5;if(b%2==0){a=b;}}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run();
+  t.equal(asmBlock.getOutputBuffer(), '0', 'returns');
+
+  t.end();
+});
+
+test('Check Register compiler compiler Program v5', (t) => {
+  const chomp = CodeBlock.chomp('{int a=0,b=5;if(b%2!=0){a=b;}}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run();
+  t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
+
+  t.end();
+});
+
+test('Check Register compiler compiler Program v5', (t) => {
+  const chomp = CodeBlock.chomp('{int sum=0;for(int i=0;i<100;i=i+1){if(i%2==0){sum=sum+i;}}}', 0)
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  // asmBlock.push(new Print('12', PrintTypes.MEMORY))
+  console.log(asmBlock.toString())
+  // asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  // asmBlock.run();
+  // console.log(asmBlock.runner.printPointerBytes(20))
+  // console.log(asmBlock.getOutputBuffer())
+  // t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
 
   t.end();
 });

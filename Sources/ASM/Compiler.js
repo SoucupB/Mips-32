@@ -1,5 +1,6 @@
 import { Assignation } from "../AST/Assignation.js";
 import { CodeBlock } from "../AST/CodeBlock.js";
+import { ConditionalBlocks } from "../AST/ConditionalBlocks.js";
 import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
@@ -125,19 +126,42 @@ export class Compiler {
     let block = new RegisterBlock();
     const children = child.childrenChomps;
 
-    // let expressionChompTester = children[0];
-    // let codeBlock = children[1];
-    // const jumpBackLabel = `_label${this.nextLabel()}`;
+    let firstPart = children[0];
+    let middlePart = children[1];
+    let lastPart = children[2];
+    let blockPart = children[3];
 
-    // block.push(new Label(jumpBackLabel))
-    // this.createExpressionAsm(expressionChompTester, block);
-    // const responseRegister = this.getExpressionRegister(expressionChompTester);
-    // const jumpOverLabel = `_label${this.nextLabel()}`;
-    // block.push(new Test(responseRegister, responseRegister));
-    // block.push(new Jz(jumpOverLabel));
-    // block.push(this.compileBlock(codeBlock))
-    // block.push(new Jmp(jumpBackLabel));
-    // block.push(new Label(jumpOverLabel))
+    this.registerStack.freeze();
+    block.push(new Label(`_startForLoop${this.nextLabel()}`))
+    switch(firstPart.type) {
+      case Initialization: {
+        block.push(this.compileInitialization(firstPart))
+        break;
+      }
+      case Assignation: {
+        block.push(this.compileAssignation(firstPart))
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
+    const jumpBackLabel = `_label${this.nextLabel()}`;
+    block.push(new Label(jumpBackLabel))
+    this.createExpressionAsm(middlePart, block);
+    const responseRegister = this.getExpressionRegister(middlePart);
+    const jumpOverLabel = `_label${this.nextLabel()}`;
+    block.push(new Test(responseRegister, responseRegister));
+    block.push(new Jz(jumpOverLabel));
+    block.push(this.compileBlock(blockPart));
+    block.push(new Jmp(jumpBackLabel));
+
+    block.push(this.compileAssignation(lastPart))
+    block.push(new Label(jumpOverLabel))
+    block.push(new Pop(this.registerStack.getFreezeTopDiff()))
+    this.registerStack.pop();
+
     return block;
   }
 
@@ -148,6 +172,10 @@ export class Compiler {
       }
       case 'for': {
         return this.compileFor(child);
+      }
+
+      default: {
+        break;
       }
     }
     
@@ -166,6 +194,25 @@ export class Compiler {
     block.push(new Jmp('ret', JmpTypes.REGISTER));
     this.registerMem.freeRegister(expressionRegister);
 
+    return block;
+  }
+
+  compileConditionalBlock(child) {
+    let block = new RegisterBlock();
+    const children = child.childrenChomps;
+
+    const conditionalExpression = children[0];
+    const contitionalBlock = children[1];
+
+    this.createExpressionAsm(conditionalExpression, block);
+
+    const responseRegister = this.getExpressionRegister(conditionalExpression);
+    const jumpOverLabel = `_label${this.nextLabel()}`;
+    block.push(new Test(responseRegister, responseRegister));
+    block.push(new Jz(jumpOverLabel));
+    block.push(this.compileBlock(contitionalBlock))
+    block.push(new Label(jumpOverLabel));
+    
     return block;
   }
 
@@ -197,6 +244,10 @@ export class Compiler {
         }
         case ReturnMethod: {
           block.push(this.compileReturnMethod(child))
+          break;
+        }
+        case ConditionalBlocks: {
+          block.push(this.compileConditionalBlock(child));
           break;
         }
         default: {
