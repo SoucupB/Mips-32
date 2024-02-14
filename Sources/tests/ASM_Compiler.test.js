@@ -228,13 +228,14 @@ import { Program } from '../AST/Program.js';
 // });
 
 test('Check Compiler checker v13 (Full Program).', (t) => {
-  const program = new Program('int fibboRecursive(int n){return 0;}int main(){int b=fibboRecursive(5);return 0;}')
+  const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)+1;}void main(){int b=fibboRecursive(134);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
   console.log(asmBlock.toString())
   asmBlock.run()
+  console.log(asmBlock.runner.printPointerBytes(50))
 
   t.end();
 });

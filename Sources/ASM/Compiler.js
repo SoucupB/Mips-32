@@ -260,6 +260,24 @@ export class Compiler {
     return block;
   }
 
+  isMethodMain(methodName) {
+    if(methodName.buffer == 'main') {
+      return true;
+    }
+
+    return false;
+  }
+
+  compileMainMethod(methodName, methodBlock) {
+    let block = new RegisterBlock();
+
+    const methodBlockNameLabel = `_${methodName}`;
+    block.push(new Label(methodBlockNameLabel));
+    block.push(this.compileBlock(methodBlock));
+
+    return block;
+  }
+
   compileMethods(method) {
     const children = method.childrenChomps;
     let block = new RegisterBlock();
@@ -269,6 +287,10 @@ export class Compiler {
     const methodBlock = children[2];
 
     const methodName = methodHeader.childrenChomps[1];
+
+    if(this.isMethodMain(methodName)) {
+      return this.compileMainMethod(methodName.buffer, methodBlock);
+    }
 
     const methodBlockNameLabel = `_${methodName}`;
     block.push(new Label(methodBlockNameLabel));
