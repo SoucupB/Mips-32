@@ -173,14 +173,31 @@ export class Push extends Register {
   }
 }
 
+export const PopTypes = {
+  BYTES: 1,
+  REGISTER: 2
+}
+
 export class Pop extends Register {
-  constructor(bytes) {
+  constructor(bytes, type = PopTypes.BYTES) {
     super();
     this.bytes = bytes;
+    this.type = type;
   }
 
   toString() {
-    return `POP ${this.bytes}`
+    switch(this.type) {
+      case PopTypes.BYTES: {
+        return `POP ${this.bytes}`;
+      }
+      case PopTypes.REGISTER: {
+        return `POP $${this.bytes}`;
+      }
+      default: {
+        break;
+      }
+    }
+    return '';
   }
 }
 

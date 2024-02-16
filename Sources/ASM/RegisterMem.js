@@ -36,7 +36,11 @@ export class RegisterMem {
   }
 
   freeRegister(reg) {
-    delete this.registerToID[reg];
-    delete this.IDToRegisters[this.registerToID[reg]];
+    if(reg in this.registerToID) {
+      delete this.registerToID[reg];
+    }
+    if(this.registerToID[reg] in this.IDToRegisters) {
+      delete this.IDToRegisters[this.registerToID[reg]];
+    }
   }
 }
