@@ -15,6 +15,16 @@ export class RegisterMem {
     return null;
   }
 
+  getUsedRegisters() {
+    let registers = [];
+
+    for(const [key, _] of Object.entries(this.registerToID)) {
+      registers.push(key);
+    }
+
+    return registers;
+  }
+
   registerFromID(nodeID) {
     return this.IDToRegisters[nodeID];
   }
@@ -36,11 +46,11 @@ export class RegisterMem {
   }
 
   freeRegister(reg) {
-    if(reg in this.registerToID) {
-      delete this.registerToID[reg];
-    }
     if(this.registerToID[reg] in this.IDToRegisters) {
       delete this.IDToRegisters[this.registerToID[reg]];
+    }
+    if(reg in this.registerToID) {
+      delete this.registerToID[reg];
     }
   }
 }

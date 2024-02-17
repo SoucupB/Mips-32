@@ -115,6 +115,7 @@ export class Compiler {
     const responseRegister = this.getExpressionRegister(expressionChompTester);
     const jumpOverLabel = `_label${this.nextLabel()}`;
     block.push(new Test(responseRegister, responseRegister));
+    this.registerMem.freeRegister(responseRegister);
     block.push(new Jz(jumpOverLabel));
     block.push(this.compileBlock(codeBlock))
     block.push(new Jmp(jumpBackLabel));
@@ -153,6 +154,7 @@ export class Compiler {
     const responseRegister = this.getExpressionRegister(middlePart);
     const jumpOverLabel = `_label${this.nextLabel()}`;
     block.push(new Test(responseRegister, responseRegister));
+    this.registerMem.freeRegister(responseRegister);
     block.push(new Jz(jumpOverLabel));
     block.push(this.compileBlock(blockPart));
 
@@ -209,6 +211,7 @@ export class Compiler {
     const responseRegister = this.getExpressionRegister(conditionalExpression);
     const jumpOverLabel = `_label${this.nextLabel()}`;
     block.push(new Test(responseRegister, responseRegister));
+    this.registerMem.freeRegister(responseRegister);
     block.push(new Jz(jumpOverLabel));
     block.push(this.compileBlock(contitionalBlock))
     block.push(new Label(jumpOverLabel));
@@ -243,7 +246,7 @@ export class Compiler {
           break;
         }
         case ReturnMethod: {
-          block.push(this.compileReturnMethod(child))
+          block.push(this.compileReturnMethod(child));
           break;
         }
         case ConditionalBlocks: {

@@ -2,7 +2,7 @@ import Constant from "../AST/Constant.js";
 import Expression from "../AST/Expression.js";
 import { MethodCall } from "../AST/Methods.js";
 import Variable from "../AST/Variable.js";
-import { Add, Cmp, Div, Jmp, Mov, MovTypes, Mul, Or, Pop, Prp, Push, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from "./Register.js";
+import { Add, Cmp, Div, Jmp, Mov, MovTypes, Mul, Or, Pop, PopTypes, Prp, Push, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from "./Register.js";
 
 let nodeID = 0;
 
@@ -194,13 +194,12 @@ export class ExpressionTree {
     if(this.isLeaf(node.right)) {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
-
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Div(freeRegisterSrc, freeRegisterDst));
-    block.push(new Mov(freeBufferRegister, 'HI', MovTypes.REG_TO_REG))
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Mov(freeBufferRegister, 'HI', MovTypes.REG_TO_REG))
   }
 
   reminder_InstructionSet(node, block, registerMem, registerStack) {
@@ -215,12 +214,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Div(freeRegisterSrc, freeRegisterDst));
-    block.push(new Mov(freeBufferRegister, 'LO', MovTypes.REG_TO_REG))
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Mov(freeBufferRegister, 'LO', MovTypes.REG_TO_REG))
   }
 
   equal_InstructionSet(node, block, registerMem, registerStack) {
@@ -235,12 +234,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Sete(freeBufferRegister));
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+    
+    block.push(new Sete(freeBufferRegister));
   }
 
   setGe_InstructionSet(node, block, registerMem, registerStack) {
@@ -255,12 +254,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Setge(freeBufferRegister));
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Setge(freeBufferRegister));
   }
 
   setLe_InstructionSet(node, block, registerMem, registerStack) {
@@ -275,12 +274,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Setle(freeBufferRegister));
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Setle(freeBufferRegister));
   }
 
   notEqual_InstructionSet(node, block, registerMem, registerStack) {
@@ -295,12 +294,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Setne(freeBufferRegister));
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Setne(freeBufferRegister));
   }
 
   less_InstructionSet(node, block, registerMem, registerStack) {
@@ -315,12 +314,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Mov(freeBufferRegister, 'CF', MovTypes.REG_TO_REG));
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Mov(freeBufferRegister, 'CF', MovTypes.REG_TO_REG));
   }
 
   more_InstructionSet(node, block, registerMem, registerStack) {
@@ -335,12 +334,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    block.push(new Mov(freeBufferRegister, 'CT', MovTypes.REG_TO_REG));
-
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+
+    block.push(new Mov(freeBufferRegister, 'CT', MovTypes.REG_TO_REG));
   }
 
   doubleAnd_InstructionSet(node, block, registerMem, registerStack) {
@@ -355,12 +354,12 @@ export class ExpressionTree {
       block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
 
-    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
-    block.push(new Test(freeRegisterSrc, freeRegisterDst));
-    block.push(new Setnz(freeBufferRegister));
-
+    block.push(new Test(freeRegisterSrc, freeRegisterDst));  
     registerMem.freeRegister(freeRegisterSrc);
     registerMem.freeRegister(freeRegisterDst);
+
+    let freeBufferRegister = this.findRegisterForNode(node, registerMem);
+    block.push(new Setnz(freeBufferRegister));
   }
 
   doubleOr_InstructionSet(node, block, registerMem, registerStack) {
