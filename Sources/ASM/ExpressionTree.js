@@ -128,258 +128,149 @@ export class ExpressionTree {
     return !node.left && !node.right;
   }
 
-  add_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+  movAndGetFreeRegisters(node, block, registerMem, registerStack) {
+    let left = this.findRegisterForNode(node.left, registerMem);
+    let right = this.findRegisterForNode(node.right, registerMem);
     
     if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
+      block.push(new Mov(left, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
     }
     if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
+      block.push(new Mov(right, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
     }
+
+    return [left, right]
+  }
+
+  freeRegisters(registerArray, registerMem) {
+    for(let i = 0, c = registerArray.length; i < c; i++) {
+      registerMem.freeRegister(registerArray[i]);
+    }
+  }
+
+  add_InstructionSet(node, block, registerMem, registerStack) {
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Add(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
 
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }
 
   sub_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-    
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Sub(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
-
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }
 
   mul_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Mul(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
 
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }
 
   div_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
     block.push(new Div(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Mov(freeBufferRegister, 'HI', MovTypes.REG_TO_REG))
   }
 
   reminder_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Div(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Mov(freeBufferRegister, 'LO', MovTypes.REG_TO_REG))
   }
 
   equal_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     
     block.push(new Sete(freeBufferRegister));
   }
 
   setGe_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Setge(freeBufferRegister));
   }
 
   setLe_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Setle(freeBufferRegister));
   }
 
   notEqual_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Setne(freeBufferRegister));
   }
 
   less_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Mov(freeBufferRegister, 'CF', MovTypes.REG_TO_REG));
   }
 
   more_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Cmp(freeRegisterSrc, freeRegisterDst));
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
     block.push(new Mov(freeBufferRegister, 'CT', MovTypes.REG_TO_REG));
   }
 
   doubleAnd_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     block.push(new Test(freeRegisterSrc, freeRegisterDst));  
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Setnz(freeBufferRegister));
   }
 
   doubleOr_InstructionSet(node, block, registerMem, registerStack) {
-    let freeRegisterSrc = this.findRegisterForNode(node.left, registerMem);
-    let freeRegisterDst = this.findRegisterForNode(node.right, registerMem);
-
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(freeRegisterSrc, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    }
-    
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(freeRegisterDst, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
+    let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Or(freeRegisterSrc, freeRegisterDst));
     block.push(new Setnz(freeBufferRegister));
-
-    registerMem.freeRegister(freeRegisterSrc);
-    registerMem.freeRegister(freeRegisterDst);
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }
 
   addInstructionToBlock_t(node, block, registerMem, registerStack) {
