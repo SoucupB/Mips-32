@@ -71,7 +71,7 @@ export class ExpressionTree {
   }
 
   getNodeMethodCallRegisterResponse(node, block, registerStack, registerMem) {
-    const children = node.childrenChomps;
+    const children = node.chomp.childrenChomps;
 
     const methodName = children[0];
     const methodParamsExpressions = children[1].childrenChomps;
@@ -79,6 +79,7 @@ export class ExpressionTree {
     registerStack.freeze();
     for(let i = 0, c = methodParamsExpressions.length; i < c; i++) {
       const currentExpression = methodParamsExpressions[i];
+
       currentExpression.expressionTree.addInstructionToBlockWithOrder(block, registerMem, registerStack);
       const expressionResultRegister = this.getExpressionRegister(currentExpression, registerMem);
       block.push(new Push(expressionResultRegister));
@@ -91,15 +92,15 @@ export class ExpressionTree {
     block.push(new Jmp(`_${methodName.buffer}`));
     block.push(new Pop(registerStack.getFreezeTopDiff()));
     registerStack.pop();
-    // block.push(new Push('rsp'))
-    // registerStack.push(node.nodeID, 4);
+    block.push(new Push('rsp'))
+    registerStack.push(node.nodeID, 4);
     return 'rsp';
   }
 
   getNodeValue(node, block, registerStack, registerMem) {
     const isMethodCall = this.isNodeMethodCall(node);
     if(isMethodCall) {
-      return this.getNodeMethodCallRegisterResponse(node.chomp, block, registerStack, registerMem);
+      return this.getNodeMethodCallRegisterResponse(node, block, registerStack, registerMem);
     }
     const isVariable = this.isNodeVariable(node);
     if(!isVariable) {
@@ -137,16 +138,49 @@ export class ExpressionTree {
   }
 
   addMethodToAsm(node, block, registerMem, registerStack) {
-    let movInstructions = [];
+    let response = [null, null];
+    let registers = [null, null];
 
-    if(this.isNodeMethodCall(node.left)) {
-      const left = node.left;
-      this.getNodeMethodCallRegisterResponse(left.chomp, block, registerStack, registerMem);
+    const left = node.left;
+    const right = node.right;
+    let nodes = [left, right];
+
+    // console.log("MAZGA")
+    if(this.isNodeMethodCall(left)) {
+      this.getNodeMethodCallRegisterResponse(left, block, registerStack, registerMem);
+      registers[0] = this.findRegisterForNode(left, registerMem);
+      // response[0] = new Mov(registers[0], registerStack.getStackOffset(left.nodeID), MovTypes.STACK_TO_REG);
+      // if(this.isNodeMethodCall(left) && this.isNodeMethodCall(right)) {
+      //   console.log(left.nodeID, registerStack.getStackOffset(left.nodeID))
+      // }
     }
-    if(this.isNodeMethodCall(node.right)) {
-      const right = node.right;
-      this.getNodeMethodCallRegisterResponse(right.chomp, block, registerStack, registerMem);
+    if(this.isNodeMethodCall(right)) {
+      this.getNodeMethodCallRegisterResponse(right, block, registerStack, registerMem);
+      registers[1] = this.findRegisterForNode(right, registerMem);
+      // response[1] = new Mov(registers[1], registerStack.getStackOffset(right.nodeID), MovTypes.STACK_TO_REG);
+      
+      // if(this.isNodeMethodCall(left) && this.isNodeMethodCall(right)) {
+      //   console.log(right.nodeID, registerStack.getStackOffset(right.nodeID))
+      // }
     }
+    // console.log("ZOGGG");
+    // if(this.isNodeMethodCall(left) && this.isNodeMethodCall(right)) {
+    //   console.log("PRIME ", registerStack.getStackOffset(left.nodeID), registerStack.getStackOffset(right.nodeID))
+    // }
+
+    for(let i = 0, c = response.length; i < c; i++) {
+      if(registers[i] != null) {
+        block.push(new Mov(registers[i], registerStack.getStackOffset(nodes[i].nodeID), MovTypes.STACK_TO_REG));
+      }
+    }
+    if(registers[0] == null) {
+      registers[0] = this.pushMov(left, block, registerMem, registerStack);
+    }
+    if(registers[1] == null) {
+      registers[1] = this.pushMov(right, block, registerMem, registerStack);
+    }
+
+    return registers;
   }
 
   pushMov(node, block, registerMem, registerStack) {
@@ -163,31 +197,11 @@ export class ExpressionTree {
   }
 
   movAndGetFreeRegisters(node, block, registerMem, registerStack) {
-    // if(this.isNodeMethodCall(node.left) || this.isNodeMethodCall(node.right)) {
-    //   return this.addMethodToAsm(node, block, registerMem, registerStack);
-    // }
+    if(this.isNodeMethodCall(node.left) || this.isNodeMethodCall(node.right)) {
+      return this.addMethodToAsm(node, block, registerMem, registerStack);
+    }
 
-    const left = this.pushMov(node.left, block, registerMem, registerStack);
-    const right = this.pushMov(node.right, block, registerMem, registerStack);
-
-    // let left = this.findRegisterForNode(node.left, registerMem);
-    // let right = this.findRegisterForNode(node.right, registerMem);
-
-    // if(this.isLeaf(node.left)) {
-    //   block.push(new Mov(left, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
-    // }
-    // else {
-    //   block.push(new Mov(left, registerStack.getStackOffset(node.left.nodeID), MovTypes.STACK_TO_REG));
-    // }
-
-    // if(this.isLeaf(node.right)) {
-    //   block.push(new Mov(right, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    // }
-    // else {
-    //   block.push(new Mov(right, registerStack.getStackOffset(node.right.nodeID), MovTypes.STACK_TO_REG));
-    // }
-
-    return [left, right]
+    return [this.pushMov(node.left, block, registerMem, registerStack), this.pushMov(node.right, block, registerMem, registerStack)]
   }
 
   freeRegisters(registerArray, registerMem) {
