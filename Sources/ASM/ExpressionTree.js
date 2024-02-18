@@ -153,7 +153,7 @@ export class ExpressionTree {
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Add(freeBufferRegister, freeRegisterSrc, freeRegisterDst));
-
+    
     this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }
 
@@ -273,13 +273,7 @@ export class ExpressionTree {
     this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }
 
-  addInstructionToBlock_t(node, block, registerMem, registerStack) {
-    if(!node.left && !node.right) {
-      return ;
-    }
-
-    this.addInstructionToBlock_t(node.left, block, registerMem, registerStack);
-    this.addInstructionToBlock_t(node.right, block, registerMem, registerStack);
+  addInstructions(node, block, registerMem, registerStack) {
     switch(node.chomp.buffer) {
       case '+': {
         this.add_InstructionSet(node, block, registerMem, registerStack);
@@ -340,6 +334,17 @@ export class ExpressionTree {
     }
   }
 
+  addInstructionToBlock_t(node, block, registerMem, registerStack) {
+    if(!node.left && !node.right) {
+      return ;
+    }
+
+    this.addInstructionToBlock_t(node.left, block, registerMem, registerStack);
+    this.addInstructionToBlock_t(node.right, block, registerMem, registerStack);
+    
+    this.addInstructions(node, block, registerMem, registerStack);
+  }
+
   addInstructionToBlock(block, registerMem, registerStack) {
     if(!this.root.left && !this.root.right) {
       let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
@@ -354,6 +359,93 @@ export class ExpressionTree {
     let expressionNode = new ExpressionTree(chomp);
     expressionNode.build();
     return expressionNode.root;
+  }
+
+  isOperationLeaf(node) {
+    if(this.isLeaf(node)) {
+      return false;
+    }
+    return this.isLeaf(node.left) && this.isLeaf(node.right)
+  }
+
+  numberOfOperations(node) {
+    if(!node) {
+      return 0;
+    }
+    return this.numberOfOperations(node.left) + this.numberOfOperations(node.right) + 1;
+  }
+
+  isVisited(node, visited) {
+    return node.nodeID in visited;
+  }
+
+  order_t(currentNode, visited, currentOrder) {
+    if(this.isVisited(currentNode, visited)) {
+      return ;
+    }
+    if(this.isLeaf(currentNode)) {
+      return ;
+    }
+
+    if(this.isOperationLeaf(currentNode)) {
+      currentOrder.push(currentNode.left);
+      currentOrder.push(currentNode.right);
+      currentOrder.push(currentNode);
+      
+      visited[currentNode.left.nodeID] = 1;
+      visited[currentNode.right.nodeID] = 1;
+      visited[currentNode.nodeID] = 1;
+      return ;
+    }
+
+    if(this.isVisited(currentNode.left, visited) && this.isVisited(currentNode.right, visited)) {
+      visited[currentNode.nodeID] = 1;
+      currentOrder.push(currentNode);
+      return ;
+    }
+
+    if(this.isVisited(currentNode.left, visited) && this.isLeaf(currentNode.right)) {
+      visited[currentNode.nodeID] = 1;
+      visited[currentNode.right.nodeID] = 1;
+      currentOrder.push(currentNode.right);
+      currentOrder.push(currentNode);
+      return ;
+    }
+
+    if(this.isVisited(currentNode.right, visited) && this.isLeaf(currentNode.left)) {
+      visited[currentNode.nodeID] = 1;
+      visited[currentNode.left.nodeID] = 1;
+      currentOrder.push(currentNode.left);
+      currentOrder.push(currentNode);
+      return ;
+    }
+
+    this.order_t(currentNode.left, visited, currentOrder);
+    this.order_t(currentNode.right, visited, currentOrder);
+  }
+  
+  order() {
+    let visited = {};
+    let currentOrder = [];
+
+    let nodesAmount = this.numberOfOperations(this.root);
+    const currentNode = this.root;
+    if(this.isLeaf(currentNode)) {
+      return [currentNode];
+    }
+
+    while(currentOrder.length < nodesAmount) {
+      this.order_t(currentNode, visited, currentOrder);
+    }
+
+    return currentOrder;
+  }
+
+  addInstructionToBlockWithOrder(block, registerMem, registerStack) {
+    const currentOrder = this.order();
+    for(let i = 0, c = currentOrder.length; i < c; i++) {
+      this.addInstructions(currentOrder[i], block, registerMem, registerStack);
+    }
   }
 
   build_t(depth = 0, index) {

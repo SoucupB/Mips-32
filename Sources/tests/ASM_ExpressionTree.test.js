@@ -4,7 +4,9 @@ import { ExpressionNode, ExpressionTree } from '../ASM/ExpressionTree.js';
 import Expression from '../AST/Expression.js';
 import { RegisterMem } from '../ASM/RegisterMem.js';
 import { RegisterStack } from '../ASM/RegisterStack.js';
-import { RegisterBlock } from '../ASM/Register.js';
+import { Mov, MovTypes, Print, PrintTypes, Push, RegisterBlock } from '../ASM/Register.js';
+import { Compiler } from '../ASM/Compiler.js';
+import { Runner } from '../ASM/Runner.js';
 
 test('Check Expression true v1', (t) => {
   let chomp = Expression.chomp('3+4+5+6+7', 0); 
@@ -119,8 +121,11 @@ test('Check Expression true ASM v1', (t) => {
   let asmBlock = new RegisterBlock(); 
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 45', 'ADD $2 $0 $1' ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '48', 'returns');
   t.end();
 });
 
@@ -133,8 +138,11 @@ test('Check Expression true ASM v2', (t) => {
   let asmBlock = new RegisterBlock(); 
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 4', 'ADD $2 $0 $1', 'MOV $0 5', 'ADD $1 $2 $0' ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '12', 'returns');
   t.end();
 });
 
@@ -147,16 +155,11 @@ test('Check Expression true ASM v2', (t) => {
   let asmBlock = new RegisterBlock(); 
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  // console.log(asmBlock.toStringArray())
-  t.equal(asmBlock.toStringArray().toString(), [
-    'MOV $0 3',     'MOV $1 4',
-    'ADD $2 $0 $1', 'MOV $0 5',
-    'ADD $1 $2 $0', 'MOV $0 6',
-    'ADD $2 $1 $0', 'MOV $0 7',
-    'ADD $1 $2 $0', 'MOV $0 8',
-    'ADD $2 $1 $0'
-  ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '33', 'returns');
   t.end();
 });
 
@@ -169,8 +172,11 @@ test('Check Expression true ASM v3', (t) => {
   let asmBlock = new RegisterBlock(); 
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 4', 'MOV $1 5', 'MUL $2 $0 $1', 'MOV $0 3', 'ADD $1 $0 $2' ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '23', 'returns');
   t.end();
 });
 
@@ -183,8 +189,12 @@ test('Check Expression true ASM v4', (t) => {
   let asmBlock = new RegisterBlock(); 
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 3', 'MOV $1 4', 'ADD $2 $0 $1', 'MOV $0 5', 'MUL $1 $2 $0' ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '35', 'returns');
+
   t.end();
 });
 
@@ -197,15 +207,11 @@ test('Check Expression true ASM v5', (t) => {
   let asmBlock = new RegisterBlock(); 
 
   expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  t.equal(asmBlock.toStringArray().toString(), [
-    'MOV $0 3',     'MOV $1 4',
-    'ADD $2 $0 $1', 'MOV $0 5',
-    'MUL $1 $2 $0', 'MOV $0 6',
-    'MOV $2 7',     'ADD $3 $0 $2',
-    'MOV $0 5',     'MUL $2 $0 $3',
-    'ADD $0 $1 $2'
-  ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '100', 'returns');
   t.end();
 });
 
@@ -219,9 +225,17 @@ test('Check Expression true ASM v6', (t) => {
 
   registerStack.push('a', 4);
   registerStack.push('b', 4);
-  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Mov(0, 4, MovTypes.NUMBER_TO_REG));
+  asmBlock.push(new Push(0));
+  asmBlock.push(new Mov(0, 4, MovTypes.NUMBER_TO_REG));
+  asmBlock.push(new Push(0));
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack);
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
 
-  t.equal(asmBlock.toStringArray().toString(), [ 'MOV $0 [$st-8]', 'MOV $1 [$st-4]', 'ADD $2 $0 $1' ].toString(), 'returns');
+  t.equal(runner.getOutputBuffer(), '8', 'returns');
+
   t.end();
 });
 
@@ -236,20 +250,79 @@ test('Check Expression true ASM v7', (t) => {
   registerStack.push('a', 4);
   registerStack.push('b', 4);
   registerStack.push('c', 4);
-  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
 
-  t.equal(asmBlock.toStringArray().toString(), [
-    'MOV $0 [$st-12]',
-    'MOV $1 [$st-8]',
-    'ADD $2 $0 $1',
-    'MOV $0 2',
-    'MUL $1 $2 $0',
-    'MOV $0 [$st-8]',
-    'MOV $2 [$st-4]',
-    'ADD $3 $0 $2',
-    'MOV $0 3',
-    'MUL $2 $3 $0',
-    'ADD $0 $1 $2'
-  ].toString(), 'returns');
+  
+  asmBlock.push(new Mov(0, 4, MovTypes.NUMBER_TO_REG));
+  asmBlock.push(new Push(0));
+  asmBlock.push(new Mov(0, 4, MovTypes.NUMBER_TO_REG));
+  asmBlock.push(new Push(0));
+  asmBlock.push(new Mov(0, 4, MovTypes.NUMBER_TO_REG));
+  asmBlock.push(new Push(0));
+
+  expressionTree.addInstructionToBlock(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+
+  t.equal(runner.getOutputBuffer(), '40', 'returns');
+
+  t.end();
+});
+
+test('Check Expression order v1', (t) => {
+  let chomp = Expression.chomp('3+4*5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+
+  t.equal(runner.getOutputBuffer(), '23', 'returns');
+  t.end();
+});
+
+test('Check Expression order v2', (t) => {
+  let chomp = Expression.chomp('3+4*5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  // t.equal(expressionTree.toString(), '(3+(4*5))', 'returns');
+  t.end();
+});
+
+test('Check Expression order v3', (t) => {
+  let chomp = Expression.chomp('3+4*5*(((5+3)/2)-7)', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '-57', 'returns');
+  t.end();
+});
+
+test('Check Expression order v4', (t) => {
+  let chomp = Expression.chomp('3+4*5*(((5+3)/2)-7)+(43*(5/5)-2+(9*(9+9)))', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  console.log(asmBlock.toString())
+  t.equal(runner.getOutputBuffer(), '146', 'returns');
   t.end();
 });
