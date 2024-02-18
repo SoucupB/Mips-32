@@ -55,6 +55,9 @@ export class ExpressionTree {
   }
 
   isNodeMethodCall(node) {
+    if(!node || !node.chomp) {
+      return false;
+    }
     return node.chomp.type == MethodCall;
   }
 
@@ -72,7 +75,7 @@ export class ExpressionTree {
 
     const methodName = children[0];
     const methodParamsExpressions = children[1].childrenChomps;
-
+    const dateTime = Date.now();
     registerStack.freeze();
     for(let i = 0, c = methodParamsExpressions.length; i < c; i++) {
       const currentExpression = methodParamsExpressions[i];
@@ -80,14 +83,16 @@ export class ExpressionTree {
       const expressionResultRegister = this.getExpressionRegister(currentExpression, registerMem);
       block.push(new Push(expressionResultRegister));
       registerMem.freeRegister(expressionResultRegister);
-      registerStack.push(i, 4);
+      registerStack.push(`${dateTime}_${i}`, 4);
     }
-    registerStack.push('return_address_offset', 4);
+    registerStack.push(`return_address_offset_${dateTime}`, 4);
     block.push(new Prp('ret', 3));
     block.push(new Push('ret'));
     block.push(new Jmp(`_${methodName.buffer}`));
     block.push(new Pop(registerStack.getFreezeTopDiff()));
     registerStack.pop();
+    // block.push(new Push('rsp'))
+    // registerStack.push(node.nodeID, 4);
     return 'rsp';
   }
 
@@ -100,7 +105,6 @@ export class ExpressionTree {
     if(!isVariable) {
       return node.chomp.buffer;
     }
-    // console.log("VASILE", node.chomp.buffer, registerStack.getStackOffset(node.chomp.buffer), registerStack)
     return registerStack.getStackOffset(node.chomp.buffer);
   }
 
@@ -132,23 +136,56 @@ export class ExpressionTree {
     return !node.left && !node.right;
   }
 
-  movAndGetFreeRegisters(node, block, registerMem, registerStack) {
-    let left = this.findRegisterForNode(node.left, registerMem);
-    let right = this.findRegisterForNode(node.right, registerMem);
-    
-    if(this.isLeaf(node.left)) {
-      block.push(new Mov(left, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
+  addMethodToAsm(node, block, registerMem, registerStack) {
+    let movInstructions = [];
+
+    if(this.isNodeMethodCall(node.left)) {
+      const left = node.left;
+      this.getNodeMethodCallRegisterResponse(left.chomp, block, registerStack, registerMem);
+    }
+    if(this.isNodeMethodCall(node.right)) {
+      const right = node.right;
+      this.getNodeMethodCallRegisterResponse(right.chomp, block, registerStack, registerMem);
+    }
+  }
+
+  pushMov(node, block, registerMem, registerStack) {
+    let register = this.findRegisterForNode(node, registerMem);
+
+    if(this.isLeaf(node)) {
+      block.push(new Mov(register, this.getNodeValue(node, block, registerStack, registerMem), this.getNodeMovType(node)));
     }
     else {
-      block.push(new Mov(left, registerStack.getStackOffset(node.left.nodeID), MovTypes.STACK_TO_REG));
+      block.push(new Mov(register, registerStack.getStackOffset(node.nodeID), MovTypes.STACK_TO_REG));
     }
 
-    if(this.isLeaf(node.right)) {
-      block.push(new Mov(right, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
-    }
-    else {
-      block.push(new Mov(right, registerStack.getStackOffset(node.right.nodeID), MovTypes.STACK_TO_REG));
-    }
+    return register;
+  }
+
+  movAndGetFreeRegisters(node, block, registerMem, registerStack) {
+    // if(this.isNodeMethodCall(node.left) || this.isNodeMethodCall(node.right)) {
+    //   return this.addMethodToAsm(node, block, registerMem, registerStack);
+    // }
+
+    const left = this.pushMov(node.left, block, registerMem, registerStack);
+    const right = this.pushMov(node.right, block, registerMem, registerStack);
+
+    // let left = this.findRegisterForNode(node.left, registerMem);
+    // let right = this.findRegisterForNode(node.right, registerMem);
+
+    // if(this.isLeaf(node.left)) {
+    //   block.push(new Mov(left, this.getNodeValue(node.left, block, registerStack, registerMem), this.getNodeMovType(node.left)));
+    // }
+    // else {
+    //   block.push(new Mov(left, registerStack.getStackOffset(node.left.nodeID), MovTypes.STACK_TO_REG));
+    // }
+
+    // if(this.isLeaf(node.right)) {
+    //   block.push(new Mov(right, this.getNodeValue(node.right, block, registerStack, registerMem), this.getNodeMovType(node.right)))
+    // }
+    // else {
+    //   block.push(new Mov(right, registerStack.getStackOffset(node.right.nodeID), MovTypes.STACK_TO_REG));
+    // }
 
     return [left, right]
   }

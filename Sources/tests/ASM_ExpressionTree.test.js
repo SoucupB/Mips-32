@@ -335,7 +335,7 @@ test('Check Expression order v5', (t) => {
   let registerStack = new RegisterStack();
   let asmBlock = new RegisterBlock(); 
   
-  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack);
   asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
   let runner = new Runner(asmBlock.flatten().block);
   runner.run();
