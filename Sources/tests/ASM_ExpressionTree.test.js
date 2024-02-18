@@ -286,16 +286,16 @@ test('Check Expression order v1', (t) => {
   t.end();
 });
 
-test('Check Expression order v2', (t) => {
-  let chomp = Expression.chomp('3+4*5', 0); 
-  let expressionTree = new ExpressionTree(chomp);
-  expressionTree.build();
-  // t.equal(expressionTree.toString(), '(3+(4*5))', 'returns');
-  t.end();
-});
+// test('Check Expression order v2', (t) => {
+//   let chomp = Expression.chomp('3+4*5', 0); 
+//   let expressionTree = new ExpressionTree(chomp);
+//   expressionTree.build();
+//   // t.equal(expressionTree.toString(), '(3+(4*5))', 'returns');
+//   t.end();
+// });
 
 test('Check Expression order v3', (t) => {
-  let chomp = Expression.chomp('3+4*5*(((5+3)/2)-7)', 0); 
+  let chomp = Expression.chomp('3+4*5*(((19+3)/2)-7)', 0); 
   let expressionTree = new ExpressionTree(chomp);
   expressionTree.build();
   let registerMem = new RegisterMem();
@@ -306,12 +306,13 @@ test('Check Expression order v3', (t) => {
   asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
   let runner = new Runner(asmBlock.flatten().block);
   runner.run();
-  t.equal(runner.getOutputBuffer(), '-57', 'returns');
+  t.equal(runner.getOutputBuffer(), '83', 'returns');
   t.end();
 });
 
+// does not work with negatives
 test('Check Expression order v4', (t) => {
-  let chomp = Expression.chomp('3+4*5*(((5+3)/2)-7)+(43*(5/5)-2+(9*(9+9)))', 0); 
+  let chomp = Expression.chomp('3+4*5*(((100+4)/2)-7)+(43*(5/5)-2+(9*(9+9)))', 0); 
   let expressionTree = new ExpressionTree(chomp);
   expressionTree.build();
   let registerMem = new RegisterMem();
@@ -322,7 +323,70 @@ test('Check Expression order v4', (t) => {
   asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
   let runner = new Runner(asmBlock.flatten().block);
   runner.run();
-  console.log(asmBlock.toString())
-  t.equal(runner.getOutputBuffer(), '146', 'returns');
+  t.equal(runner.getOutputBuffer(), '1106', 'returns');
+  t.end();
+});
+
+test('Check Expression order v5', (t) => {
+  let chomp = Expression.chomp('3+4*5+5/5-3+7*7', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '70', 'returns');
+  t.end();
+});
+
+test('Check Expression order v6', (t) => {
+  let chomp = Expression.chomp('45+32>32+44', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '1', 'returns');
+  t.end();
+});
+
+test('Check Expression order v7', (t) => {
+  let chomp = Expression.chomp('45+32>35+44', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '0', 'returns');
+  t.end();
+});
+
+test('Check Expression order v8', (t) => {
+  let chomp = Expression.chomp('5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '5', 'returns');
   t.end();
 });

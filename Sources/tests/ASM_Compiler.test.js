@@ -289,7 +289,7 @@ import { Program } from '../AST/Program.js';
 // Remove registers from expressions
 
 test('Check Compiler checker v13 (Full Program).', (t) => { // rsp register is not pushed onto the stack and therefor its value is lost
-  const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)*n;}void main(){int b=fibboRecursive(4);}') // rsp should have been pushed into the stack
+  const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)*n;}void main(){int b=fibboRecursive(5);}') // rsp should have been pushed into the stack
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);

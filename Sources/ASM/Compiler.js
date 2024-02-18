@@ -40,7 +40,7 @@ export class Compiler {
   }
 
   saveExpressionResult(expressionChomp, block) {
-    const topRegister = this.registerMem.registerFromID(expressionChomp.expressionTree.root.nodeID);
+    const topRegister = expressionChomp.expressionTree.root.register;
     block.push(new Push(topRegister));
     this.registerMem.freeRegister(topRegister);
   }
@@ -73,6 +73,9 @@ export class Compiler {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
     this.createExpressionAsm(children[1], block);
+
+    // console.log('PIZDA\n', block.toString(), this.registerStack, '\nZZZID')
+
     this.loadExpressionOnStack(children[1], children[0], block);
     return block;
   }
@@ -86,7 +89,7 @@ export class Compiler {
   }
 
   getExpressionRegister(expressionChomp) {
-    return this.registerMem.registerFromID(expressionChomp.expressionTree.root.nodeID);
+    return expressionChomp.expressionTree.root.register;
   }
 
   _generateRandomString(length = 4) {

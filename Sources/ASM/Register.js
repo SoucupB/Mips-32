@@ -384,7 +384,7 @@ export class Print extends Register {
       case PrintTypes.REGISTER: {
         return `PRR $${this.value} 4`
       }
-      case PrintTypes.REGISTER: {
+      case PrintTypes.MEMORY: {
         return `PRR [${this.value}] 4`
       }
       default: {

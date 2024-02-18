@@ -729,6 +729,17 @@ test('Check Register compiler compiler Program v1', (t) => {
   t.end();
 });
 
+test('Check Register compiler variable v1', (t) => {
+  const chomp = CodeBlock.chomp('{int a=123+43+43+53;}', 0) // bug
+  let program = new Compiler(null);
+  let asmBlock = program.compileBlock(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run();
+  t.equal(asmBlock.getOutputBuffer(), '262', 'returns');
+
+  t.end();
+});
+
 test('Check Register compiler compiler Program v2', (t) => {
   const chomp = CodeBlock.chomp('{int a=0,b=1,n=13,i=0,result=0;while(i<n){int c=a+b;a=b;b=c;i=i+1;}result=b;}', 0) // bug
   let program = new Compiler(null);
