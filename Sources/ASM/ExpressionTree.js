@@ -442,6 +442,12 @@ export class ExpressionTree {
   }
 
   addInstructionToBlockWithOrder(block, registerMem, registerStack) {
+    if(!this.root.left && !this.root.right) {
+      let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
+      block.push(new Mov(freeRegisterSrc, this.getNodeValue(this.root, block, registerStack, registerMem), this.getNodeMovType(this.root)));
+      return ;
+    }
+
     const currentOrder = this.order();
     for(let i = 0, c = currentOrder.length; i < c; i++) {
       this.addInstructions(currentOrder[i], block, registerMem, registerStack);

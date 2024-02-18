@@ -36,7 +36,7 @@ export class Compiler {
   }
 
   createExpressionAsm(expressionChomp, block) {
-    expressionChomp.expressionTree.addInstructionToBlock(block, this.registerMem, this.registerStack);
+    expressionChomp.expressionTree.addInstructionToBlockWithOrder(block, this.registerMem, this.registerStack);
   }
 
   saveExpressionResult(expressionChomp, block) {
