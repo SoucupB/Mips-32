@@ -382,3 +382,100 @@ test('Check Expression order v8', (t) => {
   t.equal(runner.getOutputBuffer(), '5', 'returns');
   t.end();
 });
+
+test('Check Expression order v8', (t) => {
+  let chomp = Expression.chomp('1||2', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '1', 'returns');
+  t.end();
+});
+
+test('Check Expression order v9', (t) => {
+  let chomp = Expression.chomp('0||2', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '1', 'returns');
+  t.end();
+});
+
+test('Check Expression order v10', (t) => {
+  let chomp = Expression.chomp('1||0', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '1', 'returns');
+  t.end();
+});
+
+test('Check Expression order v11', (t) => {
+  let chomp = Expression.chomp('0||0', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  // console.log(asmBlock.toString())
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '0', 'returns');
+  t.end();
+});
+
+test('Check Expression order v12', (t) => {
+  let chomp = Expression.chomp('0==1||0==0', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '1', 'returns');
+  t.end();
+});
+
+test('Check Expression order v13', (t) => {
+  let chomp = Expression.chomp('0==1||0==1', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
+  asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+  t.equal(runner.getOutputBuffer(), '0', 'returns');
+  t.end();
+});

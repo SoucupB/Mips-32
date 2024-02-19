@@ -82,6 +82,17 @@ export const MovTypes = {
   REG_TO_STACK: 6
 }
 
+export class Setdor extends Register {
+  constructor(reg) {
+    super();
+    this.reg = reg;
+  }
+
+  toString() {
+    return `SETDPR $${this.reg}`
+  }
+}
+
 export class Mov extends Register {
   constructor(dst, src, type) {
     super();

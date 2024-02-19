@@ -2,7 +2,7 @@ import Constant from "../AST/Constant.js";
 import Expression from "../AST/Expression.js";
 import { MethodCall } from "../AST/Methods.js";
 import Variable from "../AST/Variable.js";
-import { Add, Cmp, Div, Jmp, Mov, MovTypes, Mul, Or, Pop, PopTypes, Prp, Push, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from "./Register.js";
+import { Add, Cmp, Div, Jmp, Mov, MovTypes, Mul, Or, Pop, PopTypes, Prp, Push, Setdor, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from "./Register.js";
 
 let nodeID = 0;
 
@@ -335,7 +335,7 @@ export class ExpressionTree {
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
     block.push(new Or(freeRegisterSrc, freeRegisterDst));
-    block.push(new Setnz(freeBufferRegister));
+    block.push(new Setdor(freeBufferRegister));
     this.addNodeToTheStack(node, freeBufferRegister, block, registerStack, registerMem);
     this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
   }

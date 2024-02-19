@@ -1,4 +1,4 @@
-import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test, Print, PrintTypes } from './Register.js';
+import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test, Print, PrintTypes, Or, Setdor } from './Register.js';
 
 export const ReadMemoryType = {
   INT32: 1,
@@ -267,6 +267,14 @@ export class Runner {
     }
   }
 
+  setOr(instruction) {
+    this.register['or_reg'] = this.booleanToNumber(this.getRegValue(instruction.regA) || this.getRegValue(instruction.regB))
+  }
+
+  setDor(instruction) {
+    this.register[instruction.reg.toString()] = this.register['or_reg'];
+  }
+
   setPrint(instruction) {
     switch(instruction.type) {
       case PrintTypes.REGISTER: {
@@ -340,6 +348,12 @@ export class Runner {
     }
     if(instruction instanceof Print) {
       this.setPrint(instruction)
+    }
+    if(instruction instanceof Or) {
+      this.setOr(instruction)
+    }
+    if(instruction instanceof Setdor) {
+      this.setDor(instruction)
     }
   }
 
