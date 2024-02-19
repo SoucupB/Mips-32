@@ -56,13 +56,25 @@ export class Runner {
     return response.join(' ');
   }
 
-  numberToByteArray(number) {
+  positiveNumberToByteArray(number) {
     const byteArray = new Array(4).fill(0);
     byteArray[0] = number & 0xFF;
     byteArray[1] = (number >> 8) & 0xFF;
     byteArray[2] = (number >> 16) & 0xFF;
     byteArray[3] = (number >> 24) & 0xFF;
     return byteArray;
+  }
+
+  negativeNumberToByteArray(number) {
+    const normalisedNumber = 2**32 + number;
+    return this.positiveNumberToByteArray(normalisedNumber);
+  }
+
+  numberToByteArray(number) {
+    if(number >= 0) {
+      return this.positiveNumberToByteArray(number);
+    }
+    return this.negativeNumberToByteArray(number);
   }
 
   saveRegInStack(memPointer, reg) {
@@ -81,6 +93,13 @@ export class Runner {
     }
   }
 
+  get32ByteInteger(number) {
+    if(number < 2**31) {
+      return number;
+    }
+    return -(2**32 - number);
+  }
+
   getNumberAtAddress(memory, pointer, type = ReadMemoryType.INT32) {
     switch(type) {
       case ReadMemoryType.INT32: {
@@ -90,7 +109,7 @@ export class Runner {
           number += memory[pointer + i] * power;
           power *= 256;
         }
-        return number;
+        return this.get32ByteInteger(number);
       }
       case ReadMemoryType.INT8: {
         return memory[pointer];
@@ -255,7 +274,6 @@ export class Runner {
         break;
       }
       case PrintTypes.MEMORY: {
-        // console.log(this.initialStackPointer, this.stackPointer, this.numberFromPointer(parseInt(instruction.value) + this.stackPointer))
         this.outputBuffer += this.numberFromPointer(parseInt(instruction.value) + this.initialStackPointer);
         break;
       }
