@@ -61,8 +61,7 @@ export class ExpressionTree {
     return node.chomp.type == MethodCall;
   }
 
-  getExpressionRegister(expression, registerMem) {
-    // return registerMem.registerFromID(expression.expressionTree.root.nodeID)
+  getExpressionRegister(expression) {
     return expression.expressionTree.root.register;
   }
 
@@ -81,7 +80,7 @@ export class ExpressionTree {
       const currentExpression = methodParamsExpressions[i];
 
       currentExpression.expressionTree.addInstructionToBlockWithOrder(block, registerMem, registerStack);
-      const expressionResultRegister = this.getExpressionRegister(currentExpression, registerMem);
+      const expressionResultRegister = this.getExpressionRegister(currentExpression);
       block.push(new Push(expressionResultRegister));
       registerMem.freeRegister(expressionResultRegister);
       registerStack.push(`${dateTime}_${i}`, 4);
@@ -144,29 +143,14 @@ export class ExpressionTree {
     const left = node.left;
     const right = node.right;
     let nodes = [left, right];
-
-    // console.log("MAZGA")
     if(this.isNodeMethodCall(left)) {
       this.getNodeMethodCallRegisterResponse(left, block, registerStack, registerMem);
       registers[0] = this.findRegisterForNode(left, registerMem);
-      // response[0] = new Mov(registers[0], registerStack.getStackOffset(left.nodeID), MovTypes.STACK_TO_REG);
-      // if(this.isNodeMethodCall(left) && this.isNodeMethodCall(right)) {
-      //   console.log(left.nodeID, registerStack.getStackOffset(left.nodeID))
-      // }
     }
     if(this.isNodeMethodCall(right)) {
       this.getNodeMethodCallRegisterResponse(right, block, registerStack, registerMem);
       registers[1] = this.findRegisterForNode(right, registerMem);
-      // response[1] = new Mov(registers[1], registerStack.getStackOffset(right.nodeID), MovTypes.STACK_TO_REG);
-      
-      // if(this.isNodeMethodCall(left) && this.isNodeMethodCall(right)) {
-      //   console.log(right.nodeID, registerStack.getStackOffset(right.nodeID))
-      // }
     }
-    // console.log("ZOGGG");
-    // if(this.isNodeMethodCall(left) && this.isNodeMethodCall(right)) {
-    //   console.log("PRIME ", registerStack.getStackOffset(left.nodeID), registerStack.getStackOffset(right.nodeID))
-    // }
 
     for(let i = 0, c = response.length; i < c; i++) {
       if(registers[i] != null) {

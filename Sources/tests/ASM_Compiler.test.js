@@ -1,7 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
 import { Compiler } from '../ASM/Compiler.js';
-import { CodeBlock } from '../AST/CodeBlock.js';
 import { Program } from '../AST/Program.js';
 import { Print, PrintTypes } from '../ASM/Register.js';
 

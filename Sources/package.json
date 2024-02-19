@@ -4,7 +4,7 @@
   "description": "A repository for describind a mips 32 compiler",
   "main": "dist/bundle.js",
   "scripts": {
-    "test": "npx tap tests/ASM_Compiler.test.js --disable-coverage --allow-empty-coverage",
+    "test": "npx tap --disable-coverage --allow-empty-coverage",
     "build": "webpack --mode production"
   },
   "keywords": [],

@@ -1,5 +1,10 @@
 import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, Register, RegisterBlock, Sete, Setge, Setle, Setne, Setnz, Sub, Test, Print, PrintTypes } from './Register.js';
 
+export const ReadMemoryType = {
+  INT32: 1,
+  INT8: 2
+};
+
 export class Runner {
   constructor(instructionArray) {
     this.instructionArray = instructionArray;
@@ -76,30 +81,38 @@ export class Runner {
     }
   }
 
+  getNumberAtAddress(memory, pointer, type = ReadMemoryType.INT32) {
+    switch(type) {
+      case ReadMemoryType.INT32: {
+        let number = 0;
+        let power = 1;
+        for(let i = 0; i < 4; i++) {
+          number += memory[pointer + i] * power;
+          power *= 256;
+        }
+        return number;
+      }
+      case ReadMemoryType.INT8: {
+        return memory[pointer];
+      }
+      default: {
+        break;
+      }
+    }
+
+    return 0;
+  }
+
   saveMemInReg(memPointer, reg) {
-    let memPointerNumber = parseInt(memPointer);
-    let number = this.memory[memPointerNumber] + 
-                 this.memory[memPointerNumber + 1] * 256 + 
-                 this.memory[memPointerNumber + 2] * 256 * 256 + 
-                 this.memory[memPointerNumber + 3] * 256 * 256 * 256;
-    this.register[reg.toString()] = number;
+    this.register[reg.toString()] = this.getNumberAtAddress(this.memory, parseInt(memPointer));
   }
 
   saveStackInReg(memPointer, reg) {
-    let memoryStack = this.stackPointer - parseInt(memPointer)
-    let number = this.memory[memoryStack] + 
-                 this.memory[memoryStack + 1] * 256 + 
-                 this.memory[memoryStack + 2] * 256 * 256 + 
-                 this.memory[memoryStack + 3] * 256 * 256 * 256;
-    this.register[reg] = number;
+    this.register[reg] = this.getNumberAtAddress(this.memory, this.stackPointer - parseInt(memPointer));
   }
 
   numberFromPointer(pointer) {
-    let number = this.memory[pointer] + 
-                 this.memory[pointer + 1] * 256 + 
-                 this.memory[pointer + 2] * 256 * 256 + 
-                 this.memory[pointer + 3] * 256 * 256 * 256;
-    return number;
+    return this.getNumberAtAddress(this.memory, pointer);
   }
 
   runMov(instruction) {
