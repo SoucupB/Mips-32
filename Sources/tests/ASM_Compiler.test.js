@@ -228,44 +228,44 @@ import { Print, PrintTypes } from '../ASM/Register.js';
 //   t.end();
 // });
 
-// test('Check Compiler recursive fibbo.', (t) => { 
-//   const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)+fibboRecursive(n-2);}void main(){int b=fibboRecursive(8);}')
-//   let chomp = program.chomp();
-//   t.equal(chomp.isInvalid(), false, 'returns');
-//   let programCompiler = new Compiler(null);
-//   let asmBlock = programCompiler.compileProgram(chomp);
-//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
-//   asmBlock.run()
-//   t.equal(asmBlock.getOutputBuffer(), '34', 'returns');
+test('Check Compiler recursive fibbo.', (t) => { 
+  const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)+fibboRecursive(n-2);}void main(){int b=fibboRecursive(8);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '34', 'returns');
 
-//   t.end();
-// });
+  t.end();
+});
 
-// test('Check Compiler add 2 numbers.', (t) => {
-//   const program = new Program('int add(int a,int b){return a+b;}void main(){int b=add(5,7);}')
-//   let chomp = program.chomp();
-//   t.equal(chomp.isInvalid(), false, 'returns');
-//   let programCompiler = new Compiler(null);
-//   let asmBlock = programCompiler.compileProgram(chomp);
-//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
-//   asmBlock.run()
-//   t.equal(asmBlock.getOutputBuffer(), '12', 'returns');
+test('Check Compiler add 2 numbers.', (t) => {
+  const program = new Program('int add(int a,int b){return a+b;}void main(){int b=add(5,7);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '12', 'returns');
 
-//   t.end();
-// });
+  t.end();
+});
 
-// test('Check Compiler add 4 numbers.', (t) => {
-//   const program = new Program('int add(int a,int b,int c,int d){return a+b+c+d;}void main(){int b=add(1,2,3,4);}')
-//   let chomp = program.chomp();
-//   t.equal(chomp.isInvalid(), false, 'returns');
-//   let programCompiler = new Compiler(null);
-//   let asmBlock = programCompiler.compileProgram(chomp);
-//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
-//   asmBlock.run()
-//   t.equal(asmBlock.getOutputBuffer(), '10', 'returns');
+test('Check Compiler add 4 numbers.', (t) => {
+  const program = new Program('int add(int a,int b,int c,int d){return a+b+c+d;}void main(){int b=add(1,2,3,4);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '10', 'returns');
 
-//   t.end();
-// });
+  t.end();
+});
 
 test('Check Compiler mirror.', (t) => {
   const program = new Program('int mirror(int a){int response=0;while(a!=0){response=response*10;response=response+a%10;a=a/10;}return response;}void main(){int b=mirror(123);}')
@@ -282,15 +282,15 @@ test('Check Compiler mirror.', (t) => {
   t.end();
 });
 
-// test('Send by value', (t) => {
-//   const program = new Program('int mirror(int a){a=10;return 15;}void main(){int a=5;int b=mirror(a);}')
-//   let chomp = program.chomp();
-//   t.equal(chomp.isInvalid(), false, 'returns');
-//   let programCompiler = new Compiler(null);
-//   let asmBlock = programCompiler.compileProgram(chomp);
-//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
-//   asmBlock.run()
-//   t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
+test('Send by value', (t) => {
+  const program = new Program('int mirror(int a){a=10;return 15;}void main(){int a=5;int b=mirror(a);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
 
-//   t.end();
-// });
+  t.end();
+});

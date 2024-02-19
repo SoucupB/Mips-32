@@ -242,6 +242,7 @@ export class Runner {
         break;
       }
       case PrintTypes.MEMORY: {
+        console.log(this.initialStackPointer, this.stackPointer, this.numberFromPointer(parseInt(instruction.value) + this.stackPointer))
         this.outputBuffer += this.numberFromPointer(parseInt(instruction.value) + this.initialStackPointer);
         break;
       }
