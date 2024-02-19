@@ -185,6 +185,13 @@ export class Compiler {
     return new RegisterBlock();
   }
 
+  popReturnStackPointer(block) {
+    const methodPointerDiff = this.registerStack.getFreezeTopDiffFromMethod();
+    if(methodPointerDiff) {
+      block.push(new Pop(methodPointerDiff));
+    }
+  }
+
   compileReturnMethod(child) {
     const expression = child.childrenChomps[0];
 
@@ -194,6 +201,7 @@ export class Compiler {
 
     block.push(new Mov('ret', this.registerStack.getStackOffset('return_address'), MovTypes.STACK_TO_REG));
     block.push(new Mov('rsp', expressionRegister, MovTypes.REG_TO_REG))
+    this.popReturnStackPointer(block);
     block.push(new Jmp('ret', JmpTypes.REGISTER));
     this.registerMem.freeRegister(expressionRegister);
 
@@ -305,6 +313,7 @@ export class Compiler {
       this.registerStack.push(paramName.buffer, 4);
     }
     this.registerStack.push('return_address', 4);
+    this.registerStack.freezeMethodPointer();
     block.push(this.compileBlock(methodBlock));
     this.registerStack.pop();
 

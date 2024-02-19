@@ -25,8 +25,11 @@ export class RegisterStack {
     this.variableNames.push(variable);
   }
 
-  freeze() {
+  freezeMethodPointer() {
     this.methodFreezeChunk = this.getStackLastIndex();
+  }
+
+  freeze() {
     this.freezeChunks.push(this.stackOffset.length)
     this.freezeHistory.push(this.getStackLastIndex());
   }
