@@ -89,7 +89,7 @@ export class Setdor extends Register {
   }
 
   toString() {
-    return `SETDPR $${this.reg}`
+    return `SETDOR $${this.reg}`
   }
 }
 

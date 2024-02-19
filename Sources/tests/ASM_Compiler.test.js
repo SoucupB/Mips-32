@@ -68,8 +68,8 @@ test('Send by value', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
-  asmBlock.run()
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
+  asmBlock.run();
   t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
@@ -82,8 +82,8 @@ test('Multiple declarations inside a method v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('4', PrintTypes.MEMORY))
-  asmBlock.run()
+  asmBlock.push(new Print('4', PrintTypes.MEMORY));
+  asmBlock.run();
   t.equal(asmBlock.getOutputBuffer(), '8', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
@@ -96,8 +96,8 @@ test('Multiple declarations inside a method v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('4', PrintTypes.MEMORY))
-  asmBlock.run()
+  asmBlock.push(new Print('4', PrintTypes.MEMORY));
+  asmBlock.run();
   t.equal(asmBlock.getOutputBuffer(), '28', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
@@ -110,7 +110,7 @@ test('Chain calls', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('4', PrintTypes.MEMORY))
+  asmBlock.push(new Print('4', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '575', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -124,7 +124,7 @@ test('least common divisor v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '4', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -138,7 +138,7 @@ test('least common divisor v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '7', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -152,7 +152,7 @@ test('least common divisor v3', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '254', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -166,7 +166,7 @@ test('Recursive calls, power v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '16', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -180,7 +180,7 @@ test('Recursive calls, power v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '117649', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -188,13 +188,13 @@ test('Recursive calls, power v2', (t) => {
   t.end();
 });
 
-test('Recursive calls, power v2', (t) => {
+test('Recursive calls, power v3', (t) => {
   const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return p*power(p,e-1);}int response=power(p,e/2);return response*response;}void main(){int a=power(9,5);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '59049', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -267,6 +267,48 @@ test('Check Compiler recursive fibbonachi with negative.', (t) => {
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '89', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Recursive pyramide building v1', (t) => { 
+  const program = new Program('int pyramid(int a,int b){if(a==0||b==0){return 1;}return pyramid(a-1,b)+pyramid(a,b-1);}void main(){int b=pyramid(6,3);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '84', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Recursive pyramide building v2', (t) => { 
+  const program = new Program('int pyramid(int a,int b){if(a==0||b==0){return 1;}return pyramid(a-1,b)+pyramid(a,b-1);}void main(){int b=pyramid(7,9);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '11440', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Recursive pyramide building v3', (t) => { 
+  const program = new Program('int pyramid(int a,int b){if(a==0||b==0){return 1;}return pyramid(a-1,b)+pyramid(a,b-1);}void main(){int b=pyramid(3,8);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '165', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
