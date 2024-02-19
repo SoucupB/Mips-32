@@ -74,8 +74,6 @@ export class Compiler {
     let block = new RegisterBlock();
     this.createExpressionAsm(children[1], block);
 
-    // console.log('PIZDA\n', block.toString(), this.registerStack, '\nZZZID')
-
     this.loadExpressionOnStack(children[1], children[0], block);
     return block;
   }

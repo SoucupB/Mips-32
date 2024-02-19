@@ -3,6 +3,7 @@ const { test } = tap;
 import { Compiler } from '../ASM/Compiler.js';
 import { CodeBlock } from '../AST/CodeBlock.js';
 import { Program } from '../AST/Program.js';
+import { Print, PrintTypes } from '../ASM/Register.js';
 
 // test('Check Compiler checker v1', (t) => {
 //   const chomp = CodeBlock.chomp('{int adafg=3+4;int c=5+6;c=adafg*5;}', 0)
@@ -227,76 +228,69 @@ import { Program } from '../AST/Program.js';
 //   t.end();
 // });
 
+// test('Check Compiler recursive fibbo.', (t) => { 
+//   const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)+fibboRecursive(n-2);}void main(){int b=fibboRecursive(8);}')
+//   let chomp = program.chomp();
+//   t.equal(chomp.isInvalid(), false, 'returns');
+//   let programCompiler = new Compiler(null);
+//   let asmBlock = programCompiler.compileProgram(chomp);
+//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
+//   asmBlock.run()
+//   t.equal(asmBlock.getOutputBuffer(), '34', 'returns');
 
-// JMP _main
+//   t.end();
+// });
 
-// :_fibboRecursive
+// test('Check Compiler add 2 numbers.', (t) => {
+//   const program = new Program('int add(int a,int b){return a+b;}void main(){int b=add(5,7);}')
+//   let chomp = program.chomp();
+//   t.equal(chomp.isInvalid(), false, 'returns');
+//   let programCompiler = new Compiler(null);
+//   let asmBlock = programCompiler.compileProgram(chomp);
+//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
+//   asmBlock.run()
+//   t.equal(asmBlock.getOutputBuffer(), '12', 'returns');
 
-// MOV $0 [$st-8]
-// MOV $1 2
-// CMP $0 $1
-// MOV $2 $CF
-// TEST $2 $2
-// JZ _label0
-// MOV $0 1
-// MOV $ret [$st-4]
-// MOV $rsp $0
-// JMP $ret
-// :_label0
+//   t.end();
+// });
 
-// MOV $3 [$st-8]
-// MOV $4 1
-// SUB $5 $3 $4
-// PUSH $5
-// PRP $ret 3
-// PUSH $ret
+// test('Check Compiler add 4 numbers.', (t) => {
+//   const program = new Program('int add(int a,int b,int c,int d){return a+b+c+d;}void main(){int b=add(1,2,3,4);}')
+//   let chomp = program.chomp();
+//   t.equal(chomp.isInvalid(), false, 'returns');
+//   let programCompiler = new Compiler(null);
+//   let asmBlock = programCompiler.compileProgram(chomp);
+//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
+//   asmBlock.run()
+//   t.equal(asmBlock.getOutputBuffer(), '10', 'returns');
 
-// JMP _fibboRecursive
-// POP 8
-// MOV $0 $rsp # Here is the error, the 0 register is not pushed onto the stack
-// MOV $3 [$st-8]
-// MOV $4 2
+//   t.end();
+// });
 
-// PUSH $0
-
-// SUB $5 $3 $4
-// PUSH $5
-// PRP $ret 3
-// PUSH $ret
-
-// JMP _fibboRecursive
-// POP 8
-
-// POP $0
-
-// MOV $1 $rsp
-// ADD $3 $0 $1
-// MOV $ret [$st-4]
-// MOV $rsp $3
-// JMP $ret
-
-// :_main
-// MOV $1 3
-// PUSH $1
-// PRP $ret 3
-// PUSH $ret
-// JMP _fibboRecursive
-// POP 8
-// MOV $0 $rsp
-// PUSH $0
-// POP 4
-
-// Remove registers from expressions
-
-test('Check Compiler checker v13 (Full Program).', (t) => { // rsp register is not pushed onto the stack and therefor its value is lost
-  const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)+fibboRecursive(n-2);}void main(){int b=fibboRecursive(13);}') // rsp should have been pushed into the stack
+test('Check Compiler mirror.', (t) => {
+  const program = new Program('int mirror(int a){int response=0;while(a!=0){response=response*10;response=response+a%10;a=a/10;}return response;}void main(){int b=mirror(123);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run();
   console.log(asmBlock.toString())
-  asmBlock.run()
   console.log(asmBlock.runner.printPointerBytes(32))
+  t.equal(asmBlock.getOutputBuffer(), '321', 'returns');
 
   t.end();
 });
+
+// test('Send by value', (t) => {
+//   const program = new Program('int mirror(int a){a=10;return 15;}void main(){int a=5;int b=mirror(a);}')
+//   let chomp = program.chomp();
+//   t.equal(chomp.isInvalid(), false, 'returns');
+//   let programCompiler = new Compiler(null);
+//   let asmBlock = programCompiler.compileProgram(chomp);
+//   asmBlock.push(new Print('0', PrintTypes.MEMORY))
+//   asmBlock.run()
+//   t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
+
+//   t.end();
+// });

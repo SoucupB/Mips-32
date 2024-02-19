@@ -286,14 +286,6 @@ test('Check Expression order v1', (t) => {
   t.end();
 });
 
-// test('Check Expression order v2', (t) => {
-//   let chomp = Expression.chomp('3+4*5', 0); 
-//   let expressionTree = new ExpressionTree(chomp);
-//   expressionTree.build();
-//   // t.equal(expressionTree.toString(), '(3+(4*5))', 'returns');
-//   t.end();
-// });
-
 test('Check Expression order v3', (t) => {
   let chomp = Expression.chomp('3+4*5*(((19+3)/2)-7)', 0); 
   let expressionTree = new ExpressionTree(chomp);
