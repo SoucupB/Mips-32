@@ -239,6 +239,7 @@ test('Check Compiler recursive fibbo.', (t) => {
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '34', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });
@@ -252,6 +253,7 @@ test('Check Compiler add 2 numbers.', (t) => {
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '12', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });
@@ -265,6 +267,7 @@ test('Check Compiler add 4 numbers.', (t) => {
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '10', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });
@@ -277,15 +280,16 @@ test('Check Compiler mirror.', (t) => {
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run();
-  console.log(asmBlock.toString())
-  console.log(asmBlock.runner.printPointerBytes(32))
+  // console.log(asmBlock.toString())
+  // console.log(asmBlock.runner.printPointerBytes(32))
   t.equal(asmBlock.getOutputBuffer(), '321', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });
 
 test('Send by value', (t) => {
-  const program = new Program('int mirror(int a){a=10;return 15;}void main(){int a=5;int b=mirror(a);}')
+  const program = new Program('int reff(int a){a=10;return 15;}void main(){int a=5;int b=reff(a);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -293,6 +297,91 @@ test('Send by value', (t) => {
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Multiple declarations inside a method v1', (t) => {
+  const program = new Program('int reff(int a){int c=3;return a+c;}void main(){int a=5;int b=reff(a);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('4', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '8', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Multiple declarations inside a method v2', (t) => {
+  const program = new Program('int reff(int a){int c=3,v=5,t=7;if(v==5){int z=3;c=c+10+z;}return a+c+t;}void main(){int a=5;int b=reff(a);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('4', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '28', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Chain calls', (t) => {
+  const program = new Program('int testA(int z){return z+10;}int reff(int a){int c=3,v=5,t=7;if(v==5){int z=3;c=c+10+z;}return (a+c+t)*testA(10)+testA(5);}void main(){int a=5;int b=reff(a);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('4', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '575', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('least common divisor v1', (t) => {
+  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(12,16);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '4', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('least common divisor v2', (t) => {
+  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(28,35);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '7', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('least common divisor v3', (t) => {
+  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(3556,8382);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '254', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });

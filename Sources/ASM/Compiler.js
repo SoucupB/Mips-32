@@ -228,7 +228,7 @@ export class Compiler {
     return block;
   }
 
-  compileBlock(chomp) {
+  compileBlock(chomp, withStackPop = true) {
     let block = new RegisterBlock();
     this.buildExpressionTrees(chomp);
     const children = chomp.childrenChomps;
@@ -267,7 +267,9 @@ export class Compiler {
         }
       }
     }
-    this.popStackValues(block);
+    if(withStackPop) {
+      this.popStackValues(block);
+    }
     this.registerStack.pop();
     return block;
   }
@@ -314,7 +316,7 @@ export class Compiler {
     }
     this.registerStack.push('return_address', 4);
     this.registerStack.freezeMethodPointer();
-    block.push(this.compileBlock(methodBlock));
+    block.push(this.compileBlock(methodBlock, false));
     this.registerStack.pop();
 
     return block;
