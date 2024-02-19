@@ -385,3 +385,45 @@ test('least common divisor v3', (t) => {
 
   t.end();
 });
+
+test('Recursive calls, power v1', (t) => {
+  const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return p*power(p,e-1);}int response=power(p,e/2);return response*response;}void main(){int a=power(2,4);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '16', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Recursive calls, power v2', (t) => {
+  const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return p*power(p,e-1);}int response=power(p,e/2);return response*response;}void main(){int a=power(7,6);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '117649', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Recursive calls, power v2', (t) => {
+  const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return p*power(p,e-1);}int response=power(p,e/2);return response*response;}void main(){int a=power(9,5);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '59049', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
