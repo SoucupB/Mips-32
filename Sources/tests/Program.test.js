@@ -254,3 +254,17 @@ test('Check Program checker Expression call v3', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Program checker Expression pointer v1', (t) => {
+  let program = new Program('int a=0;void coco(int z,int t){z=0;int frt=5;}int main(){coco(3,2)+*a;return 0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check Program checker Expression pointer v2', (t) => {
+  let program = new Program('int a=0;void coco(int z,int t){z=0;int frt=5;}int main(){coco(3,*2)+a;return 0;}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
