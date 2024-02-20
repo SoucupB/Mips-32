@@ -4,6 +4,7 @@ import Variable from "./Variable.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
+import { Pointer } from "./Pointer.js";
 
 export class Assignation {
   static chomp(str, index, withEnding = true) {
@@ -35,18 +36,31 @@ export class Assignation {
     return chompResponse;
   }
 
-  static chompInitializedVariable(str, index) {
-    let variable = Variable.chomp(str, index);
-    if(variable.isInvalid()) {
-      return Chomp.invalid();
+  static chompDeclarator(str, index) {
+    let pointer = Pointer.chomp(str, index);
+    if(!pointer.isInvalid()) {
+      return pointer;
     }
-    index = variable.index;
-    let equalChomp = Operator.chompEqual(str, index);
-    if(equalChomp.isInvalid()) {
+
+    let variable = Variable.chomp(str, index);
+    if(!variable.isInvalid()) {
       return variable;
     }
+
+    return Chomp.invalid();
+  }
+
+  static chompInitializedVariable(str, index) {
+    let assigner = Assignation.chompDeclarator(str, index);
+    index = assigner.index;
+    let equalChomp = Operator.chompEqual(str, index);
+    if(equalChomp.isInvalid()) {
+      return assigner;
+    }
     index = equalChomp.index;
-    return new Chomp(variable.buffer, index, Variable);
+    
+    assigner.index = index;
+    return assigner;
   }
 
   static toString(chomp) {
