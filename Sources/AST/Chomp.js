@@ -1,3 +1,5 @@
+import { Pointer } from "./Pointer.js";
+
 class Chomp {
   constructor(buffer, index, type = null, isParent = false, invalid = false) {
     this.buffer = buffer;
@@ -34,7 +36,16 @@ class Chomp {
       }
       return childParent;
     }
-    return this.buffer;
+    
+    switch(this.type) {
+      case Pointer: {
+        return `*${this.childrenChomps[0].toString()}`;
+      }
+
+      default: {
+        return this.buffer;
+      }
+    }
   }
 }
 

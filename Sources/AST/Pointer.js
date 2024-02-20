@@ -32,4 +32,9 @@ export class Pointer {
     currentChomp.childrenChomps = [paranthesysExpressionChomp];
     return currentChomp;
   }
+
+  static findUnassignedVariables(chomp, stackDeclaration) {
+    const expression = chomp.childrenChomps[0];
+    return Expression.checkStackInitialization(expression, stackDeclaration);
+  }
 }

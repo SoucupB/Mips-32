@@ -86,19 +86,32 @@ export class Assignation {
     return response;
   }
 
+  static isAssignerDefined(assigner, stackDeclaration) {
+    switch(assigner.type) {
+      case Variable: {
+        return stackDeclaration.isVariableDefined(assigner.buffer);
+      }
+      case Pointer: {
+        return Expression.checkStackInitialization(assigner.childrenChomps[0], stackDeclaration);
+      }
+    }
+
+    return false;
+  }
+
   static findUnassignedVariables(chomp, stackDeclaration) {
     let child = chomp.childrenChomps;
 
-    let assignerVariable = child[0];
+    let assigner = child[0];
     let expression = child[1];
 
     let undefinedVariables = [];
 
-    if(!stackDeclaration.isVariableDefined(assignerVariable.buffer)) {
-      undefinedVariables.push(assignerVariable.buffer);
+    if(!Assignation.isAssignerDefined(assigner, stackDeclaration)) {
+      undefinedVariables.push(assigner);
     }
     if(undefinedVariables.length) {
-      return new CompilationErrors(undefinedVariables, ErrorTypes.VARIABLE_NOT_DEFINED);
+      return new CompilationErrors(null, ErrorTypes.VARIABLE_NOT_DEFINED);
     }
     let expressionUndefinedVariables = Expression.checkStackInitialization(expression, stackDeclaration);
     if(!expressionUndefinedVariables.isClean()) {

@@ -335,5 +335,80 @@ test('Check with methods v4 stack', (t) => {
   t.end();
 });
 
+test('Expression with pointer v1', (t) => {
+  let chomp = Expression.chomp('a+b+*z', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 6, 'returns');
+  t.end();
+});
 
-// Add expression tests with missing variables.
+test('Expression with pointer v2', (t) => {
+  let chomp = Expression.chomp('a+b+*(z+32+1)+c', 0); 
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 15, 'returns');
+  t.end();
+});
+
+test('Expression with pointer missing params v1', (t) => {
+  let chomp = Expression.chomp('a+b+*(z+32+1)+c', 0);
+  let stackDeclaration = new StackDeclarations();
+  stackDeclaration.push('a')
+  stackDeclaration.push('b')
+  stackDeclaration.push('c')
+  stackDeclaration.push('z')
+
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.NO_ERRORS, 'returns');
+  t.end();
+});
+
+test('Expression with pointer missing params v2', (t) => {
+  let chomp = Expression.chomp('a+b+*(z+32+1)+c', 0);
+  let stackDeclaration = new StackDeclarations();
+  stackDeclaration.push('a')
+  stackDeclaration.push('b')
+  stackDeclaration.push('c')
+
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns'); 
+  t.end();
+});
+
+test('Expression with pointer missing params v3', (t) => {
+  let chomp = Expression.chomp('a+b+*(z+32+1+ft)+c', 0);
+  let stackDeclaration = new StackDeclarations();
+  stackDeclaration.push('a')
+  stackDeclaration.push('b')
+  stackDeclaration.push('c')
+  stackDeclaration.push('z')
+
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns'); 
+  t.end();
+});
+
+test('Expression with pointer missing params v4', (t) => {
+  let chomp = Expression.chomp('a+b+*(z+32+1+ft)+c', 0);
+  let stackDeclaration = new StackDeclarations();
+  stackDeclaration.push('a')
+  stackDeclaration.push('b')
+  stackDeclaration.push('c')
+  stackDeclaration.push('z')
+  stackDeclaration.push('ft')
+
+
+  let stackResponse = Expression.checkStackInitialization(chomp, stackDeclaration);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(stackResponse.type, ErrorTypes.NO_ERRORS, 'returns'); 
+  t.end();
+});

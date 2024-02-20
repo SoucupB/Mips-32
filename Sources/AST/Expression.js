@@ -4,6 +4,7 @@ import Chomp from "./Chomp.js";
 import Variable from "./Variable.js";
 import { Methods, MethodCall } from "./Methods.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
+import { Pointer } from "./Pointer.js";
 
 class Expression {
   static isValid(str) {
@@ -106,7 +107,7 @@ class Expression {
   }
 
   static chompDenominator(str, index) {
-    let possibleCharacters = [Methods.chompMethodCall, Constant.chomp, Variable.chomp]
+    let possibleCharacters = [Methods.chompMethodCall, Pointer.chomp, Constant.chomp, Variable.chomp]
     for(let i = 0, c = possibleCharacters.length; i < c; i++) {
       let chomp = possibleCharacters[i](str, index);
       if(!chomp.isInvalid()) {
@@ -124,6 +125,14 @@ class Expression {
         case Variable: {
           if(!stackDeclaration.isVariableDefined(children[i].buffer)) {
             return new CompilationErrors([children[i].buffer], ErrorTypes.VARIABLE_NOT_DEFINED)
+          }
+          break;
+        }
+
+        case Pointer: {
+          let undefinedVariables = Pointer.findUnassignedVariables(children[i], stackDeclaration);
+          if(!undefinedVariables.isClean()) {
+            return undefinedVariables;
           }
           break;
         }
