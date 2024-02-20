@@ -87,3 +87,17 @@ test('Check Assignation checker v10', (t) => {
   t.equal(Assignation.findUnassignedVariables(chomp, stack).type, ErrorTypes.NO_ERRORS, 'returns');
   t.end();
 });
+
+test('Check Assignation checker v11', (t) => {
+  let chomp = Assignation.chomp('*adada=aaa+bbb-ccc/222+2;', 0);
+  
+  t.equal(Assignation.toString(chomp), '*adada=aaa+bbb-ccc/222+2;', 'returns');
+  t.end();
+});
+
+test('Check Assignation checker v12', (t) => {
+  let chomp = Assignation.chomp('*(adada+1)=aaa+bbb-ccc/222+2;', 0);
+  
+  t.equal(Assignation.toString(chomp), '*adada+1=aaa+bbb-ccc/222+2;', 'returns');
+  t.end();
+});

@@ -65,7 +65,21 @@ export class Assignation {
 
   static toString(chomp) {
     let response = '';
-    response += chomp.childrenChomps[0].buffer;
+    const assigner = chomp.childrenChomps[0];
+    switch(assigner.type) {
+      case Variable: {
+        response += assigner.buffer;
+        break;
+      }
+      case Pointer: {
+        response += `*${assigner.childrenChomps[0].toString()}`;
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
     response += '=';
     response += chomp.childrenChomps[1].toString();
     response += ';';
