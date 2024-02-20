@@ -38,7 +38,7 @@ class Expression {
     let chomp = Expression.chompDenominator(str, indexArray[0]);
     if(chomp.isInvalid()) {
       let newIndex = [indexArray[0]]
-      let denomitorChomp = Expression.chomp_ParanthesisData(str, newIndex, chompsArray);
+      let denomitorChomp = Expression.chomp_ParanthesisData(str, newIndex);
       if(!denomitorChomp.isInvalid()) {
         chompsArray.push(denomitorChomp);
         indexArray[0] = denomitorChomp.index;

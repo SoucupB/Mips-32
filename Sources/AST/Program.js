@@ -128,7 +128,6 @@ export class Program {
         default:
           break;
       }
-      // iterate through instructions and find instructions that have multiple definitions.
     }
     return true;
   }
