@@ -38,7 +38,7 @@ class Expression {
     let chomp = Expression.chompDenominator(str, indexArray[0]);
     if(chomp.isInvalid()) {
       let newIndex = [indexArray[0]]
-      let denomitorChomp = Expression.chomp_ParanthesisData(str, newIndex);
+      let denomitorChomp = Expression.chomp_ParanthesisData(str, newIndex[0]);
       if(!denomitorChomp.isInvalid()) {
         chompsArray.push(denomitorChomp);
         indexArray[0] = denomitorChomp.index;
@@ -87,22 +87,22 @@ class Expression {
   }
 
   static chomp_ParanthesisData(str, index) {
-    let chompOpenParanth = Operator.chompOpenParanth(str, index[0]);
+    let chompOpenParanth = Operator.chompOpenParanth(str, index);
     if(chompOpenParanth.isInvalid()) {
       return Chomp.invalid();
     }
-    index[0] = chompOpenParanth.index;
-    let chomp = Expression.chompSearch_t(str, index[0]);
+    index = chompOpenParanth.index;
+    let chomp = Expression.chompSearch_t(str, index);
     if(chomp.isInvalid()) {
       return Chomp.invalid();
     }
-    index[0] = chomp.index;
-    let chompCloseParanth = Operator.chompCloseParanth(str, index[0]);
+    index = chomp.index;
+    let chompCloseParanth = Operator.chompCloseParanth(str, index);
     if(chompCloseParanth.isInvalid()) {
       return Chomp.invalid();
     }
-    index[0] = chompCloseParanth.index;
-    return Expression.chompFromArray(chomp.childrenChomps, index);
+    index = chompCloseParanth.index;
+    return Expression.chompFromArray(chomp.childrenChomps, [index]);
   }
 
   static chompDenominator(str, index) {

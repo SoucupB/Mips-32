@@ -1,5 +1,7 @@
 import Character from "./Character.js";
 import Chomp from "./Chomp.js";
+import Expression from "./Expression.js";
+import Variable from "./Variable.js";
 
 export class Pointer {
   static chomp(str, index) {
@@ -12,10 +14,22 @@ export class Pointer {
     }
     index++;
 
+    let variableChomp = Variable.chomp(str, index);
+    if(!variableChomp.isInvalid()) {
+      index = variableChomp.index;
+      let currentChomp = new Chomp(null, index, Pointer);
+      currentChomp.childrenChomps = [Expression.chomp(variableChomp.buffer, 0)];
+      return currentChomp;
+    }
 
-  }
+    let paranthesysExpressionChomp = Expression.chomp_ParanthesisData(str, index);
+    if(paranthesysExpressionChomp.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = paranthesysExpressionChomp.index;
 
-  static chompExpressionInParanthesys(str, index) {
-    
+    let currentChomp = new Chomp(null, index, Pointer);
+    currentChomp.childrenChomps = [paranthesysExpressionChomp];
+    return currentChomp;
   }
 }
