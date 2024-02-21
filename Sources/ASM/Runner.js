@@ -5,6 +5,8 @@ export const ReadMemoryType = {
   INT8: 2
 };
 
+let stddoutOutputBuffer = 2 ** 16;
+
 export class Runner {
   constructor(instructionArray) {
     this.instructionArray = instructionArray;
@@ -18,6 +20,17 @@ export class Runner {
 
     this.pc = 0;
     this.saveLabelAddresses();
+  }
+
+  getStdoutResponse() {
+    const bufferSize = this.getNumberAtAddress(this.memory, stddoutOutputBuffer - 4);
+
+    let response = [];
+    for(let i = 0, c = bufferSize; i < c; i += 4) {
+      response.push(this.getNumberAtAddress(this.memory, stddoutOutputBuffer + i));
+    }
+
+    return response.join('\n');
   }
 
   saveRegValue(dst, src) {

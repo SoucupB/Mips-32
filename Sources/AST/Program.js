@@ -7,9 +7,29 @@ import { StackDeclarations } from "./StackDeclarations.js";
 import { Helper } from "./Helper.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 
+let stddoutOutputBuffer = 2 ** 16;
+
+export class PredefinedMethods {
+  static methods() {
+    return `${PredefinedMethods.getElementAt()}${PredefinedMethods.storeElement()}${PredefinedMethods.storePrint()}`
+  }
+
+  static getElementAt() {
+    return `int getElement(int buffer,int pos){return *(buffer+pos*4);}`;
+  }
+
+  static storeElement() {
+    return `int setElement(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}`;
+  }
+
+  static storePrint() {
+    return `int printLine(int element){int startingPointer=${stddoutOutputBuffer};int size=*(startingPointer-4);*(startingPointer+size)=element;int newSize=size+4;*(startingPointer-4)=newSize;return 0;}`;
+  }
+};
+
 export class Program {
   constructor(code, errors = []) {
-    this.code = code;
+    this.code = `${PredefinedMethods.methods()}${code}`;
     this.errors = errors;
   }
 

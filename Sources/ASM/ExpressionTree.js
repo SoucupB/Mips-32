@@ -542,7 +542,6 @@ export class ExpressionTree {
 
     if(!this.root.left && !this.root.right) {
       let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
-      // block.push(new Mov(freeRegisterSrc, this.getNodeValue(this.root, block, registerStack, registerMem), this.getNodeMovType(this.root)));
       this.pushMov(this.root, block, registerMem, registerStack);
       block.push(new Push(freeRegisterSrc));
       registerStack.push(this.root.nodeID, 4);

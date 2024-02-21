@@ -13,6 +13,10 @@ export class RegisterBlock {
     return [instruction.toString()];
   }
 
+  getStdoutResponse() {
+    return this.runner.getStdoutResponse();
+  }
+
   toStringArray_t(block) {
     let response = [];
     for(let i = 0, c = block.length; i < c; i++) {

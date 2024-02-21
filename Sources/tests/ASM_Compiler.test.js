@@ -343,7 +343,7 @@ test('Pointer program v2', (t) => {
 });
 
 test('Pointer program v2', (t) => { 
-  const program = new Program('int setElementInPointer(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}void main(){int buffer=344,z=setElementInPointer(buffer,0,134),c=*buffer;}')
+  const program = new Program('void main(){int buffer=344,z=setElement(buffer,0,134),c=*buffer;}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -357,15 +357,67 @@ test('Pointer program v2', (t) => {
 });
 
 test('Pointer program v3', (t) => { 
-  const program = new Program('int getElement(int buffer,int pos){return *(buffer+pos*4);}int setElementInPointer(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}void main(){int sum=0,buffer=344,trp=0;for(int i=1;i<=100;i=i+1){trp=setElementInPointer(buffer,i,i);}for(int i=1;i<=100;i=i+1){sum=sum+getElement(buffer,i);}}')
+  const program = new Program('void main(){int sum=0,buffer=344,trp=0;for(int i=1;i<=100;i=i+1){trp=setElement(buffer,i,i);}for(int i=1;i<=100;i=i+1){sum=sum+getElement(buffer,i);}}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString());
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '5050', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+// MOV [$3] $0
+// MOV $0 [$st-4]
+// MOV $1 4
+// ADD $2 $0 $1
+// PUSH $2
+// POP 4
+// MOV $0 [$st-8]
+// MOV $1 4
+// SUB $2 $0 $1
+// PUSH $2
+// POP 4
+// MOV [$2] $2
+
+// Fix a bug where registers from an expression are intechangably used with the pointer registers.
+test('Pointer program v4', (t) => { 
+  const program = new Program('void main(){int sum=112,c=0;c=printLine(sum);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '112', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer program v5', (t) => {
+  const program = new Program('void main(){int sum=112,c=0;c=printLine(sum);c=printLine(sum+100);c=printLine(sum+200);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '112\n212\n312', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer program v6', (t) => {
+  const program = new Program('void main(){int buffer=3242;for(int i=0;i<=5;i=i+1){int p=setElement(buffer,i,i+100);}for(int i=0;i<=5;i=i+1){int z=printLine(getElement(buffer,i));}}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '100\n101\n102\n103\n104\n105', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
