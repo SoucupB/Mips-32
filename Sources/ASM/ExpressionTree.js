@@ -1,6 +1,7 @@
 import Constant from "../AST/Constant.js";
 import Expression from "../AST/Expression.js";
 import { MethodCall } from "../AST/Methods.js";
+import { Pointer } from "../AST/Pointer.js";
 import Variable from "../AST/Variable.js";
 import { Add, Cmp, Div, Jmp, Mov, MovTypes, Mul, Or, Pop, PopTypes, Prp, Push, Setdor, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from "./Register.js";
 
@@ -167,11 +168,41 @@ export class ExpressionTree {
     return registers;
   }
 
+  pushNonPointerNode(node, block, registerMem, registerStack) {
+    let register = this.findRegisterForNode(node, registerMem);
+    block.push(new Mov(register, this.getNodeValue(node, block, registerStack, registerMem), this.getNodeMovType(node)));
+  }
+
+  pushPointerNode(node, block, registerMem, registerStack) {
+    let register = this.findRegisterForNode(node, registerMem);
+    const pointerExpression = node.chomp.childrenChomps[0];
+
+    pointerExpression.expressionTree.addInstructionToBlockWithOrder(block, registerMem, registerStack);
+
+    const regSrc = pointerExpression.expressionTree.getRegister(registerMem);
+    block.push(new Mov(register, regSrc, MovTypes.REG_MEM_TO_REG));
+    registerMem.freeRegister(regSrc);
+  }
+
+  pushLeafNode(node, block, registerMem, registerStack) {
+    switch(node.chomp.type) {
+      case Pointer: {
+        this.pushPointerNode(node, block, registerMem, registerStack)
+        break;
+      }
+
+      default: {
+        this.pushNonPointerNode(node, block, registerMem, registerStack)
+        break;
+      }
+    }
+  }
+
   pushMov(node, block, registerMem, registerStack) {
     let register = this.findRegisterForNode(node, registerMem);
 
     if(this.isLeaf(node)) {
-      block.push(new Mov(register, this.getNodeValue(node, block, registerStack, registerMem), this.getNodeMovType(node)));
+      this.pushLeafNode(node, block, registerMem, registerStack);
     }
     else {
       block.push(new Mov(register, registerStack.getStackOffset(node.nodeID), MovTypes.STACK_TO_REG));
