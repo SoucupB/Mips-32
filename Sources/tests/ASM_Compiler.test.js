@@ -356,7 +356,7 @@ test('Pointer program v2', (t) => {
   t.end();
 });
 
-test('Pointer program v2', (t) => { 
+test('Pointer program v3', (t) => { 
   const program = new Program('int getElement(int buffer,int pos){return *(buffer+pos*4);}int setElementInPointer(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}void main(){int sum=0,buffer=344,trp=0;for(int i=1;i<=100;i=i+1){trp=setElementInPointer(buffer,i,i);}for(int i=1;i<=100;i=i+1){sum=sum+getElement(buffer,i);}}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
