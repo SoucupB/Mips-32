@@ -6,6 +6,7 @@ import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
 import { Methods, ReturnMethod } from "../AST/Methods.js";
+import { Pointer } from "../AST/Pointer.js";
 import { ExpressionTree } from "./ExpressionTree.js";
 import { Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
@@ -45,12 +46,37 @@ export class Compiler {
     this.registerMem.freeRegister(topRegister);
   }
 
-  loadExpressionOnStack(expressionChomp, assignerName, block) {
+  loadVariableInStack(expressionChomp, assigner, block) {
     const topRegister = this.getExpressionRegister(expressionChomp);
-    const stackPointerForVariable = this.registerStack.getStackOffset(assignerName.buffer)
+    const stackPointerForVariable = this.registerStack.getStackOffset(assigner.buffer)
 
     block.push(new Mov(stackPointerForVariable, topRegister, MovTypes.REG_TO_STACK));
     this.registerMem.freeRegister(topRegister);
+  }
+
+  loadPointerInStack(expressionChomp, assignerExpression, block) {
+    const expressionChompTopRegister = this.getExpressionRegister(expressionChomp);
+    this.createExpressionAsm(assignerExpression, block);
+    const assignerExpressionChompTopRegister = this.getExpressionRegister(assignerExpression);
+
+    block.push(new Mov(assignerExpressionChompTopRegister, expressionChompTopRegister, MovTypes.REG_TO_MEM_REG));
+
+    this.registerMem.freeRegister(expressionChompTopRegister);
+    this.registerMem.freeRegister(assignerExpressionChompTopRegister);
+  }
+
+  loadExpressionOnStack(expressionChomp, assigner, block) {
+    switch(assigner.type) {
+      case Pointer: {
+        this.loadPointerInStack(expressionChomp, assigner.childrenChomps[0], block);
+        break;
+      }
+
+      default: {
+        this.loadVariableInStack(expressionChomp, assigner, block);
+        break;
+      }
+    }
   }
 
   compileInitialization(chomp, memoryRegion = this.registerStack) {

@@ -315,16 +315,30 @@ test('Recursive pyramide building v3', (t) => {
 });
 
 test('Pointer program v1', (t) => { 
-  const program = new Program('void main(){int a=15;int b=343;a=*(b+100)+43;}')
+  const program = new Program('void main(){int a=15;int b=343;a=a+*(b+100)+43;}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString());
-  // asmBlock.push(new Print('0', PrintTypes.MEMORY))
-  // asmBlock.run()
-  // t.equal(asmBlock.getOutputBuffer(), '165', 'returns');
-  // t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '58', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer program v2', (t) => { 
+  const program = new Program('void main(){int a=15;int b=344;*b=100+100;a=*b+a;}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  // console.log(asmBlock.toString());
+  asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '215', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });

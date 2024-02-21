@@ -168,13 +168,11 @@ export class ExpressionTree {
     return registers;
   }
 
-  pushNonPointerNode(node, block, registerMem, registerStack) {
-    let register = this.findRegisterForNode(node, registerMem);
+  pushNonPointerNode(register, node, block, registerMem, registerStack) {
     block.push(new Mov(register, this.getNodeValue(node, block, registerStack, registerMem), this.getNodeMovType(node)));
   }
 
-  pushPointerNode(node, block, registerMem, registerStack) {
-    let register = this.findRegisterForNode(node, registerMem);
+  pushPointerNode(register, node, block, registerMem, registerStack) {
     const pointerExpression = node.chomp.childrenChomps[0];
 
     pointerExpression.expressionTree.addInstructionToBlockWithOrder(block, registerMem, registerStack);
@@ -184,15 +182,15 @@ export class ExpressionTree {
     registerMem.freeRegister(regSrc);
   }
 
-  pushLeafNode(node, block, registerMem, registerStack) {
+  pushLeafNode(register, node, block, registerMem, registerStack) {
     switch(node.chomp.type) {
       case Pointer: {
-        this.pushPointerNode(node, block, registerMem, registerStack)
+        this.pushPointerNode(register, node, block, registerMem, registerStack)
         break;
       }
 
       default: {
-        this.pushNonPointerNode(node, block, registerMem, registerStack)
+        this.pushNonPointerNode(register, node, block, registerMem, registerStack)
         break;
       }
     }
@@ -202,7 +200,7 @@ export class ExpressionTree {
     let register = this.findRegisterForNode(node, registerMem);
 
     if(this.isLeaf(node)) {
-      this.pushLeafNode(node, block, registerMem, registerStack);
+      this.pushLeafNode(register, node, block, registerMem, registerStack);
     }
     else {
       block.push(new Mov(register, registerStack.getStackOffset(node.nodeID), MovTypes.STACK_TO_REG));
