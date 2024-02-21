@@ -130,8 +130,18 @@ export class Runner {
     this.register[reg] = this.getNumberAtAddress(this.memory, this.stackPointer - parseInt(memPointer));
   }
 
-  saveRegMemInReg(regDst, regSrc) {
+  saveRegMemInReg(regSrc, regDst) {
     this.register[regDst] = this.getNumberAtAddress(this.memory, parseInt(this.register[regSrc.toString()]));
+  }
+
+  saveRegInMemReg(regSrc, regDst) {
+    let numberFromReg = this.numberToByteArray(this.getRegValue(regSrc));
+
+    let pointer = this.getRegValue(regDst);
+
+    for(let i = 0, c = numberFromReg.length; i < c; i++) {
+      this.memory[pointer + i] = numberFromReg[i];
+    }
   }
 
   numberFromPointer(pointer) {
@@ -166,6 +176,9 @@ export class Runner {
       }
       case MovTypes.REG_MEM_TO_REG: {
         this.saveRegMemInReg(instruction.src, instruction.dst);
+      }
+      case MovTypes.REG_TO_MEM_REG: {
+        this.saveRegInMemReg(instruction.src, instruction.dst);
       }
       default: {
         break;

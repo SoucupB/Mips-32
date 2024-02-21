@@ -80,7 +80,8 @@ export const MovTypes = {
   NUMBER_TO_REG: 4,
   STACK_TO_REG: 5,
   REG_TO_STACK: 6,
-  REG_MEM_TO_REG: 7
+  REG_MEM_TO_REG: 7,
+  REG_TO_MEM_REG: 8
 }
 
 export class Setdor extends Register {
@@ -122,6 +123,9 @@ export class Mov extends Register {
       }
       case MovTypes.REG_MEM_TO_REG: {
         return `MOV $${this.dst} [$${this.src}]`
+      }
+      case MovTypes.REG_TO_MEM_REG: {
+        return `MOV [$${this.dst}] $${this.src}`
       }
       case MovTypes.REG_TO_STACK: {
         if(this.dst == 0) {

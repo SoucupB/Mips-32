@@ -856,10 +856,22 @@ test('Check Register compiler compiler Program v11', (t) => {
 
 test('Check Register mem_reg_to_reg', (t) => {
   let block = new RegisterBlock();
-  block.push(new Mov('0', '1', MovTypes.NUMBER_TO_REG))
-  block.push(new Mov('1', '2', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('0', '156', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('1', '1000', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('1', '0', MovTypes.REG_TO_MEM_REG))
+  block.push(new Mov('2', '1000', MovTypes.MEM_TO_REG))
   block.run();
-  t.equal(block.getRegValue(0), 1, 'returns');
-  t.equal(block.getRegValue(1), 2, 'returns');
+  t.equal(block.getRegValue(2), 156, 'returns');
+  t.end();
+});
+
+test('Check Register reg_mem_to_reg', (t) => {
+  let block = new RegisterBlock();
+  block.push(new Mov('0', '156', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('1', '1000', MovTypes.NUMBER_TO_REG))
+  block.push(new Mov('1', '0', MovTypes.REG_TO_MEM_REG))
+  block.push(new Mov('2', '1', MovTypes.REG_MEM_TO_REG))
+  block.run();
+  t.equal(block.getRegValue(2), 156, 'returns');
   t.end();
 });
