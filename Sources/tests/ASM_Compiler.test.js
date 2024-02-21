@@ -133,28 +133,26 @@ test('least common divisor v1', (t) => {
 });
 
 test('least common divisor v2', (t) => {
-  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(28,35);}')
+  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(28,35),z=0;z=printLine(a);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '7', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '7', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });
 
 test('least common divisor v3', (t) => {
-  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(3556,8382);}')
+  const program = new Program('int cmmdc(int a,int b){if(b==0){return a;}return cmmdc(b,a%b);}void main(){int a=cmmdc(3556,8382),z=0;z=printLine(a);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '254', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '254', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -418,6 +416,19 @@ test('Pointer program v6', (t) => {
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '100\n101\n102\n103\n104\n105', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Recursive calls, power with modulo', (t) => {
+  const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return (p*power(p,e-1))%43254;}int response=power(p,e/2);return (response*response)%43254;}void main(){int a=power(2,1000000000),z=printLine(a);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run()
+  t.equal(asmBlock.getStdoutResponse(), '5830', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
