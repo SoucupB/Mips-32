@@ -334,11 +334,25 @@ test('Pointer program v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString());
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '215', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer program v2', (t) => { 
+  const program = new Program('int setElementInPointer(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}void main(){int buffer=344,z=setElementInPointer(buffer,0,134),c=*buffer;}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  console.log(asmBlock.toString());
+  asmBlock.push(new Print('8', PrintTypes.MEMORY))
+  asmBlock.run()
+  t.equal(asmBlock.getOutputBuffer(), '134', 'returns');
+  // t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });
