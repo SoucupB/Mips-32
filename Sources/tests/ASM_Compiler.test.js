@@ -434,7 +434,20 @@ test('Recursive calls, power with modulo', (t) => {
   t.end();
 });
 
-test('Recursive calls, power with modulo', (t) => {
+test('Expression lines v1', (t) => {
+  const program = new Program('void main(){int a=8,b=3;a+b-3+5;printLine(a);printLine(b);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '8\n3', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Expression lines v2', (t) => {
   const program = new Program('void main(){int a=3*(4+4)*5;printLine(a);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');

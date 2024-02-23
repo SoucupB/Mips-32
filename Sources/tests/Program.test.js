@@ -282,3 +282,10 @@ test('Program expression v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Program expression v2', (t) => {
+  let program = new Program('int coco(int n){return 5;}void main(){int a=0,b=5;a+b-coco(b);printLine(a);printLine(b);}');
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
