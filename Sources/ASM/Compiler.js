@@ -98,9 +98,12 @@ export class Compiler {
   compileAssignation(chomp) {
     const children = chomp.childrenChomps;
     let block = new RegisterBlock();
-    this.createExpressionAsm(children[1], block);
+    const expression = children[1];
+    const assigner = children[0];
 
-    this.loadExpressionOnStack(children[1], children[0], block);
+    this.createExpressionAsm(expression, block);
+
+    this.loadExpressionOnStack(expression, assigner, block);
     return block;
   }
 
@@ -244,6 +247,14 @@ export class Compiler {
     return block;
   }
 
+  compileExpression(child) {
+    let block = new RegisterBlock();
+
+    this.createExpressionAsm(child, block);
+
+    return block;
+  }
+
   compileBlock(chomp, withStackPop = true) {
     let block = new RegisterBlock();
     this.buildExpressionTrees(chomp);
@@ -276,6 +287,10 @@ export class Compiler {
         }
         case ConditionalBlocks: {
           block.push(this.compileConditionalBlock(child));
+          break;
+        }
+        case Expression: {
+          block.push(this.compileExpression(child));
           break;
         }
         default: {
