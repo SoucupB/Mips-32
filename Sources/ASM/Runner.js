@@ -33,6 +33,10 @@ export class Runner {
     return response.join('\n');
   }
 
+  get32BitNumberAtAddress(pointer) {
+    return this.getNumberAtAddress(this.memory, pointer);
+  }
+
   saveRegValue(dst, src) {
     if(src.toString() in this.register) {
       this.register[dst.toString()] = this.register[src.toString()];

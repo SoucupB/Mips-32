@@ -17,6 +17,11 @@ export class ExpressionNode {
   }
 }
 
+export const ExpressionReturnTypes = {
+  REGISTER: 1,
+  STACK_OFFSET: 2
+};
+
 export class ExpressionTree {
   constructor(expressionChomp) {
     this.expressionChomp = expressionChomp;
@@ -28,6 +33,8 @@ export class ExpressionTree {
       ['+', '-'],
       ['*', '/', '%'],
     ];
+
+    this.returnType = ExpressionReturnTypes.REGISTER;
   }
 
   toString_t(node) {
@@ -537,8 +544,17 @@ export class ExpressionTree {
     return currentOrder;
   }
 
-  addInstructionToBlockWithOrder(block, registerMem, registerStack) {
+  addResultToStack(block, registerMem, registerStack) {
+    if(this.returnType == ExpressionReturnTypes.STACK_OFFSET) {
+      block.push(new Push(this.getRegister(registerMem)));
+      registerStack.push(this.root.nodeID, 4);
+    }
+  }
+
+  addInstructionToBlockWithOrder(block, registerMem, registerStack, returnType = ExpressionReturnTypes.REGISTER) {
     registerStack.freeze();
+
+    this.returnType = returnType;
 
     if(!this.root.left && !this.root.right) {
       let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
@@ -555,8 +571,8 @@ export class ExpressionTree {
       this.addInstructions(currentOrder[i], block, registerMem, registerStack);
     }
     block.push(new Pop(registerStack.getFreezeTopDiff()));
-    
     registerStack.pop();
+    this.addResultToStack(block, registerMem, registerStack);
   }
 
   build_t(depth = 0, index) {

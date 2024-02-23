@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { ExpressionNode, ExpressionTree } from '../ASM/ExpressionTree.js';
+import { ExpressionNode, ExpressionReturnTypes, ExpressionTree } from '../ASM/ExpressionTree.js';
 import Expression from '../AST/Expression.js';
 import { RegisterMem } from '../ASM/RegisterMem.js';
 import { RegisterStack } from '../ASM/RegisterStack.js';
@@ -440,7 +440,6 @@ test('Check Expression order v11', (t) => {
   let asmBlock = new RegisterBlock(); 
   
   expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack)
-  // console.log(asmBlock.toString())
   asmBlock.push(new Print(expressionTree.getRegister(registerMem)))
   let runner = new Runner(asmBlock.flatten().block);
   runner.run();
@@ -477,5 +476,37 @@ test('Check Expression order v13', (t) => {
   let runner = new Runner(asmBlock.flatten().block);
   runner.run();
   t.equal(runner.getOutputBuffer(), '0', 'returns');
+  t.end();
+});
+
+test('Check Expression with stack response v1', (t) => {
+  let chomp = Expression.chomp('3+4*5', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack, ExpressionReturnTypes.STACK_OFFSET)
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+
+  t.equal(runner.get32BitNumberAtAddress(runner.initialStackPointer), 23, 'returns');
+  t.end();
+});
+
+test('Check Expression with stack response v1', (t) => {
+  let chomp = Expression.chomp('3+4*5-32*(7*3-3*(1+2+3+4))', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  let registerMem = new RegisterMem();
+  let registerStack = new RegisterStack();
+  let asmBlock = new RegisterBlock(); 
+  
+  expressionTree.addInstructionToBlockWithOrder(asmBlock, registerMem, registerStack, ExpressionReturnTypes.STACK_OFFSET)
+  let runner = new Runner(asmBlock.flatten().block);
+  runner.run();
+
+  t.equal(runner.get32BitNumberAtAddress(runner.initialStackPointer), 311, 'returns');
   t.end();
 });
