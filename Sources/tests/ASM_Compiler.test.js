@@ -355,7 +355,7 @@ test('Pointer program v2', (t) => {
 });
 
 test('Pointer program v3', (t) => { 
-  const program = new Program('void main(){int sum=0,buffer=344,trp=0;for(int i=1;i<=100;i=i+1){trp=setElement(buffer,i,i);}for(int i=1;i<=100;i=i+1){sum=sum+getElement(buffer,i);}}')
+  const program = new Program('void main(){int sum=0,buffer=344,trp=0;for(int i=1;i<=100;i=i+1){setElement(buffer,i,i);}for(int i=1;i<=100;i=i+1){sum=sum+getElement(buffer,i);}}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -409,7 +409,7 @@ test('Pointer program v5', (t) => {
 });
 
 test('Pointer program v6', (t) => {
-  const program = new Program('void main(){int buffer=3242;for(int i=0;i<=5;i=i+1){int p=setElement(buffer,i,i+100);}for(int i=0;i<=5;i=i+1){printLine(getElement(buffer,i));}}')
+  const program = new Program('void main(){int buffer=3242;for(int i=0;i<=5;i=i+1){setElement(buffer,i,i+100);}for(int i=0;i<=5;i=i+1){printLine(getElement(buffer,i));}}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -453,7 +453,7 @@ test('Expression lines v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString())
+  console.log(asmBlock.toString())
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '120', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
