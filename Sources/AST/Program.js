@@ -28,8 +28,13 @@ export class PredefinedMethods {
 };
 
 export class Program {
-  constructor(code, errors = []) {
-    this.code = `${PredefinedMethods.methods()}${code}`;
+  constructor(code, errors = [], withPredefinedMethods = true) {
+    if(withPredefinedMethods) {
+      this.code = `${PredefinedMethods.methods()}${code}`;
+    }
+    else {
+      this.code = code;
+    }
     this.errors = errors;
   }
 

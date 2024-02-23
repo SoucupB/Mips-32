@@ -46,11 +46,11 @@ export class CodeBlock {
 
   static chompBlock(str, index, withReturnStatement) {
     let availableBlocks = [Assignation.chomp, Initialization.chomp, (str, index) => CodeBlock.chomp(str, index, withReturnStatement), 
-                           (str, index) => LoopBlocks.chomp(str, index, withReturnStatement), (str, index) => ConditionalBlocks.chomp(str, index, withReturnStatement), 
-                           CodeBlock.expressionChompWithLineTerminator];
+                           (str, index) => LoopBlocks.chomp(str, index, withReturnStatement), (str, index) => ConditionalBlocks.chomp(str, index, withReturnStatement)];
     if(withReturnStatement) {
       availableBlocks.push(ReturnMethod.chomp);
     }
+    availableBlocks.push(CodeBlock.expressionChompWithLineTerminator);
     let responseBlocks = [];
     while(index < str.length) {
       let hasLineBeenProcessed = false;

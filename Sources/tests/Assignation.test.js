@@ -101,3 +101,10 @@ test('Check Assignation checker v12', (t) => {
   t.equal(Assignation.toString(chomp), '*adada+1=aaa+bbb-ccc/222+2;', 'returns');
   t.end();
 });
+
+test('Check Assignation checker v13', (t) => {
+  let chomp = Assignation.chomp('cana(2);', 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

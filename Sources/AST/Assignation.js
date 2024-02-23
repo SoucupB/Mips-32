@@ -55,7 +55,7 @@ export class Assignation {
     index = assigner.index;
     let equalChomp = Operator.chompEqual(str, index);
     if(equalChomp.isInvalid()) {
-      return assigner;
+      return Chomp.invalid();
     }
     index = equalChomp.index;
     

@@ -383,7 +383,7 @@ test('Pointer program v3', (t) => {
 
 // Fix a bug where registers from an expression are intechangably used with the pointer registers.
 test('Pointer program v4', (t) => { 
-  const program = new Program('void main(){int sum=112,c=0;c=printLine(sum);}')
+  const program = new Program('void main(){int sum=112;printLine(sum);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -396,7 +396,7 @@ test('Pointer program v4', (t) => {
 });
 
 test('Pointer program v5', (t) => {
-  const program = new Program('void main(){int sum=112,c=0;c=printLine(sum);c=printLine(sum+100);c=printLine(sum+200);}')
+  const program = new Program('void main(){int sum=112;printLine(sum);printLine(sum+100);printLine(sum+200);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -409,7 +409,7 @@ test('Pointer program v5', (t) => {
 });
 
 test('Pointer program v6', (t) => {
-  const program = new Program('void main(){int buffer=3242;for(int i=0;i<=5;i=i+1){int p=setElement(buffer,i,i+100);}for(int i=0;i<=5;i=i+1){int z=printLine(getElement(buffer,i));}}')
+  const program = new Program('void main(){int buffer=3242;for(int i=0;i<=5;i=i+1){int p=setElement(buffer,i,i+100);}for(int i=0;i<=5;i=i+1){printLine(getElement(buffer,i));}}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -422,7 +422,7 @@ test('Pointer program v6', (t) => {
 });
 
 test('Recursive calls, power with modulo', (t) => {
-  const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return (p*power(p,e-1))%43254;}int response=power(p,e/2);return (response*response)%43254;}void main(){int a=power(2,1000000000),z=printLine(a);}')
+  const program = new Program('int power(int p,int e){if(e==0){return 1;}if(e%2!=0){return (p*power(p,e-1))%43254;}int response=power(p,e/2);return (response*response)%43254;}void main(){int a=power(2,1000000000);printLine(a);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -440,10 +440,10 @@ test('Recursive calls, power with modulo', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString())
-  // asmBlock.run();
-  // t.equal(asmBlock.getStdoutResponse(), '120', 'returns');
-  // t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+  // console.log(asmBlock.toString())
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '120', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
 });

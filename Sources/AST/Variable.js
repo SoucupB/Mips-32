@@ -20,6 +20,22 @@ class Variable {
     return true;
   }
 
+  static isKeyword(buffer) {
+    const cKeywords = [
+      "auto", "break", "case", "char", "const", "continue", "default", "do",
+      "double", "else", "enum", "extern", "float", "for", "goto", "if", "int",
+      "long", "register", "return", "short", "signed", "sizeof", "static",
+      "struct", "switch", "typedef", "union", "unsigned", "void", "volatile",
+      "while"
+    ];
+
+    if(cKeywords.includes(buffer)) {
+      return true;
+    }
+
+    return false;
+  }
+
   static chomp(str, index) {
     if(!str || !str.length || Character.isNumeric(str[index])) {
       return Chomp.invalid();
@@ -32,6 +48,9 @@ class Variable {
       result += str[i++];
     }
     if(!result.length) {
+      return Chomp.invalid();
+    }
+    if(Variable.isKeyword(result)) {
       return Chomp.invalid();
     }
 
