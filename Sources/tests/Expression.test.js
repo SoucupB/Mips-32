@@ -448,3 +448,9 @@ test('Check expression with spaces v5', (t) => {
   t.equal(chomp.index, 52, 'returns');
   t.end();
 });
+
+test('Check expression with spaces v6', (t) => {
+  let chomp = Expression.chomp('(_ ) +  ( (  (1) ) *4+ f  ( 5 ,7  ,  8  ) )+(3+ 3  )     ', 0);
+  t.equal(chomp.index, 52, 'returns');
+  t.end();
+});

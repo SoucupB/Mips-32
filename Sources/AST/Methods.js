@@ -70,6 +70,7 @@ export class ReturnMethod {
       return Chomp.invalid();
     }
     index = expression.index;
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(index >= str.length || !Character.isAssignationEnding(str[index])) {
       return Chomp.invalid();
     }

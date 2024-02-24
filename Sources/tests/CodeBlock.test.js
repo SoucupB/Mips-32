@@ -389,11 +389,69 @@ test('Check CodeBlock internal stack Expression validity v2', (t) => {
 
 test('Check CodeBlock with spaces v1', (t) => {
   let chomp = CodeBlock.chomp(`{
-    int c=0;
-    int a=10;
-    a+c;
+    int c  =  0;
+    int a  = 10;
+    a +  c;
   }`, 0);
 
   t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock with spaces v2', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int c  =  0;
+    int a  = 10
+    a +  c;
+  }`, 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock with spaces v3', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int c  =  0;
+    int a  = c
+    a +  c;
+  }`, 0);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock with spaces with return v1', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int c  =  0;
+    int a  = c;
+    a +  c;
+    return a + c;
+  }`, 0, true);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock with spaces with return v2', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int c  =  0;
+    int a  = c;
+    a +  c;
+    return    a +    c   ;
+  }`, 0, true);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});
+
+test('Check CodeBlock with spaces with return v3', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int c  =  0;
+    int a  = c;
+    a +  c;
+    returna +    c   ;
+  }`, 0, true);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
