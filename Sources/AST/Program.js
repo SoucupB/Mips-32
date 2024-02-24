@@ -23,7 +23,7 @@ export class PredefinedMethods {
   }
 
   static storePrint() {
-    return `int printLine(int element){int startingPointer=${stddoutOutputBuffer};int size=*(startingPointer-4);*(startingPointer+size)=element;int newSize=size+4;*(startingPointer-4)=newSize;return 0;}`;
+    return `int printLine(int element){int startingPointer=${stddoutOutputBuffer};int size=*(startingPointer-4);*(startingPointer+size)=element;*(startingPointer-4)=size+4;return 0;}`;
   }
 };
 

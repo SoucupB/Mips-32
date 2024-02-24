@@ -20,6 +20,7 @@ export class Compiler {
     this.globalStack = new RegisterStack();
 
     this.labelID = 0;
+    this.assignationID = 0;
   }
 
   buildExpressionTrees(chomp) {
@@ -61,10 +62,10 @@ export class Compiler {
 
   loadPointerInStack(expressionChomp, assignerExpression, block) {
     let freeRegister = this.registerMem.findUnusedRegister();
-    this.registerMem.saveRegisterID(freeRegister, 'dsafagagds');
+    this.registerMem.saveRegisterID(freeRegister, `assignation-id-${this.assignationID++}`);
     
     this.createExpressionAsm(expressionChomp, block, ExpressionReturnTypes.STACK_OFFSET);
-    this.createExpressionAsm(assignerExpression, block, ExpressionReturnTypes.STACK_OFFSET);
+    this.createExpressionAsm(assignerExpression, block);
     const assignerExpressionChompTopRegister = this.getExpressionRegister(assignerExpression);
 
     block.push(new Mov(freeRegister, this.getExpressionStackPoint(expressionChomp), MovTypes.STACK_TO_REG));
