@@ -843,12 +843,8 @@ test('Check Register compiler compiler Program v11', (t) => {
   const chomp = CodeBlock.chomp('{int n=16637,result=1;for(int i=2;i<=n/2;i=i+1){if(n%i==0){result=0;}}}', 0)
   let program = new Compiler(null);
   let asmBlock = program.compileBlock(chomp);
-  // asmBlock.push(new Print('12', PrintTypes.MEMORY))
-  // console.log(asmBlock.toString())
   asmBlock.push(new Print('4', PrintTypes.MEMORY))
   asmBlock.run();
-  // console.log(asmBlock.runner.printPointerBytes(20))
-  // console.log(asmBlock.getOutputBuffer())
   t.equal(asmBlock.getOutputBuffer(), '0', 'returns');
 
   t.end();

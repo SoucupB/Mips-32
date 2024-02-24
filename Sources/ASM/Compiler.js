@@ -61,18 +61,20 @@ export class Compiler {
   }
 
   loadPointerInStack(expressionChomp, assignerExpression, block) {
-    let freeRegister = this.registerMem.findUnusedRegister();
-    this.registerMem.saveRegisterID(freeRegister, `assignation-id-${this.assignationID++}`);
+    let left = this.registerMem.findUnusedRegister();
+    this.registerMem.saveRegisterID(left, `assignation-id-${this.assignationID++}`);
+    let right = this.registerMem.findUnusedRegister();
+    this.registerMem.saveRegisterID(right, `assignation-id-${this.assignationID++}`);
     
     this.createExpressionAsm(expressionChomp, block, ExpressionReturnTypes.STACK_OFFSET);
-    this.createExpressionAsm(assignerExpression, block);
-    const assignerExpressionChompTopRegister = this.getExpressionRegister(assignerExpression);
+    this.createExpressionAsm(assignerExpression, block, ExpressionReturnTypes.STACK_OFFSET);
 
-    block.push(new Mov(freeRegister, this.getExpressionStackPoint(expressionChomp), MovTypes.STACK_TO_REG));
-    block.push(new Mov(assignerExpressionChompTopRegister, freeRegister, MovTypes.REG_TO_MEM_REG));
+    block.push(new Mov(right, this.getExpressionStackPoint(assignerExpression), MovTypes.STACK_TO_REG));
+    block.push(new Mov(left, this.getExpressionStackPoint(expressionChomp), MovTypes.STACK_TO_REG));
+    block.push(new Mov(right, left, MovTypes.REG_TO_MEM_REG));
 
-    this.registerMem.freeRegister(assignerExpressionChompTopRegister);
-    this.registerMem.freeRegister(freeRegister);
+    this.registerMem.freeRegister(left);
+    this.registerMem.freeRegister(right);
   }
 
   loadExpressionOnStack(expressionChomp, assigner, block) {
