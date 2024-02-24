@@ -507,7 +507,6 @@ test('Pointer arithmetics v4', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString())
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '68', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -523,6 +522,7 @@ test('Pointer arithmetics v4', (t) => {
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '530', 'returns');
+  // console.log(asmBlock.toString())
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();

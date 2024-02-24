@@ -31,6 +31,18 @@ class Operator {
     return Chomp.invalid();
   }
 
+  static pruneSpacesAndNewlines(str, index) {
+    while(index < str.length && Operator.isEmptySpaceOrNewLine(str[index])) {
+      index++;
+    }
+
+    return index;
+  }
+
+  static isEmptySpaceOrNewLine(chr) {
+    return chr == ' ' || chr == '\n' || chr == '\t' || chr == '\n\t';
+  }
+
   static chompEqual(str, index) {
     if((!str || index >= str.length) || str[index] != '=') {
       return Chomp.invalid();
