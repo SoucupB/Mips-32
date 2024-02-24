@@ -467,9 +467,61 @@ test('Pointer arithmetics v1', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString())
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '53', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer arithmetics v2', (t) => {
+  const program = new Program('void main(){int a=5,b=1000;*(b+30)=15+16+17+a;int c=*(b+30);printLine(c);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '53', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer arithmetics v3', (t) => {
+  const program = new Program('void main(){int a=5,b=1000,z=1500;*(z+64)=22;*(b+30)=15+16+17+a;int c=*(b+30)+*(z+64);printLine(c);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '75', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer arithmetics v4', (t) => {
+  const program = new Program('void main(){int a=5,b=1000,z=1500;*(b+30)=15;*(z+64)=22;*(b+30+*(z+64))=15+16+17+a;int c=*(b+30)+*(b+30+*(z+64));printLine(c);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  console.log(asmBlock.toString())
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '68', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer arithmetics v4', (t) => {
+  const program = new Program('void main(){int a=5,b=1000,z=1500;*(b+30)=15;*(z+64)=22;*(b+30+*(z+64))=15+16+(17+a)**(z+64);int c=*(b+30)+*(b+30+*(z+64));printLine(c);}')
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '530', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();

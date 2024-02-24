@@ -211,11 +211,9 @@ export class ExpressionTree {
     if(this.isLeaf(node)) {
       return this.pushLeafNode(node, block, registerMem, registerStack);
     }
-    else {
-      let register = this.findRegisterForNode(node, registerMem);
-      block.push(new Mov(register, registerStack.getStackOffset(node.nodeID), MovTypes.STACK_TO_REG));
-      return register;
-    }
+    let register = this.findRegisterForNode(node, registerMem);
+    block.push(new Mov(register, registerStack.getStackOffset(node.nodeID), MovTypes.STACK_TO_REG));
+    return register;
   }
 
   movAndGetFreeRegisters(node, block, registerMem, registerStack) {
