@@ -32,7 +32,7 @@ class Character {
   }
 
   static isEmptySpaceOrNewLine(chr) {
-    return chr == ' ' || chr == '\n' || chr == '\t' || chr == '\n\t';
+    return chr == ' ' || chr == '\n' || chr == '\t' || chr == '\t\n';
   }
 }
 export default Character;

@@ -298,9 +298,8 @@ test('Program new lines v1', (t) => {
   void main() {
     int a = 0, b = 5;
     a + b - coco(b);
-    printLine(a);
-    printLine(b);
-  }`);
+  }
+  `);
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();

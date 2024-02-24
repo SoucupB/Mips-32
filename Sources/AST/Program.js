@@ -6,6 +6,7 @@ import { Initialization } from "./Initialization.js";
 import { StackDeclarations } from "./StackDeclarations.js";
 import { Helper } from "./Helper.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
+import Character from "./Character.js";
 
 let stddoutOutputBuffer = 2 ** 16;
 
@@ -178,7 +179,8 @@ export class Program {
         break;
       }
     }
-
+    
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(index < str.length) {
       return Chomp.invalid();
     }

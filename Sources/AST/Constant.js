@@ -16,7 +16,7 @@ class Constant {
       return Chomp.invalid();
     }
 
-    let i = index;
+    let i = Character.pruneSpacesAndNewlines(str, index);
     let result = "";
 
     while(i < str.length && Character.isNumeric(str[i])) {

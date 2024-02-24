@@ -24,7 +24,8 @@ export class CodeBlock {
     if(closedBracket.isInvalid()) {
       return Chomp.invalid();
     }
-    let responseChomp = new Chomp(null, index + 1, CodeBlock);
+    index = closedBracket.index;
+    let responseChomp = new Chomp(null, index, CodeBlock);
     responseChomp.childrenChomps = blockList.childrenChomps;
     return responseChomp;
   }
