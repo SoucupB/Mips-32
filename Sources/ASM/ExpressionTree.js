@@ -145,9 +145,8 @@ export class ExpressionTree {
   }
 
   addMethodToAsm(node, block, registerMem, registerStack) {
-    let response = [null, null];
     let registers = [null, null];
-    
+
     let nodes = [node.left, node.right];
     for(let i = 0; i < nodes.length; i++) {
       const currentNode = nodes[i];
@@ -157,7 +156,7 @@ export class ExpressionTree {
       }
     }
 
-    for(let i = 0, c = response.length; i < c; i++) {
+    for(let i = 0, c = registers.length; i < c; i++) {
       if(registers[i] != null) {
         block.push(new Mov(registers[i], registerStack.getStackOffset(nodes[i].nodeID), MovTypes.STACK_TO_REG));
         continue;
