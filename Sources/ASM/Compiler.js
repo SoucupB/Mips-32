@@ -7,7 +7,7 @@ import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
 import { Methods, ReturnMethod } from "../AST/Methods.js";
 import { Pointer } from "../AST/Pointer.js";
-import { ExpressionTree } from "./ExpressionTree.js";
+import { ExpressionReturnTypes, ExpressionTree } from "./ExpressionTree.js";
 import { Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
 import { RegisterMem } from "./RegisterMem.js";
 import { RegisterStack } from "./RegisterStack.js";
@@ -36,8 +36,8 @@ export class Compiler {
     }
   }
 
-  createExpressionAsm(expressionChomp, block) {
-    expressionChomp.expressionTree.addInstructionToBlockWithOrder(block, this.registerMem, this.registerStack);
+  createExpressionAsm(expressionChomp, block, type = ExpressionReturnTypes.REGISTER) {
+    expressionChomp.expressionTree.addInstructionToBlockWithOrder(block, this.registerMem, this.registerStack, type);
   }
 
   saveExpressionResult(expressionChomp, block) {
@@ -47,6 +47,7 @@ export class Compiler {
   }
 
   loadVariableInStack(expressionChomp, assigner, block) {
+    this.createExpressionAsm(expressionChomp, block);
     const topRegister = this.getExpressionRegister(expressionChomp);
     const stackPointerForVariable = this.registerStack.getStackOffset(assigner.buffer)
 
@@ -54,15 +55,23 @@ export class Compiler {
     this.registerMem.freeRegister(topRegister);
   }
 
+  getExpressionStackPoint(expression) {
+    return this.registerStack.getStackOffset(expression.expressionTree.root.nodeID);
+  }
+
   loadPointerInStack(expressionChomp, assignerExpression, block) {
-    const expressionChompTopRegister = this.getExpressionRegister(expressionChomp);
-    this.createExpressionAsm(assignerExpression, block);
+    let freeRegister = this.registerMem.findUnusedRegister();
+    this.registerMem.saveRegisterID(freeRegister, 'dsafagagds');
+    
+    this.createExpressionAsm(expressionChomp, block, ExpressionReturnTypes.STACK_OFFSET);
+    this.createExpressionAsm(assignerExpression, block, ExpressionReturnTypes.STACK_OFFSET);
     const assignerExpressionChompTopRegister = this.getExpressionRegister(assignerExpression);
 
-    block.push(new Mov(assignerExpressionChompTopRegister, expressionChompTopRegister, MovTypes.REG_TO_MEM_REG));
+    block.push(new Mov(freeRegister, this.getExpressionStackPoint(expressionChomp), MovTypes.STACK_TO_REG));
+    block.push(new Mov(assignerExpressionChompTopRegister, freeRegister, MovTypes.REG_TO_MEM_REG));
 
-    this.registerMem.freeRegister(expressionChompTopRegister);
     this.registerMem.freeRegister(assignerExpressionChompTopRegister);
+    this.registerMem.freeRegister(freeRegister);
   }
 
   loadExpressionOnStack(expressionChomp, assigner, block) {
@@ -100,8 +109,6 @@ export class Compiler {
     let block = new RegisterBlock();
     const expression = children[1];
     const assigner = children[0];
-
-    this.createExpressionAsm(expression, block);
 
     this.loadExpressionOnStack(expression, assigner, block);
     return block;

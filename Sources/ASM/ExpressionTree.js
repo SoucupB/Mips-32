@@ -546,8 +546,10 @@ export class ExpressionTree {
 
   addResultToStack(block, registerMem, registerStack) {
     if(this.returnType == ExpressionReturnTypes.STACK_OFFSET) {
-      block.push(new Push(this.getRegister(registerMem)));
+      const currentRegister = this.getRegister(registerMem);
+      block.push(new Push(currentRegister));
       registerStack.push(this.root.nodeID, 4);
+      this.freeRegisters([currentRegister], registerMem)
     }
   }
 
@@ -563,7 +565,8 @@ export class ExpressionTree {
       registerStack.push(this.root.nodeID, 4);
       block.push(new Pop(registerStack.getFreezeTopDiff()));
       registerStack.pop();
-      // this.freeRegisters([freeRegisterSrc], registerMem);
+      this.addResultToStack(block, registerMem, registerStack);
+      this.freeRegisters([freeRegisterSrc], registerMem);
       return ;
     }
     const currentOrder = this.order();
