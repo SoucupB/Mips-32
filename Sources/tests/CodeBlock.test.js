@@ -386,3 +386,14 @@ test('Check CodeBlock internal stack Expression validity v2', (t) => {
   t.equal(variablesErrors.type, ErrorTypes.VARIABLE_NOT_DEFINED, 'returns');
   t.end();
 });
+
+test('Check CodeBlock with spaces v1', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int c=0;
+    int a=10;
+    a+c;
+  }`, 0);
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.end();
+});

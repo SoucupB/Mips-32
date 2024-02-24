@@ -199,6 +199,8 @@ export class Methods {
       index = expression.index;
       expressions.push(expression);
 
+      index = Character.pruneSpacesAndNewlines(str, index);
+
       if(index >= str.length || !Character.isCommaSeparator(str[index])) {
         return Methods.arrayToChomp(expressions, index);
       }
