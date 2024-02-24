@@ -91,3 +91,40 @@ test('Chomp v6', (t) => {
   t.equal(chompResponse.isInvalid(), true, 'chomp is invalid');
   t.end();
 });
+
+test('Chomp empty spaces v1', (t) => {
+  const chompResponse = Variable.chomp('     _yyy aaa daf', 0);
+
+  t.equal(chompResponse.index, 9, 'returns index');
+  t.equal(chompResponse.buffer, '_yyy', 'returns chomp buffer');
+  t.equal(chompResponse.isInvalid(), false, 'chomp is valid');
+  t.end();
+});
+
+test('Chomp empty spaces v2', (t) => {
+  const chompResponse = Variable.chomp(' \n\n  _yyy aaa daf', 0);
+
+  t.equal(chompResponse.index, 9, 'returns index');
+  t.equal(chompResponse.buffer, '_yyy', 'returns chomp buffer');
+  t.equal(chompResponse.isInvalid(), false, 'chomp is valid');
+  t.end();
+});
+
+test('Chomp empty spaces v3', (t) => {
+  const chompResponse = Variable.chomp(' \n\n  _yyy     aaa daf', 9);
+
+  t.equal(chompResponse.index, 17, 'returns index');
+  t.equal(chompResponse.buffer, 'aaa', 'returns chomp buffer');
+  t.equal(chompResponse.isInvalid(), false, 'chomp is valid');
+  t.end();
+});
+
+test('Chomp empty spaces v4', (t) => {
+  const chompResponse = Variable.chomp(`
+  _yyy     aaa daf`, 0);
+
+  t.equal(chompResponse.index, 7, 'returns index');
+  t.equal(chompResponse.buffer, '_yyy', 'returns chomp buffer');
+  t.equal(chompResponse.isInvalid(), false, 'chomp is valid');
+  t.end();
+});

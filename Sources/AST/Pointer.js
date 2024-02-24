@@ -9,6 +9,7 @@ export class Pointer {
       return Chomp.invalid();
     }
 
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(str[index] != '*') {
       return Chomp.invalid();
     }

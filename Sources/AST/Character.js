@@ -22,5 +22,17 @@ class Character {
   static isAssignationEnding(char) {
     return char == ';';
   }
+
+  static pruneSpacesAndNewlines(str, index) {
+    while(index < str.length && Character.isEmptySpaceOrNewLine(str[index])) {
+      index++;
+    }
+
+    return index;
+  }
+
+  static isEmptySpaceOrNewLine(chr) {
+    return chr == ' ' || chr == '\n' || chr == '\t' || chr == '\n\t';
+  }
 }
 export default Character;

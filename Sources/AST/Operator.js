@@ -14,7 +14,7 @@ class Operator {
       return Chomp.invalid();
     }
 
-    let i = index;
+    let i = Character.pruneSpacesAndNewlines(str, index);
     if(str.length - i >= 2) {
       let specialCharactersArray = ['==', '!=', '||', '&&', '<=', '>=']
       for(let j = 0, c = specialCharactersArray.length; j < c; j++) {
@@ -31,19 +31,8 @@ class Operator {
     return Chomp.invalid();
   }
 
-  static pruneSpacesAndNewlines(str, index) {
-    while(index < str.length && Operator.isEmptySpaceOrNewLine(str[index])) {
-      index++;
-    }
-
-    return index;
-  }
-
-  static isEmptySpaceOrNewLine(chr) {
-    return chr == ' ' || chr == '\n' || chr == '\t' || chr == '\n\t';
-  }
-
   static chompEqual(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     if((!str || index >= str.length) || str[index] != '=') {
       return Chomp.invalid();
     }
@@ -51,6 +40,7 @@ class Operator {
   }
 
   static chompOpenParanth(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(index >= str.length || str[index] != '(') {
       return Chomp.invalid();
     }
@@ -59,6 +49,7 @@ class Operator {
   }
 
   static chompCloseParanth(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(index >= str.length || str[index] != ')') {
       return Chomp.invalid();
     }
@@ -67,6 +58,7 @@ class Operator {
   }
 
   static chompOpenBracket(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(index >= str.length || str[index] != '{') {
       return Chomp.invalid();
     }
@@ -75,6 +67,7 @@ class Operator {
   }
 
   static chompCloseBracket(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     if(index >= str.length || str[index] != '}') {
       return Chomp.invalid();
     }

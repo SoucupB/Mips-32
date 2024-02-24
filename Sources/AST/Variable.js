@@ -41,7 +41,7 @@ class Variable {
       return Chomp.invalid();
     }
 
-    let i = index;
+    let i = Character.pruneSpacesAndNewlines(str, index);
     let result = "";
 
     while(i < str.length && (Character.isAlpha(str[i]) || Character.isNumeric(str[i]) || str[i] == '_')) {
