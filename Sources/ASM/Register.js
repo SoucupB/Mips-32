@@ -65,6 +65,46 @@ export class RegisterBlock {
     return this.runner.getOutputBuffer();
   }
 
+  getPopback(index) {
+    let sum = 0;
+    while(index < this.block.length && (this.block[index] instanceof Pop))  {
+      sum += parseInt(this.block[index].bytes);
+      index++;
+    }
+
+    return sum;
+  }
+
+  markPopBacks(index, pushPopBuffer) {
+    while(index < this.block.length && (this.block[index] instanceof Pop)) {
+      pushPopBuffer[index] = 1;
+      index++;
+    }
+  }
+
+  removeUselessPushPopBlocks(optimizedBlock) {
+    let pushPopBuffer = new Array(this.block.length).fill(0);
+    for(let i = 0, c = this.block.length; i < c; i++) {
+      if(!pushPopBuffer[i]) {
+        if(this.block[i] instanceof Pop) {  
+          optimizedBlock.push(new Pop(this.getPopback(i)));
+        }
+        else {
+          optimizedBlock.push(this.block[i]);
+        }
+      }
+      this.markPopBacks(i, pushPopBuffer);
+    }
+  }
+
+  optimize() {
+    let optimizedBlock = new RegisterBlock();
+    this.block = this.flatten().block;
+    this.removeUselessPushPopBlocks(optimizedBlock);
+
+    return optimizedBlock;
+  }
+
   run() {
     this.runner = (new Runner(this.flatten().block));
     this.runner.run();

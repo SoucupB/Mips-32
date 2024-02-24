@@ -366,7 +366,7 @@ export class Compiler {
     return block;
   }
 
-  compileProgram(program) {
+  compileProgram(program, withOptimizations = true) {
     let children = program.childrenChomps;
     this.buildExpressionTrees(program);
     let block = new RegisterBlock();
