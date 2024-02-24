@@ -181,7 +181,6 @@ export class ExpressionTree {
 
   pushPointerNode(register, node, block, registerMem, registerStack) {
     const pointerExpression = node.chomp.childrenChomps[0];
-
     pointerExpression.expressionTree.addInstructionToBlockWithOrder(block, registerMem, registerStack);
 
     const regSrc = pointerExpression.expressionTree.getRegister(registerMem);

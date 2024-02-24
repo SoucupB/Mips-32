@@ -61,13 +61,13 @@ export class Compiler {
   }
 
   loadPointerInStack(expressionChomp, assignerExpression, block) {
+    this.createExpressionAsm(expressionChomp, block, ExpressionReturnTypes.STACK_OFFSET);
+    this.createExpressionAsm(assignerExpression, block, ExpressionReturnTypes.STACK_OFFSET);
+    
     let left = this.registerMem.findUnusedRegister();
     this.registerMem.saveRegisterID(left, `assignation-id-${this.assignationID++}`);
     let right = this.registerMem.findUnusedRegister();
     this.registerMem.saveRegisterID(right, `assignation-id-${this.assignationID++}`);
-    
-    this.createExpressionAsm(expressionChomp, block, ExpressionReturnTypes.STACK_OFFSET);
-    this.createExpressionAsm(assignerExpression, block, ExpressionReturnTypes.STACK_OFFSET);
 
     block.push(new Mov(right, this.getExpressionStackPoint(assignerExpression), MovTypes.STACK_TO_REG));
     block.push(new Mov(left, this.getExpressionStackPoint(expressionChomp), MovTypes.STACK_TO_REG));
