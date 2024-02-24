@@ -16,7 +16,7 @@ export class Runner {
     this.memory = new Array(1024 * 1024 * 24).fill(0);
     this.addresses = {};
 
-    this.outputBuffer = '' // temorary method;
+    this.outputBuffer = ''
 
     this.pc = 0;
     this.saveLabelAddresses();

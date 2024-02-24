@@ -600,3 +600,161 @@ test('Pointer swapping 2 values', (t) => {
 
   t.end();
 });
+
+test('Pointer permutations v1', (t) => {
+  const program = new Program(`
+    int permutations(int n, int k, int total, int checker) {
+      if(k >= n) {
+        *total = *total + 1;
+        return 0;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          permutations(n, k + 1, total, checker);
+          setElement(checker, i, 0);
+        }
+      }
+
+      return 0;
+    }
+
+    void main() {
+      int buffer = 1050, n = 5, total = 1100, checker = 2000;
+      permutations(n, 0, total, checker);
+      printLine(*total);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '120', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+// There is some memory leak if n is set to 7
+test('Pointer permutations v2', (t) => {
+  const program = new Program(`
+    int permutations(int n, int k, int total, int checker) {
+      if(k >= n) {
+        *total = *total + 1;
+        return 0;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          permutations(n, k + 1, total, checker);
+          setElement(checker, i, 0);
+        }
+      }
+
+      return 0;
+    }
+
+    void main() {
+      int buffer = 1050, n = 6, total = 1100, checker = 2000;
+      permutations(n, 0, total, checker);
+      printLine(*total);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '720', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer permutations v3', (t) => {
+  const program = new Program(`
+    int permutations(int n, int k, int displayBuffer, int checker) {
+      if(k >= n) {
+        for(int i = 0; i < n; i = i + 1) {
+          printLine(getElement(displayBuffer, i));
+        }
+        return 0;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          setElement(displayBuffer, k, i);
+          permutations(n, k + 1, displayBuffer, checker);
+          setElement(checker, i, 0);
+        }
+      }
+
+      return 0;
+    }
+
+    void main() {
+      int buffer = 1050, n = 2, checker = 2000;
+      int responseBuffer = 504;
+      permutations(n, 0, responseBuffer, checker);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '1\n2\n2\n1', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer permutations v4', (t) => {
+  const program = new Program(`
+    int permutations(int n, int k, int displayBuffer, int checker) {
+      if(k >= n) {
+        for(int i = 0; i < n; i = i + 1) {
+          printLine(getElement(displayBuffer, i));
+        }
+        return 0;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          setElement(displayBuffer, k, i);
+          permutations(n, k + 1, displayBuffer, checker);
+          setElement(checker, i, 0);
+        }
+      }
+
+      return 0;
+    }
+
+    void main() {
+      int buffer = 1050, n = 3, checker = 2000;
+      int responseBuffer = 504;
+      permutations(n, 0, responseBuffer, checker);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), [
+    1, 2, 3, 
+    1, 3, 2, 
+    2, 1, 3, 
+    2, 3, 1, 
+    3, 1, 2, 
+    3, 2, 1
+  ].join('\n'), 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
