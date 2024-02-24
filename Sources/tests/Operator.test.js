@@ -82,3 +82,11 @@ test('Chomp operator v8', (t) => {
   t.equal(chomp.isInvalid(), true, 'chomp is invalid');
   t.end();
 });
+
+test('Chomp operator with spaces v1', (t) => {
+  let chomp = Operator.chomp('  \n || dafa', 0);
+
+  t.equal(chomp.index, 6, 'returns index');
+  t.equal(chomp.buffer, '||', 'returns buffer');
+  t.end();
+});
