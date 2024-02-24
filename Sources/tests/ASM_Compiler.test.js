@@ -5,7 +5,17 @@ import { Program } from '../AST/Program.js';
 import { Print, PrintTypes } from '../ASM/Register.js';
 
 test('Check Compiler recursive fibbo.', (t) => { 
-  const program = new Program('int fibboRecursive(int n){if(n<2){return 1;}return fibboRecursive(n-1)+fibboRecursive(n-2);}void main(){int b=fibboRecursive(8);}')
+  const program = new Program(`
+    int fibboRecursive(int n) {
+      if ( n < 2 ) {
+        return 1;
+      }
+      return fibboRecursive ( n - 1 ) + fibboRecursive ( n - 2 );
+    }
+    void main() { 
+      int b=fibboRecursive(8);
+    }`
+  )
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -19,7 +29,14 @@ test('Check Compiler recursive fibbo.', (t) => {
 });
 
 test('Check Compiler add 2 numbers.', (t) => {
-  const program = new Program('int add(int a,int b){return a+b;}void main(){int b=add(5,7);}')
+  const program = new Program(`
+    int add(int a, int b) {
+      return a + b;
+    }
+    void main() {
+      int b = add(5, 7);
+    }
+  `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -33,7 +50,15 @@ test('Check Compiler add 2 numbers.', (t) => {
 });
 
 test('Check Compiler add 4 numbers.', (t) => {
-  const program = new Program('int add(int a,int b,int c,int d){return a+b+c+d;}void main(){int b=add(1,2,3,4);}')
+  const program = new Program(`
+    int add ( int a, int b, int c, int d)
+    {
+      return a + b + c + d;
+    }
+    void main() {
+      int b = add(1, 2, 3, 4);
+    }
+  `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -47,7 +72,20 @@ test('Check Compiler add 4 numbers.', (t) => {
 });
 
 test('Check Compiler mirror.', (t) => {
-  const program = new Program('int mirror(int a){int response=0;while(a!=0){response=response*10;response=response+a%10;a=a/10;}return response;}void main(){int b=mirror(123);}')
+  const program = new Program(`
+    int mirror(int a) {
+      int response=0;
+      while(a != 0) {
+        response = response * 10;
+        response = response + a % 10;
+        a = a / 10;
+      }
+      return response;
+    }
+    void main() {
+      int b = mirror(123);
+    }
+    `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -63,7 +101,16 @@ test('Check Compiler mirror.', (t) => {
 });
 
 test('Send by value', (t) => {
-  const program = new Program('int reff(int a){a=10;return 15;}void main(){int a=5;int b=reff(a);}')
+  const program = new Program(`
+    int reff(int a) {
+      a = 10;
+      return 15;
+    }
+    void main() {
+      int a = 5;
+      int b = reff(a);
+    }
+  `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -369,20 +416,6 @@ test('Pointer program v3', (t) => {
   t.end();
 });
 
-// MOV [$3] $0
-// MOV $0 [$st-4]
-// MOV $1 4
-// ADD $2 $0 $1
-// PUSH $2
-// POP 4
-// MOV $0 [$st-8]
-// MOV $1 4
-// SUB $2 $0 $1
-// PUSH $2
-// POP 4
-// MOV [$2] $2
-
-// Fix a bug where registers from an expression are intechangably used with the pointer registers.
 test('Pointer program v4', (t) => { 
   const program = new Program('void main(){int sum=112;printLine(sum);}')
   let chomp = program.chomp();
@@ -488,7 +521,15 @@ test('Pointer arithmetics v2', (t) => {
 });
 
 test('Pointer arithmetics v3', (t) => {
-  const program = new Program('void main(){int a=5,b=1000,z=1500;*(z+64)=22;*(b+30)=15+16+17+a;int c=*(b+30)+*(z+64);printLine(c);}')
+  const program = new Program(`
+    void main() {
+      int a = 5, b = 1000, z = 1500; 
+      *(z + 64) = 22;
+      *(b + 30) = 15 + 16 + 17 + a;
+      int c = *(b + 30) + *(z + 64);
+      printLine(c);
+    }
+  `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
@@ -522,6 +563,38 @@ test('Pointer arithmetics v4', (t) => {
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '530', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer swapping 2 values', (t) => {
+  const program = new Program(`
+    int swap(int pA, int pB) {
+      int aux = *pA;
+      *pA = *pB;
+      *pB = aux;
+
+      return 0;
+    }
+
+    void main() {
+      int a = 1050, b = 1060;
+      *a = 15;
+      *b = 43;
+      printLine(*a);
+      printLine(*b);
+      swap(a, b);
+      printLine(*a);
+      printLine(*b);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '15\n43\n43\n15', 'returns');
   // console.log(asmBlock.toString())
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
