@@ -144,29 +144,6 @@ export class ExpressionTree {
     return !node.left && !node.right;
   }
 
-  addMethodToAsm(node, block, registerMem, registerStack) {
-    let registers = [null, null];
-
-    let nodes = [node.left, node.right];
-    for(let i = 0; i < nodes.length; i++) {
-      const currentNode = nodes[i];
-      if(this.isNodeMethodCall(currentNode)) {
-        this.getNodeMethodCallRegisterResponse(currentNode, block, registerStack, registerMem);
-        registers[i] = this.findRegisterForNode(currentNode, registerMem);
-      }
-    }
-
-    for(let i = 0, c = registers.length; i < c; i++) {
-      if(registers[i] != null) {
-        block.push(new Mov(registers[i], registerStack.getStackOffset(nodes[i].nodeID), MovTypes.STACK_TO_REG));
-        continue;
-      }
-      registers[i] = this.pushMov(nodes[i], block, registerMem, registerStack);
-    }
-
-    return registers;
-  }
-
   pushNonPointerNode(node, block, registerMem, registerStack) {
     let register = this.findRegisterForNode(node, registerMem);
     block.push(new Mov(register, this.getNodeValue(node, block, registerStack, registerMem), this.getNodeMovType(node)));
@@ -209,11 +186,26 @@ export class ExpressionTree {
   }
 
   movAndGetFreeRegisters(node, block, registerMem, registerStack) {
-    if(this.isNodeMethodCall(node.left) || this.isNodeMethodCall(node.right)) {
-      return this.addMethodToAsm(node, block, registerMem, registerStack);
+    let registers = [null, null];
+
+    let nodes = [node.left, node.right];
+    for(let i = 0; i < nodes.length; i++) {
+      const currentNode = nodes[i];
+      if(this.isNodeMethodCall(currentNode)) {
+        this.getNodeMethodCallRegisterResponse(currentNode, block, registerStack, registerMem);
+        registers[i] = this.findRegisterForNode(currentNode, registerMem);
+      }
     }
 
-    return [this.pushMov(node.left, block, registerMem, registerStack), this.pushMov(node.right, block, registerMem, registerStack)]
+    for(let i = 0, c = registers.length; i < c; i++) {
+      if(registers[i] != null) {
+        block.push(new Mov(registers[i], registerStack.getStackOffset(nodes[i].nodeID), MovTypes.STACK_TO_REG));
+        continue;
+      }
+      registers[i] = this.pushMov(nodes[i], block, registerMem, registerStack);
+    }
+
+    return registers;
   }
 
   freeRegisters(registerArray, registerMem) {
