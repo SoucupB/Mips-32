@@ -147,29 +147,22 @@ export class ExpressionTree {
   addMethodToAsm(node, block, registerMem, registerStack) {
     let response = [null, null];
     let registers = [null, null];
-
-    const left = node.left;
-    const right = node.right;
-    let nodes = [left, right];
-    if(this.isNodeMethodCall(left)) {
-      this.getNodeMethodCallRegisterResponse(left, block, registerStack, registerMem);
-      registers[0] = this.findRegisterForNode(left, registerMem);
-    }
-    if(this.isNodeMethodCall(right)) {
-      this.getNodeMethodCallRegisterResponse(right, block, registerStack, registerMem);
-      registers[1] = this.findRegisterForNode(right, registerMem);
+    
+    let nodes = [node.left, node.right];
+    for(let i = 0; i < nodes.length; i++) {
+      const currentNode = nodes[i];
+      if(this.isNodeMethodCall(currentNode)) {
+        this.getNodeMethodCallRegisterResponse(currentNode, block, registerStack, registerMem);
+        registers[i] = this.findRegisterForNode(currentNode, registerMem);
+      }
     }
 
     for(let i = 0, c = response.length; i < c; i++) {
       if(registers[i] != null) {
         block.push(new Mov(registers[i], registerStack.getStackOffset(nodes[i].nodeID), MovTypes.STACK_TO_REG));
+        continue;
       }
-    }
-    if(registers[0] == null) {
-      registers[0] = this.pushMov(left, block, registerMem, registerStack);
-    }
-    if(registers[1] == null) {
-      registers[1] = this.pushMov(right, block, registerMem, registerStack);
+      registers[i] = this.pushMov(nodes[i], block, registerMem, registerStack);
     }
 
     return registers;
