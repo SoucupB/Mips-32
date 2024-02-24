@@ -332,6 +332,7 @@ test('Pointer program v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
+  // console.log(asmBlock.toString())
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '215', 'returns');
@@ -461,12 +462,12 @@ test('Expression lines v2', (t) => {
 });
 
 test('Pointer arithmetics v1', (t) => {
-  const program = new Program('void main(){int a=5,b=1000;*(b+30)=15+16+17+a;int c=*(b+30);printLine(c);}')
+  const program = new Program('void main(){int a=5,b=1000,c=0;*(b+30)=15+16+17+a;c=*(b+30);printLine(c);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString())
+  // console.log(asmBlock.toString())
   asmBlock.run();
   t.equal(asmBlock.getStdoutResponse(), '53', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');

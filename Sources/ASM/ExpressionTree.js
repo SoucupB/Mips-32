@@ -175,44 +175,47 @@ export class ExpressionTree {
     return registers;
   }
 
-  pushNonPointerNode(register, node, block, registerMem, registerStack) {
+  pushNonPointerNode(node, block, registerMem, registerStack) {
+    let register = this.findRegisterForNode(node, registerMem);
     block.push(new Mov(register, this.getNodeValue(node, block, registerStack, registerMem), this.getNodeMovType(node)));
+    return register;
   }
 
-  pushPointerNode(register, node, block, registerMem, registerStack) {
+  pushPointerNode(node, block, registerMem, registerStack) {
     const pointerExpression = node.chomp.childrenChomps[0];
     pointerExpression.expressionTree.addInstructionToBlockWithOrder(block, registerMem, registerStack);
+    let register = this.findRegisterForNode(node, registerMem);
 
     const regSrc = pointerExpression.expressionTree.getRegister(registerMem);
     block.push(new Mov(register, regSrc, MovTypes.REG_MEM_TO_REG));
-    registerMem.freeRegister(regSrc);
+    if(register != regSrc) {
+      registerMem.freeRegister(regSrc);
+    }
+
+    return register;
   }
 
-  pushLeafNode(register, node, block, registerMem, registerStack) {
+  pushLeafNode(node, block, registerMem, registerStack) {
     switch(node.chomp.type) {
       case Pointer: {
-        this.pushPointerNode(register, node, block, registerMem, registerStack)
-        break;
+        return this.pushPointerNode(node, block, registerMem, registerStack)
       }
 
       default: {
-        this.pushNonPointerNode(register, node, block, registerMem, registerStack)
-        break;
+        return this.pushNonPointerNode(node, block, registerMem, registerStack)
       }
     }
   }
 
   pushMov(node, block, registerMem, registerStack) {
-    let register = this.findRegisterForNode(node, registerMem);
-
     if(this.isLeaf(node)) {
-      this.pushLeafNode(register, node, block, registerMem, registerStack);
+      return this.pushLeafNode(node, block, registerMem, registerStack);
     }
     else {
+      let register = this.findRegisterForNode(node, registerMem);
       block.push(new Mov(register, registerStack.getStackOffset(node.nodeID), MovTypes.STACK_TO_REG));
+      return register;
     }
-
-    return register;
   }
 
   movAndGetFreeRegisters(node, block, registerMem, registerStack) {
@@ -558,8 +561,8 @@ export class ExpressionTree {
     this.returnType = returnType;
 
     if(!this.root.left && !this.root.right) {
-      let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
       this.pushMov(this.root, block, registerMem, registerStack);
+      let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
       block.push(new Push(freeRegisterSrc));
       registerStack.push(this.root.nodeID, 4);
       block.push(new Pop(registerStack.getFreezeTopDiff()));

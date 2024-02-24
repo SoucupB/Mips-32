@@ -61,6 +61,7 @@ export class Compiler {
   }
 
   loadPointerInStack(expressionChomp, assignerExpression, block) {
+    this.registerStack.freeze();
     this.createExpressionAsm(expressionChomp, block, ExpressionReturnTypes.STACK_OFFSET);
     this.createExpressionAsm(assignerExpression, block, ExpressionReturnTypes.STACK_OFFSET);
     
@@ -72,9 +73,11 @@ export class Compiler {
     block.push(new Mov(right, this.getExpressionStackPoint(assignerExpression), MovTypes.STACK_TO_REG));
     block.push(new Mov(left, this.getExpressionStackPoint(expressionChomp), MovTypes.STACK_TO_REG));
     block.push(new Mov(right, left, MovTypes.REG_TO_MEM_REG));
+    block.push(new Pop(this.registerStack.getFreezeTopDiff()));
 
     this.registerMem.freeRegister(left);
     this.registerMem.freeRegister(right);
+    this.registerStack.pop();
   }
 
   loadExpressionOnStack(expressionChomp, assigner, block) {
