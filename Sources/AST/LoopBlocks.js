@@ -31,6 +31,7 @@ export class LoopBlocks {
   }
 
   static chompKeywordsInitialization(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     let keywords = LoopKeywords.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
       if(str.indexOf(keywords[i], index) == index) {

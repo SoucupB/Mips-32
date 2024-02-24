@@ -115,6 +115,7 @@ export class Initialization {
   }
 
   static chompKeywordsInitialization(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     let keywords = Keyword.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
       if(str.indexOf(keywords[i], index) == index) {

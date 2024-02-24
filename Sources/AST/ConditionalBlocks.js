@@ -3,6 +3,7 @@ import Chomp from "./Chomp.js";
 import { CodeBlock } from "./CodeBlock.js";
 import Expression from "./Expression.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
+import Character from "./Character.js";
 
 export class ConditionalKeywords {
   static keyWords() {
@@ -49,6 +50,7 @@ export class ConditionalBlocks {
   }
 
   static chompKeywordsInitialization(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     let keywords = ConditionalKeywords.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
       if(str.indexOf(keywords[i], index) == index) {

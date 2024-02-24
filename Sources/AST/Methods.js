@@ -82,6 +82,7 @@ export class ReturnMethod {
   }
 
   static chompKeywordsInitialization(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     let keywords = ReturnMethod.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
       if(str.indexOf(keywords[i], index) == index) {
@@ -169,6 +170,7 @@ export class Methods {
   }
 
   static chompKeywordsInitialization(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
     let keywords = MethodsKeywords.keyWords();
     for(let i = 0, c = keywords.length; i < c; i++) {
       if(str.indexOf(keywords[i], index) == index) {
