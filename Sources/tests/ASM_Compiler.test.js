@@ -500,6 +500,7 @@ test('Pointer arithmetics v3', (t) => {
   t.end();
 });
 
+// make it only use 3 registers by ordering the operations
 test('Pointer arithmetics v4', (t) => {
   const program = new Program('void main(){int a=5,b=1000,z=1500;*(b+30)=15;*(z+64)=22;*(b+30+*(z+64))=15+16+17+a;int c=*(b+30)+*(b+30+*(z+64));printLine(c);}')
   let chomp = program.chomp();

@@ -553,20 +553,24 @@ export class ExpressionTree {
     }
   }
 
+  pushLastNode(block, registerMem, registerStack) {
+    this.pushMov(this.root, block, registerMem, registerStack);
+    let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
+    block.push(new Push(freeRegisterSrc));
+    registerStack.push(this.root.nodeID, 4);
+    block.push(new Pop(registerStack.getFreezeTopDiff()));
+    registerStack.pop();
+    this.addResultToStack(block, registerMem, registerStack);
+    this.freeRegisters([freeRegisterSrc], registerMem);
+  }
+
   addInstructionToBlockWithOrder(block, registerMem, registerStack, returnType = ExpressionReturnTypes.REGISTER) {
     registerStack.freeze();
 
     this.returnType = returnType;
 
     if(!this.root.left && !this.root.right) {
-      this.pushMov(this.root, block, registerMem, registerStack);
-      let freeRegisterSrc = this.findRegisterForNode(this.root, registerMem);
-      block.push(new Push(freeRegisterSrc));
-      registerStack.push(this.root.nodeID, 4);
-      block.push(new Pop(registerStack.getFreezeTopDiff()));
-      registerStack.pop();
-      this.addResultToStack(block, registerMem, registerStack);
-      this.freeRegisters([freeRegisterSrc], registerMem);
+      this.pushLastNode(block, registerMem, registerStack);
       return ;
     }
     const currentOrder = this.order();
