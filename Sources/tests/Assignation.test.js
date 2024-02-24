@@ -108,3 +108,27 @@ test('Check Assignation checker v13', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Assignation with spaces v1', (t) => {
+  let chomp = Assignation.chomp('*(adada+1) =  aaa +  bbb -ccc/  222+  2   ;', 0);
+  
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(Assignation.toString(chomp), '*adada+1=aaa+bbb-ccc/222+2;', 'returns');
+  t.end();
+});
+
+test('Check Assignation with spaces v2', (t) => {
+  let chomp = Assignation.chomp('*(adada  +  1) =  aaa +  bbb -ccc/  222+  2   ;', 0);
+  
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(Assignation.toString(chomp), '*adada+1=aaa+bbb-ccc/222+2;', 'returns');
+  t.end();
+});
+
+test('Check Assignation with spaces v3', (t) => {
+  let chomp = Assignation.chomp('*  (  adada  +  1 ) =  aaa +  bbb -ccc/  222+  2   ;', 0);
+  
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(Assignation.toString(chomp), '*adada+1=aaa+bbb-ccc/222+2;', 'returns');
+  t.end();
+});

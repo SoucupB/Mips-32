@@ -11,6 +11,7 @@ export class Assignation {
     let chomper = Assignation.chompDeclaration(str, index);
     index = chomper.index;
     if(withEnding) {
+      index = Character.pruneSpacesAndNewlines(str, index);
       if(!Character.isAssignationEnding(str[index])) {
         return Chomp.invalid();
       }

@@ -283,7 +283,7 @@ test('Check Initialization checker v40 (multiple definitions)', (t) => {
 });
 
 test('Check Initialization checker v41 (multiple definitions)', (t) => {
-  const chomp1 = Initialization.chomp('int a,adafg=a+2;', 0)
+  const chomp1 = Initialization.chomp('int a,  adafg=a+  2;', 0)
   const chomp2 = Initialization.chomp('int b=2,c=adafg+3,a=50;', 0)
   let stackDeclaration = new StackDeclarations();
 
@@ -292,5 +292,54 @@ test('Check Initialization checker v41 (multiple definitions)', (t) => {
 
   t.equal(chomp1Variables.type, ErrorTypes.NO_ERRORS, 'returns');
   t.equal(chomp2Variables.type, ErrorTypes.VARIABLE_MULTIPLE_DEFINITION, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker with spaces v1', (t) => {
+  const chomp = Initialization.chomp('int a =  5,b =   6,adafg =  a +b -  2   ;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.display(chomp), 'int -> a=5 -> b=6 -> adafg=a+b-2', 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).type, ErrorTypes.NO_ERRORS, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker with spaces v2', (t) => {
+  const chomp = Initialization.chomp('int a =  5,  b =   6,adafg =  a +b -  2   ;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.display(chomp), 'int -> a=5 -> b=6 -> adafg=a+b-2', 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).type, ErrorTypes.NO_ERRORS, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker with spaces v3', (t) => {
+  const chomp = Initialization.chomp('int a =  5   ,  b =   6,adafg =  a +b -  2   ;', 0)
+  let stackDeclaration = new StackDeclarations();
+
+  t.equal(Initialization.display(chomp), 'int -> a=5 -> b=6 -> adafg=a+b-2', 'returns');
+  t.equal(Initialization.addToStackAndVerify(chomp, stackDeclaration).type, ErrorTypes.NO_ERRORS, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker with spaces v4', (t) => {
+  const chomp = Initialization.chomp('int a =  5   ,  b =   6,adafg =  a +b -  2   ;', 0)
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  t.equal(chomp.index, 46, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker with spaces v5', (t) => {
+  const chomp = Initialization.chomp('inta =  5   ,  b =   6,adafg =  a +b -  2   ;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
+
+test('Check Initialization checker with spaces v6', (t) => {
+  const chomp = Initialization.chomp('inta =  5   ,  b =   6,   adafg   a +b -  2   ;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });

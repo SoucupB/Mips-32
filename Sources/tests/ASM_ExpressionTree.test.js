@@ -510,3 +510,27 @@ test('Check Expression with stack response v1', (t) => {
   t.equal(runner.get32BitNumberAtAddress(runner.initialStackPointer), 311, 'returns');
   t.end();
 });
+
+test('Check Expression with spaces v1', (t) => {
+  let chomp = Expression.chomp('(2+ 3 )  *  8', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((2+3)*8)', 'returns');
+  t.end();
+});
+
+test('Check Expression with spaces v2', (t) => {
+  let chomp = Expression.chomp('(  2  + 3 )  *  8', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((2+3)*8)', 'returns');
+  t.end();
+});
+
+test('Check Expression with spaces v3', (t) => {
+  let chomp = Expression.chomp('  (  2  + 3 )  *  8', 0); 
+  let expressionTree = new ExpressionTree(chomp);
+  expressionTree.build();
+  t.equal(expressionTree.toString(), '((2+3)*8)', 'returns');
+  t.end();
+});
