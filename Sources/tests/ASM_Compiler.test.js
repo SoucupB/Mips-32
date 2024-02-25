@@ -717,7 +717,6 @@ test('Pointer permutations v4', (t) => {
   t.end();
 });
 
-// Probably a bug with the stack initialization for the variable "i".
 test('Pointer permutations v2', (t) => {
   const program = new Program(`
     int permutations(int n, int k, int total, int checker) {
@@ -750,6 +749,43 @@ test('Pointer permutations v2', (t) => {
   asmBlock.run();
   
   t.equal(asmBlock.getStdoutResponse(), '5040', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer permutations v3', (t) => {
+  const program = new Program(`
+    int permutations(int n, int k, int total, int checker) {
+      if(k >= n) {
+        *total = *total + 1;
+        return 0;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          permutations(n, k + 1, total, checker);
+          setElement(checker, i, 0);
+        }
+      }
+
+      return 0;
+    }
+
+    void main() {
+      int n = 8, total = 5100, checker = 3000;
+      permutations(n, 0, total, checker);
+      printLine(*total);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  
+  t.equal(asmBlock.getStdoutResponse(), '40320', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
