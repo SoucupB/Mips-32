@@ -278,6 +278,7 @@ export class Runner {
     this.register['_setE'] = this.booleanToNumber(this.getRegValue(instruction.regA) == this.getRegValue(instruction.regB));
     this.register['_setNe'] = this.booleanToNumber(this.getRegValue(instruction.regA) != this.getRegValue(instruction.regB));
     this.register['_setLe'] = this.booleanToNumber(this.getRegValue(instruction.regA) <= this.getRegValue(instruction.regB));
+    this.register['_setNz'] = this.booleanToNumber(this.getRegValue(instruction.regA) && this.getRegValue(instruction.regB));
     this.register['CF'] = this.booleanToNumber(this.getRegValue(instruction.regA) < this.getRegValue(instruction.regB));
     this.register['CT'] = this.booleanToNumber(this.getRegValue(instruction.regA) > this.getRegValue(instruction.regB));
   }
@@ -295,7 +296,7 @@ export class Runner {
   }
   
   setNz(instruction) {
-    this.register[instruction.regA.toString()] = !this.booleanToNumber(this.register[instruction.regA.toString()]);
+    this.register[instruction.regA.toString()] = this.register['_setNz'];
   }
 
   setLe(instruction) {
@@ -308,7 +309,7 @@ export class Runner {
 
   setJz(instruction) {
     if('zero_reg' in this.register && !this.register['zero_reg']) {
-      this.pc = this.addresses[instruction.label]
+      this.pc = this.addresses[instruction.label];
     }
   }
 
