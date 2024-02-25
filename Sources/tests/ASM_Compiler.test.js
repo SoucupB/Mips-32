@@ -12,18 +12,16 @@ test('Check Compiler recursive fibbo.', (t) => {
       }
       return fibboRecursive ( n - 1 ) + fibboRecursive ( n - 2 );
     }
-    void main() { 
-      int b=fibboRecursive(8);
+    void main() {
+      printLine(fibboRecursive(8));
     }`
   )
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
-  console.log(asmBlock.toString())
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '34', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '34', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -36,15 +34,15 @@ test('Check Compiler add 2 numbers.', (t) => {
     }
     void main() {
       int b = add(5, 7);
+      printLine(b);
     }
   `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '12', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '12', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -58,15 +56,15 @@ test('Check Compiler add 4 numbers.', (t) => {
     }
     void main() {
       int b = add(1, 2, 3, 4);
+      printLine(b);
     }
   `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '10', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '10', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -85,17 +83,15 @@ test('Check Compiler mirror.', (t) => {
     }
     void main() {
       int b = mirror(123);
+      printLine(b);
     }
     `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run();
-  // console.log(asmBlock.toString())
-  // console.log(asmBlock.runner.printPointerBytes(32))
-  t.equal(asmBlock.getOutputBuffer(), '321', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '321', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -110,15 +106,15 @@ test('Send by value', (t) => {
     void main() {
       int a = 5;
       int b = reff(a);
+      printLine(a);
     }
   `)
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY));
   asmBlock.run();
-  t.equal(asmBlock.getOutputBuffer(), '5', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '5', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -636,43 +632,6 @@ test('Pointer permutations v1', (t) => {
   t.end();
 });
 
-// There is some memory leak if n is set to 7
-test('Pointer permutations v2', (t) => {
-  const program = new Program(`
-    int permutations(int n, int k, int total, int checker) {
-      if(k >= n) {
-        *total = *total + 1;
-        return 0;
-      }
-
-      for(int i = 1; i <= n; i = i + 1) {
-        if(getElement(checker, i) == 0) {
-          setElement(checker, i, 1);
-          permutations(n, k + 1, total, checker);
-          setElement(checker, i, 0);
-        }
-      }
-
-      return 0;
-    }
-
-    void main() {
-      int buffer = 1050, n = 6, total = 1100, checker = 2000;
-      permutations(n, 0, total, checker);
-      printLine(*total);
-    }
-  `)
-  let chomp = program.chomp();
-  t.equal(chomp.isInvalid(), false, 'returns');
-  let programCompiler = new Compiler(null);
-  let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.run();
-  t.equal(asmBlock.getStdoutResponse(), '720', 'returns');
-  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
-
-  t.end();
-});
-
 test('Pointer permutations v3', (t) => {
   const program = new Program(`
     int permutations(int n, int k, int displayBuffer, int checker) {
@@ -753,6 +712,44 @@ test('Pointer permutations v4', (t) => {
     3, 1, 2, 
     3, 2, 1
   ].join('\n'), 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+// Probably a bug with the stack initialization for the variable "i".
+test('Pointer permutations v2', (t) => {
+  const program = new Program(`
+    int permutations(int n, int k, int total, int checker) {
+      if(k >= n) {
+        *total = *total + 1;
+        return 0;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          permutations(n, k + 1, total, checker);
+          setElement(checker, i, 0);
+        }
+      }
+
+      return 0;
+    }
+
+    void main() {
+      int n = 7, total = 5100, checker = 3000;
+      permutations(n, 0, total, checker);
+      printLine(*total);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  
+  t.equal(asmBlock.getStdoutResponse(), '5040', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();

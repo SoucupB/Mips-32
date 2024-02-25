@@ -11,14 +11,15 @@ export class Runner {
   constructor(instructionArray) {
     this.instructionArray = instructionArray;
     this.register = {};
-    this.initialStackPointer = 1024 * 1024 * 2;
+    this.initialStackPointer = 1024 * 512;
     this.stackPointer = this.initialStackPointer;
-    this.memory = new Array(1024 * 1024 * 24).fill(0);
+    this.memory = new Array(1024 * 1024).fill(0);
     this.addresses = {};
 
-    this.outputBuffer = ''
+    this.outputBuffer = '';
 
     this.pc = 0;
+    this.instructionCounter = {};
     this.saveLabelAddresses();
   }
 
@@ -38,8 +39,11 @@ export class Runner {
   }
 
   saveRegValue(dst, src) {
-    if(src.toString() in this.register) {
-      this.register[dst.toString()] = this.register[src.toString()];
+    let srcStr = src.toString();
+    let dstStr = dst.toString()
+
+    if(srcStr in this.register) {
+      this.register[dstStr] = this.register[srcStr];
       return ;
     }
   }
@@ -58,8 +62,10 @@ export class Runner {
   }
 
   getRegValue(reg) {
-    if(reg.toString() in this.register) {
-      return parseInt(this.register[reg.toString()]);
+    const regString = reg.toString();
+
+    if(regString in this.register) {
+      return parseInt(this.register[regString]);
     }
     return 0;
   }
@@ -74,7 +80,7 @@ export class Runner {
   }
 
   positiveNumberToByteArray(number) {
-    const byteArray = new Array(4).fill(0);
+    const byteArray = [0, 0, 0, 0];
     byteArray[0] = number & 0xFF;
     byteArray[1] = (number >> 8) & 0xFF;
     byteArray[2] = (number >> 16) & 0xFF;
@@ -148,7 +154,7 @@ export class Runner {
   }
 
   saveRegMemInReg(regSrc, regDst) {
-    this.register[regDst] = this.getNumberAtAddress(this.memory, parseInt(this.register[regSrc.toString()]));
+    this.register[regDst.toString()] = this.getNumberAtAddress(this.memory, parseInt(this.register[regSrc.toString()]));
   }
 
   saveRegInMemReg(regSrc, regDst) {
@@ -193,9 +199,11 @@ export class Runner {
       }
       case MovTypes.REG_MEM_TO_REG: {
         this.saveRegMemInReg(instruction.src, instruction.dst);
+        break;
       }
       case MovTypes.REG_TO_MEM_REG: {
         this.saveRegInMemReg(instruction.src, instruction.dst);
+        break;
       }
       default: {
         break;
@@ -329,6 +337,15 @@ export class Runner {
     }
   }
 
+  addInstructionToStatistics(instruction) {
+    const constructorName = instruction.constructor.name;
+
+    if(!(constructorName in this.instructionCounter)) {
+      this.instructionCounter[constructorName] = 0;
+    }
+    this.instructionCounter[constructorName]++;
+  }
+
   runInstruction(instruction) {
     if(instruction instanceof Mov) {
       this.runMov(instruction);
@@ -396,6 +413,21 @@ export class Runner {
 
   getOutputBuffer() {
     return this.outputBuffer;
+  }
+
+  statistics() {
+    let sum = 0;
+    let response = [];
+    for(const [_, value] of Object.entries(this.instructionCounter)) {
+      sum += value;
+    }
+    for(const [key, value] of Object.entries(this.instructionCounter)) {
+      if(sum) {
+        response.push(`${key}: ${value / sum * 100}`)
+      }
+    }
+
+    return response.join('\n');
   }
 
   run() {
