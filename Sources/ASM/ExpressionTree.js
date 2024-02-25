@@ -342,7 +342,7 @@ export class ExpressionTree {
   doubleAnd_InstructionSet(node, block, registerMem, registerStack) {
     let [freeRegisterSrc, freeRegisterDst] = this.movAndGetFreeRegisters(node, block, registerMem, registerStack);
 
-    block.push(new Test(freeRegisterSrc, freeRegisterDst));  
+    block.push(new Cmp(freeRegisterSrc, freeRegisterDst));  
     this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
 
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);

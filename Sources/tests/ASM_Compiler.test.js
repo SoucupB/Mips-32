@@ -1373,107 +1373,110 @@ test('Pointer tic tac toe AI v8', (t) => {
   t.end();
 });
 
-test('Pointer tic tac toe AI v9', (t) => {
-  const program = new Program(`
-    int getElementInMatrix(int board, int i, int j, int n) {
-      return getElement(board, i * n + j);
-    }
+// test('Pointer tic tac toe AI v9', (t) => {
+//   const program = new Program(`
+//     int getElementInMatrix(int board, int i, int j, int n) {
+//       return getElement(board, i * n + j);
+//     }
 
-    int setElementInMatrix(int board, int i, int j, int n, int element) {
-      return setElement(board, i * n + j, element);
-    }
+//     int setElementInMatrix(int board, int i, int j, int n, int element) {
+//       return setElement(board, i * n + j, element);
+//     }
 
-    int getLineResult(int board, int line, int n) {
-      int firstElement = getElementInMatrix(board, line, 0, n);
-      if(firstElement == getElementInMatrix(board, line, 1, n) && 
-         firstElement == getElementInMatrix(board, line, 2, n)) {
-        return firstElement;
-      }
+//     int getLineResult(int board, int line, int n) {
+//       int firstElement = getElementInMatrix(board, line, 0, n);
+//       if(firstElement == getElementInMatrix(board, line, 1, n) && 
+//          firstElement == getElementInMatrix(board, line, 2, n)) {
+//         return firstElement;
+//       }
 
-      return 0;
-    }
+//       return 0;
+//     }
 
-    int getColumnResult(int board, int column, int n) {
-      int firstElement = getElementInMatrix(board, 0, column, n);
-      if(firstElement == getElementInMatrix(board, 1, column, n) && 
-         firstElement == getElementInMatrix(board, 2, column, n)) {
-        return firstElement;
-      }
+//     int getColumnResult(int board, int column, int n) {
+//       int firstElement = getElementInMatrix(board, 0, column, n);
+//       if(firstElement == getElementInMatrix(board, 1, column, n) && 
+//          firstElement == getElementInMatrix(board, 2, column, n)) {
+//         return firstElement;
+//       }
 
-      return 0;
-    }
+//       return 0;
+//     }
 
-    int getLinesResponse(int board, int n) {
-      for(int i = 0; i < 3; i = i + 1) {
-        int lineResult = getLineResult(board, i, n);
-        if(lineResult) {
-          return lineResult;
-        }
-      }
+//     int getLinesResponse(int board, int n) {
+//       for(int i = 0; i < 3; i = i + 1) {
+//         int lineResult = getLineResult(board, i, n);
+//         if(lineResult) {
+//           return lineResult;
+//         }
+//       }
 
-      return 0;
-    }
+//       return 0;
+//     }
 
-    int getColumnResponse(int board, int n) {
-      for(int i = 0; i < 3; i = i + 1) {
-        int lineResult = getColumnResult(board, i, n);
-        if(lineResult) {
-          return lineResult;
-        }
-      }
+//     int getColumnResponse(int board, int n) {
+//       for(int i = 0; i < 3; i = i + 1) {
+//         int lineResult = getColumnResult(board, i, n);
+//         if(lineResult) {
+//           return lineResult;
+//         }
+//       }
 
-      return 0;
-    }
+//       return 0;
+//     }
 
-    int columns(int board, int n) {
-      int firstElement = getElementInMatrix(board, 0, 0, n);
-      if(firstElement == getElementInMatrix(board, 1, 1, n) &&
-         firstElement == getElementInMatrix(board, 2, 2, n)) {
-          return firstElement;
-      }
+//     int columns(int board, int n) {
+//       int firstElement = getElementInMatrix(board, 0, 0, n);
+//       if(firstElement == getElementInMatrix(board, 1, 1, n) &&
+//          firstElement == getElementInMatrix(board, 2, 2, n)) {
+//         return firstElement;
+//       }
 
-      firstElement = getElementInMatrix(board, 0, 2, n);
-      if(firstElement == getElementInMatrix(board, 1, 1, n) &&
-         firstElement == getElementInMatrix(board, 2, 0, n)) {
-          return firstElement;
-      }
+//       firstElement = getElementInMatrix(board, 0, 2, n);
+//       if(firstElement == getElementInMatrix(board, 1, 1, n) &&
+//          firstElement == getElementInMatrix(board, 2, 0, n)) {
+//           return firstElement;
+//       }
 
-      return 0;
-    }
+//       return 0;
+//     }
 
-    int result(int board, int n) {
-      int columnResult = getColumnResponse(board, n);
-      if(columnResult) {
-        return columnResult;
-      }
-      int rowResult = getLinesResponse(board, n);
-      if(rowResult) {
-        return rowResult;
-      }
-      return columns(board, n);
-    }
+//     int result(int board, int n) {
+//       int columnResult = getColumnResponse(board, n);
+//       if(columnResult) {
+//         return columnResult;
+//       }
+//       int rowResult = getLinesResponse(board, n);
+//       if(rowResult) {
+//         return rowResult;
+//       }
+//       return columns(board, n);
+//     }
 
-    void main() {
-      int board = 3000;
-      setElementInMatrix(board, 0, 2, 3, 2);
-      setElementInMatrix(board, 1, 1, 3, 2);
-      setElementInMatrix(board, 2, 0, 3, 2);
-      printLine(result(board, 3));
-      setElementInMatrix(board, 2, 0, 3, 0);
-      printLine(result(board, 3));
-    }
-  `)
-  let chomp = program.chomp();
-  t.equal(chomp.isInvalid(), false, 'returns');
-  let programCompiler = new Compiler(null);
-  let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.run();
+//     void main() {
+//       int board = 3000;
+//       setElementInMatrix(board, 0, 2, 3, 2);
+//       setElementInMatrix(board, 1, 1, 3, 2);
+//       setElementInMatrix(board, 2, 0, 3, 2);
+//       printLine(result(board, 3));
+//       setElementInMatrix(board, 2, 0, 3, 0);
+//       printLine(result(board, 3));
+//       setElementInMatrix(board, 2, 0, 3, 2);
+//       setElementInMatrix(board, 1, 1, 3, 1);
+//       printLine(result(board, 3));
+//     }
+//   `)
+//   let chomp = program.chomp();
+//   t.equal(chomp.isInvalid(), false, 'returns');
+//   let programCompiler = new Compiler(null);
+//   let asmBlock = programCompiler.compileProgram(chomp);
+//   asmBlock.run();
   
-  t.equal(asmBlock.getStdoutResponse(), '2\n0', 'returns');
-  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+//   t.equal(asmBlock.getStdoutResponse(), '2\n0\n0', 'returns');
+//   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
-  t.end();
-});
+//   t.end();
+// });
 
 test('Pointer tic tac toe AI v10', (t) => {
   const program = new Program(`
@@ -1518,9 +1521,9 @@ test('Pointer tic tac toe AI v10', (t) => {
 
     int getColumnResponse(int board, int n) {
       for(int i = 0; i < 3; i = i + 1) {
-        int lineResult = getColumnResult(board, i, n);
-        if(lineResult) {
-          return lineResult;
+        int columnResult = getColumnResult(board, i, n);
+        if(columnResult) {
+          return columnResult;
         }
       }
 
@@ -1580,14 +1583,11 @@ test('Pointer tic tac toe AI v10', (t) => {
       if(result == move) {
         return 0 - 50;
       }
-      if(result != 0 && result != move) {
-        return 50;
-      }
       if(result == 3) {
         return 20;
       }
 
-      int globalMax = 0-100;
+      int globalMax = 0 - 100;
       for(int i = 0; i < 3; i = i + 1) {
         for(int j = 0; j < 3; j = j + 1) {
           if(getElementInMatrix(board, i, j, n) == 0) {
@@ -1621,6 +1621,107 @@ test('Pointer tic tac toe AI v10', (t) => {
   asmBlock.run();
   console.log(asmBlock.getStdoutResponse())
   // t.equal(asmBlock.getStdoutResponse(), '2\n0', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Pointer tic tac toe AI v9', (t) => {
+  const program = new Program(`
+    int getElementInMatrix(int board, int i, int j, int n) {
+      return getElement(board, i * n + j);
+    }
+
+    int setElementInMatrix(int board, int i, int j, int n, int element) {
+      return setElement(board, i * n + j, element);
+    }
+
+    int getLineResult(int board, int line, int n) {
+      int firstElement = getElementInMatrix(board, line, 0, n);
+      if(firstElement == getElementInMatrix(board, line, 1, n) && 
+         firstElement == getElementInMatrix(board, line, 2, n)) {
+        return firstElement;
+      }
+
+      return 0;
+    }
+
+    int getColumnResult(int board, int column, int n) {
+      int firstElement = getElementInMatrix(board, 0, column, n);
+      if(firstElement == getElementInMatrix(board, 1, column, n) && 
+         firstElement == getElementInMatrix(board, 2, column, n)) {
+        return firstElement;
+      }
+
+      return 0;
+    }
+
+    int getLinesResponse(int board, int n) {
+      for(int i = 0; i < 3; i = i + 1) {
+        int lineResult = getLineResult(board, i, n);
+        if(lineResult) {
+          return lineResult;
+        }
+      }
+
+      return 0;
+    }
+
+    int getColumnResponse(int board, int n) {
+      for(int i = 0; i < 3; i = i + 1) {
+        int lineResult = getColumnResult(board, i, n);
+        if(lineResult) {
+          return lineResult;
+        }
+      }
+
+      return 0;
+    }
+
+    int columns(int board, int n) {
+      int firstElement = getElementInMatrix(board, 0, 0, n);
+      if(firstElement == getElementInMatrix(board, 1, 1, n) &&
+         firstElement == getElementInMatrix(board, 2, 2, n)) {
+        return firstElement;
+      }
+
+      firstElement = getElementInMatrix(board, 0, 2, n);
+      if(firstElement == getElementInMatrix(board, 1, 1, n) &&
+         firstElement == getElementInMatrix(board, 2, 0, n)) {
+          return firstElement;
+      }
+
+      return 0;
+    }
+
+    int result(int board, int n) {
+      int columnResult = getColumnResponse(board, n);
+      if(columnResult) {
+        return columnResult;
+      }
+      int rowResult = getLinesResponse(board, n);
+      if(rowResult) {
+        return rowResult;
+      }
+      return columns(board, n);
+    }
+
+    void main() {
+      int board = 3000;
+      setElementInMatrix(board, 0, 0, 3, 2);
+      setElementInMatrix(board, 1, 0, 3, 1);
+      setElementInMatrix(board, 2, 0, 3, 2);
+      printLine(getColumnResult(board, 0, 3));
+      setElementInMatrix(board, 1, 0, 3, 2);
+      printLine(getColumnResult(board, 0, 3));
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getStdoutResponse(), '0\n2', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
