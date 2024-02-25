@@ -1470,7 +1470,7 @@ test('Pointer tic tac toe AI v10', (t) => {
       return 0;
     }
 
-    int aiMove(int board, int move, int n, int bestX, int bestY, int depth) {
+    int aiMove(int board, int move, int n, int bestX, int bestY, int depth, int total) {
       int result = resultMethod(board, n);
       if(result == move) {
         return 50;
@@ -1487,7 +1487,8 @@ test('Pointer tic tac toe AI v10', (t) => {
         for(int j = 0; j < 3; j = j + 1) {
           if(getElementInMatrix(board, i, j, n) == 0) {
             setElementInMatrix(board, i, j, 3, move);
-            int currentMax = 0 - aiMove(board, 3 - move, n, bestX, bestY, depth + 1);
+            *total = *total + 1;
+            int currentMax = 0 - aiMove(board, 3 - move, n, bestX, bestY, depth + 1, total);
             if(currentMax == 20 || currentMax == 0 - 20) {
               currentMax = 20;
             }
@@ -1508,11 +1509,12 @@ test('Pointer tic tac toe AI v10', (t) => {
     }
 
     void main() {
-      int board = 3000, bestX = 5000, bestY = 5200;
+      int board = 3000, bestX = 5000, bestY = 5200, total = 5304;
       setElementInMatrix(board, 0, 0, 3, 1);
-      printLine(aiMove(board, 2, 3, bestX, bestY, 0));
+      printLine(aiMove(board, 2, 3, bestX, bestY, 0, total));
       printLine(*bestX);
       printLine(*bestY);
+      printLine(*total);
     }
   `)
   let chomp = program.chomp();
@@ -1520,7 +1522,7 @@ test('Pointer tic tac toe AI v10', (t) => {
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run();
-  t.equal(asmBlock.getStdoutResponse(), '20\n1\n1', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '20\n1\n1\n59704', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
