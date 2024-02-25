@@ -65,44 +65,71 @@ export class RegisterBlock {
     return this.runner.getOutputBuffer();
   }
 
-  getPopback(index) {
+  getPopback(index, currentBlock) {
     let sum = 0;
-    while(index < this.block.length && (this.block[index] instanceof Pop))  {
-      sum += parseInt(this.block[index].bytes);
+    while(index < currentBlock.length && (currentBlock[index] instanceof Pop))  {
+      sum += parseInt(currentBlock[index].bytes);
       index++;
     }
 
     return sum;
   }
 
-  markPopBacks(index, pushPopBuffer) {
-    while(index < this.block.length && (this.block[index] instanceof Pop)) {
+  markPopBacks(index, pushPopBuffer, currentBlock) {
+    while(index < currentBlock.length && (currentBlock[index] instanceof Pop)) {
       pushPopBuffer[index] = 1;
       index++;
     }
   }
 
-  removeUselessPushPopBlocks(optimizedBlock) {
-    let pushPopBuffer = new Array(this.block.length).fill(0);
-    for(let i = 0, c = this.block.length; i < c; i++) {
+  removeUselessPushPopBlocks(currentBlock) {
+    let optimizedBlock = new RegisterBlock();
+    let pushPopBuffer = new Array(currentBlock.length).fill(0);
+    for(let i = 0, c = currentBlock.length; i < c; i++) {
       if(!pushPopBuffer[i]) {
-        if(this.block[i] instanceof Pop) {  
-          optimizedBlock.push(new Pop(this.getPopback(i)));
+        if(currentBlock[i] instanceof Pop) {  
+          optimizedBlock.push(new Pop(this.getPopback(i, currentBlock)));
         }
         else {
-          optimizedBlock.push(this.block[i]);
+          optimizedBlock.push(currentBlock[i]);
         }
       }
-      this.markPopBacks(i, pushPopBuffer);
+      this.markPopBacks(i, pushPopBuffer, currentBlock);
     }
+
+    return optimizedBlock;
+  }
+
+  removeComplementaryPushPopBlocks(currentBlock) {
+    let optimizedBlock = new RegisterBlock();
+    let pushPopBuffer = new Array(currentBlock.length).fill(0);
+    for(let i = 0, c = currentBlock.length - 1; i < c; i++) {
+      if((currentBlock[i] instanceof Push) && 
+         (currentBlock[i + 1] instanceof Pop) &&
+         parseInt(currentBlock[i + 1].bytes) == 4) {
+        pushPopBuffer[i] = 1;
+        pushPopBuffer[i + 1] = 1;
+      }
+      else if((currentBlock[i] instanceof Push) && 
+         (currentBlock[i + 1] instanceof Pop)) {
+        pushPopBuffer[i] = 1;
+        currentBlock[i + 1].bytes = parseInt(currentBlock[i + 1].bytes) - 4;
+      }
+    }
+    for(let i = 0, c = currentBlock.length; i < c; i++) {
+      if(!pushPopBuffer[i]) {
+        optimizedBlock.push(currentBlock[i]);
+      }
+    }
+
+    return optimizedBlock;
   }
 
   optimize() {
-    let optimizedBlock = new RegisterBlock();
     this.block = this.flatten().block;
-    this.removeUselessPushPopBlocks(optimizedBlock);
-
-    return optimizedBlock;
+    let blockWOConsecutivePops = this.removeUselessPushPopBlocks(this.block).block;
+    // this.block = blockWOConsecutivePops;
+    this.block = this.removeComplementaryPushPopBlocks(blockWOConsecutivePops).block;
   }
 
   run() {

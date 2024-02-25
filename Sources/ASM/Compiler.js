@@ -389,6 +389,9 @@ export class Compiler {
         }
       }
     }
+    if(withOptimizations) {
+      block.optimize();
+    }
 
     return block;
   }

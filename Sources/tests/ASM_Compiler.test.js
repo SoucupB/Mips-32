@@ -21,6 +21,7 @@ test('Check Compiler recursive fibbo.', (t) => {
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.push(new Print('0', PrintTypes.MEMORY))
+  console.log(asmBlock.toString())
   asmBlock.run()
   t.equal(asmBlock.getOutputBuffer(), '34', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
@@ -290,14 +291,13 @@ test('Non-Recursive factorial v2', (t) => {
 });
 
 test('Negative numbers', (t) => {
-  const program = new Program('void main(){int a=10-53;}')
+  const program = new Program('void main(){int a=10-53;printLine(a);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('0', PrintTypes.MEMORY))
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '-43', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '-43', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -389,14 +389,13 @@ test('Pointer program v2', (t) => {
 });
 
 test('Pointer program v2', (t) => { 
-  const program = new Program('void main(){int buffer=344,z=setElement(buffer,0,134),c=*buffer;}')
+  const program = new Program('void main(){int buffer=344,z=setElement(buffer,0,134),c=*buffer;printLine(c);}')
   let chomp = program.chomp();
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  asmBlock.push(new Print('8', PrintTypes.MEMORY))
   asmBlock.run()
-  t.equal(asmBlock.getOutputBuffer(), '134', 'returns');
+  t.equal(asmBlock.getStdoutResponse(), '134', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
