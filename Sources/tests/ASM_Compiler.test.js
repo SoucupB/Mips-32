@@ -1452,19 +1452,19 @@ test('Pointer tic tac toe AI v10', (t) => {
 
     int resultMethod(int board, int n) {
       int columnResult = getColumnResponse(board, n);
-      if(columnResult != 0) {
+      if(columnResult) {
         return columnResult;
       }
       int rowResult = getLinesResponse(board, n);
-      if(rowResult != 0) {
+      if(rowResult) {
         return rowResult;
       }
       int diagLines = diag(board, n);
-      if(diagLines != 0) {
+      if(diagLines) {
         return diagLines;
       }
       int drawValues = isDraw(board);
-      if(drawValues != 0) {
+      if(drawValues) {
         return 3;
       }
       return 0;
@@ -1511,10 +1511,13 @@ test('Pointer tic tac toe AI v10', (t) => {
     void main() {
       int board = 3000, bestX = 5000, bestY = 5200, total = 5304;
       setElementInMatrix(board, 0, 0, 3, 1);
-      printLine(aiMove(board, 2, 3, bestX, bestY, 0, total));
-      printLine(*bestX);
-      printLine(*bestY);
-      printLine(*total);
+      printNumber(aiMove(board, 2, 3, bestX, bestY, 0, total));
+      printChar(32);
+      printNumber(*bestX);
+      printChar(32);
+      printNumber(*bestY);
+      printChar(32);
+      printNumber(*total);
     }
   `)
   let chomp = program.chomp();
@@ -1522,7 +1525,7 @@ test('Pointer tic tac toe AI v10', (t) => {
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run();
-  t.equal(asmBlock.getStdoutResponse(), '20\n1\n1\n59704', 'returns');
+  t.equal(asmBlock.getRawStdoutBuffer(), '20 1 1 59704', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
@@ -1530,92 +1533,10 @@ test('Pointer tic tac toe AI v10', (t) => {
 
 test('Pointer tic tac toe AI v9', (t) => {
   const program = new Program(`
-    int getElementInMatrix(int board, int i, int j, int n) {
-      return getElement(board, i * n + j);
-    }
-
-    int setElementInMatrix(int board, int i, int j, int n, int element) {
-      return setElement(board, i * n + j, element);
-    }
-
-    int getLineResult(int board, int line, int n) {
-      int firstElement = getElementInMatrix(board, line, 0, n);
-      if(firstElement == getElementInMatrix(board, line, 1, n) && 
-         firstElement == getElementInMatrix(board, line, 2, n)) {
-        return firstElement;
-      }
-
-      return 0;
-    }
-
-    int getColumnResult(int board, int column, int n) {
-      int firstElement = getElementInMatrix(board, 0, column, n);
-      if(firstElement == getElementInMatrix(board, 1, column, n) && 
-         firstElement == getElementInMatrix(board, 2, column, n)) {
-        return firstElement;
-      }
-
-      return 0;
-    }
-
-    int getLinesResponse(int board, int n) {
-      for(int i = 0; i < 3; i = i + 1) {
-        int lineResult = getLineResult(board, i, n);
-        if(lineResult) {
-          return lineResult;
-        }
-      }
-
-      return 0;
-    }
-
-    int getColumnResponse(int board, int n) {
-      for(int i = 0; i < 3; i = i + 1) {
-        int lineResult = getColumnResult(board, i, n);
-        if(lineResult) {
-          return lineResult;
-        }
-      }
-
-      return 0;
-    }
-
-    int columns(int board, int n) {
-      int firstElement = getElementInMatrix(board, 0, 0, n);
-      if(firstElement == getElementInMatrix(board, 1, 1, n) &&
-         firstElement == getElementInMatrix(board, 2, 2, n)) {
-        return firstElement;
-      }
-
-      firstElement = getElementInMatrix(board, 0, 2, n);
-      if(firstElement == getElementInMatrix(board, 1, 1, n) &&
-         firstElement == getElementInMatrix(board, 2, 0, n)) {
-          return firstElement;
-      }
-
-      return 0;
-    }
-
-    int result(int board, int n) {
-      int columnResult = getColumnResponse(board, n);
-      if(columnResult) {
-        return columnResult;
-      }
-      int rowResult = getLinesResponse(board, n);
-      if(rowResult) {
-        return rowResult;
-      }
-      return columns(board, n);
-    }
-
     void main() {
-      int board = 3000;
-      setElementInMatrix(board, 0, 0, 3, 2);
-      setElementInMatrix(board, 1, 0, 3, 1);
-      setElementInMatrix(board, 2, 0, 3, 2);
-      printLine(getColumnResult(board, 0, 3));
-      setElementInMatrix(board, 1, 0, 3, 2);
-      printLine(getColumnResult(board, 0, 3));
+      printNumber(43243);
+      printChar(10);
+      printNumber(6788);
     }
   `)
   let chomp = program.chomp();
@@ -1623,7 +1544,7 @@ test('Pointer tic tac toe AI v9', (t) => {
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run();
-  t.equal(asmBlock.getStdoutResponse(), '0\n2', 'returns');
+  t.equal(asmBlock.getRawStdoutBuffer(), '43243\n6788', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();

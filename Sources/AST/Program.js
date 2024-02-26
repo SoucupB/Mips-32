@@ -12,7 +12,7 @@ let stddoutOutputBuffer = 2 ** 16;
 
 export class PredefinedMethods {
   static methods() {
-    return `${PredefinedMethods.getElementAt()}${PredefinedMethods.storeElement()}${PredefinedMethods.storePrint()}`
+    return `${PredefinedMethods.getElementAt()}${PredefinedMethods.storeElement()}${PredefinedMethods.storePrint()}${PredefinedMethods.bytePrint()}`
   }
 
   static getElementAt() {
@@ -21,6 +21,47 @@ export class PredefinedMethods {
 
   static storeElement() {
     return `int setElement(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}`;
+  }
+
+  static bytePrint() {
+    return `
+    int __digitCount(int n) {
+      int total = 0;
+      while(n) {
+        n = n / 10;
+        total = total + 1;
+      }
+
+      return total;
+    }
+
+    int pushCharacter(int character) {
+      int stdoutBuffer = ${stddoutOutputBuffer};
+      int currentOffset = *(stdoutBuffer - 4);
+      *(stdoutBuffer + currentOffset) = character;
+      *(stdoutBuffer - 4) = currentOffset + 1;
+
+      return 0;
+    }
+    
+    int printNumber_t(int element){
+      if(element == 0) {
+        return 0;
+      }
+      printNumber_t(element / 10);
+      pushCharacter(element % 10 + 48);
+      return 0;
+    }
+    
+    int printNumber(int element){
+      return printNumber_t(element);
+    }
+
+    int printChar(int element){
+      return pushCharacter(element);
+    }
+    
+    `;
   }
 
   static storePrint() {

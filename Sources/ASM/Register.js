@@ -17,6 +17,10 @@ export class RegisterBlock {
     return this.runner.getStdoutResponse();
   }
 
+  getRawStdoutBuffer() {
+    return this.runner.getRawStdoutBuffer();
+  }
+
   toStringArray_t(block) {
     let response = [];
     for(let i = 0, c = block.length; i < c; i++) {
@@ -128,7 +132,6 @@ export class RegisterBlock {
   optimize() {
     this.block = this.flatten().block;
     let blockWOConsecutivePops = this.removeUselessPushPopBlocks(this.block).block;
-    // this.block = blockWOConsecutivePops;
     this.block = this.removeComplementaryPushPopBlocks(blockWOConsecutivePops).block;
   }
 

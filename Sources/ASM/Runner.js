@@ -34,6 +34,17 @@ export class Runner {
     return response.join('\n');
   }
 
+  getRawStdoutBuffer() {
+    const bufferSize = this.getNumberAtAddress(this.memory, stddoutOutputBuffer - 4);
+    let response = "";
+
+    for(let i = 0; i < bufferSize; i++) {
+      response += String.fromCharCode(this.memory[i + stddoutOutputBuffer]);
+    }
+
+    return response;
+  }
+
   get32BitNumberAtAddress(pointer) {
     return this.getNumberAtAddress(this.memory, pointer);
   }
