@@ -13,7 +13,7 @@ test('Check Compiler recursive fibbo.', (t) => {
       return fibboRecursive ( n - 1 ) + fibboRecursive ( n - 2 );
     }
     void main() {
-      printLine(fibboRecursive(8));
+      printNumber(fibboRecursive(8));
     }`
   )
   let chomp = program.chomp();
@@ -21,7 +21,7 @@ test('Check Compiler recursive fibbo.', (t) => {
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
   asmBlock.run()
-  t.equal(asmBlock.getStdoutResponse(), '34', 'returns');
+  t.equal(asmBlock.getRawStdoutBuffer(), '34', 'returns');
   t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
 
   t.end();
