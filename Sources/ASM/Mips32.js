@@ -1,4 +1,4 @@
-import { Mov } from "./Register.js";
+import { Mov, MovTypes } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -8,9 +8,10 @@ export class Mips32 {
     this.stackPointer = stackPointer;
     this.block = [];
 
-    this.zeroReg = 0;
-    this.stackPointerRegister = 24;
-    this.stddoutRegister = 25;
+    this.zeroReg = 31;
+    this.stackPointerRegister = 30;
+    this.stddoutRegister = 29;
+    this.freeRegister = 28;
 
     this.registerCount = 32;
     this.usedRegisters = {};
@@ -19,14 +20,45 @@ export class Mips32 {
     this.usedRegisters[this.stddoutRegister] = this.stddout;
 
     this.prepareHeader();
+    this.iterateBlock();
   }
 
   iterateBlock() {
     const instructionBlockAsm = this.registerBlock.block;
 
     for(let i = 0, c = instructionBlockAsm.length; i < c; i++) {
-      if(instructionBlockAsm instanceof Mov) {
+      const instruction = instructionBlockAsm[i];
+      if(instruction instanceof Mov) {
+        this.addMoveBlock(instruction)
+      }
+    }
+  }
 
+  addMoveBlock(instruction) {
+    switch(instruction.type) {
+      case MovTypes.REG_TO_REG: {
+        this.block.push(new MipsAdd(instruction.dst, instruction.src, this.zeroReg));
+        break;
+      }
+      case MovTypes.NUMBER_TO_REG: { // In case number is only 16 bits.
+        this.block.push(new MipsAddi(instruction.dst, this.zeroReg, instruction.src));
+        break;
+      }
+      case MovTypes.STACK_TO_REG: {
+        this.block.push(new MipsLw(instruction.dst, -instruction.src, this.stackPointerRegister));
+        break;
+      }
+      case MovTypes.REG_TO_STACK: {
+        this.block.push(new MipsSw(instruction.dst, -instruction.src, this.stackPointerRegister));
+        break;
+      }
+      case MovTypes.REG_MEM_TO_REG: {
+        this.block.push(new MipsLw(instruction.dst, 0, instruction.src));
+        break;
+      }
+      case MovTypes.REG_TO_MEM_REG: {
+        this.block.push(new MipsSw(instruction.dst, 0, instruction.src));
+        break;
       }
     }
   }
@@ -34,7 +66,7 @@ export class Mips32 {
   prepareHeader() {
     this.block.push(new MipsOr(this.zeroReg, this.zeroReg, this.zeroReg));
     this.block.push(new MipsAddi(this.stackPointerRegister, this.zeroReg, this.stackPointer));
-    this.block.push(new MipsOr(this.stddoutRegister, this.zeroReg, this.stddout));
+    this.block.push(new MipsAddi(this.stddoutRegister, this.zeroReg, this.stddout));
   }
 
   flatten() {
@@ -172,6 +204,19 @@ export class MipsOr extends MipsRegister {
   }
 
   toString() {
-    return `SW $${this.d} ${this.s}($${this.t})`;
+    return `OR $${this.d} $${this.s} $${this.t}`;
+  }
+}
+
+export class MipsXor extends MipsRegister {
+  constructor(d, s, t) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.t = t;
+  }
+
+  toString() {
+    return `XOR $${this.d} $${this.s} $${this.t}`;
   }
 }
