@@ -1,7 +1,7 @@
 import tap from 'tap'
 const { test } = tap;
 import { Mips32 } from '../ASM/Mips32.js';
-import { Add, Mov, MovTypes, Pop, Push, RegisterBlock } from '../ASM/Register.js';
+import { Add, Mov, MovTypes, Mul, Pop, Push, RegisterBlock } from '../ASM/Register.js';
 
 test('Prepare header', (t) => {
   let registerBlock = new RegisterBlock();
@@ -14,6 +14,7 @@ test('Prepare header', (t) => {
   registerBlock.push(new Push(2))
   registerBlock.push(new Add(2, 3, 4))
   registerBlock.push(new Pop(4))
+  registerBlock.push(new Mul(1, 2, 3))
   const mips32 = new Mips32(registerBlock, 10, 100);
   console.log(mips32.toString())
   // t.equal(Variable.isValid('test'), true, 'returns true');

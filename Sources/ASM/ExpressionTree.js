@@ -258,7 +258,7 @@ export class ExpressionTree {
     this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
-    block.push(new Mov(freeBufferRegister, 'HI', MovTypes.REG_TO_REG))
+    block.push(new Mov(freeBufferRegister, 'LO', MovTypes.REG_TO_REG))
     this.addNodeToTheStack(node, freeBufferRegister, block, registerStack, registerMem);
   }
 
@@ -269,7 +269,7 @@ export class ExpressionTree {
     this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
     let freeBufferRegister = this.findRegisterForNode(node, registerMem);
 
-    block.push(new Mov(freeBufferRegister, 'LO', MovTypes.REG_TO_REG))
+    block.push(new Mov(freeBufferRegister, 'HI', MovTypes.REG_TO_REG))
     this.addNodeToTheStack(node, freeBufferRegister, block, registerStack, registerMem);
   }
 

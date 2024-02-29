@@ -168,8 +168,8 @@ test('Check Register compiler v12', (t) => {
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
   block.push(new Div('2', '1'))
   block.run();
-  t.equal(block.getRegValue('HI'), 23, 'returns');
-  t.equal(block.getRegValue('LO'), 26022, 'returns');
+  t.equal(block.getRegValue('LO'), 23, 'returns');
+  t.equal(block.getRegValue('HI'), 26022, 'returns');
   t.end();
 });
 
@@ -179,8 +179,8 @@ test('Check Register compiler v13', (t) => {
   block.push(new Mov('2', '999888', MovTypes.NUMBER_TO_REG))
   block.push(new Div('2', '1'))
   block.run();
-  t.equal(block.getRegValue('HI'), 23, 'returns');
-  t.equal(block.getRegValue('LO'), 26022, 'returns');
+  t.equal(block.getRegValue('LO'), 23, 'returns');
+  t.equal(block.getRegValue('HI'), 26022, 'returns');
   t.end();
 });
 

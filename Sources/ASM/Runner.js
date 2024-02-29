@@ -269,8 +269,8 @@ export class Runner {
   }
 
   runDivAndMod(instruction) {
-    this.register['HI'] = Math.floor(this.getRegValue(instruction.a) / this.getRegValue(instruction.b));
-    this.register['LO'] = this.getRegValue(instruction.a) % this.getRegValue(instruction.b);
+    this.register['HI'] = this.getRegValue(instruction.a) % this.getRegValue(instruction.b);
+    this.register['LO'] = Math.floor(this.getRegValue(instruction.a) / this.getRegValue(instruction.b))
   }
 
   runPrp(instruction) {

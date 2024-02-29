@@ -1,4 +1,4 @@
-import { Add, Mov, MovTypes, Pop, Push } from "./Register.js";
+import { Add, Div, Mov, MovTypes, Mul, Pop, Push } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -12,9 +12,14 @@ export class Mips32 {
     this.stackPointerRegister = 30;
     this.stddoutRegister = 29;
     this.freeRegister = 28;
+    this.hi = 27;
+    this.lo = 26;
 
     this.registerCount = 32;
-    this.usedRegisters = {};
+    this.usedRegisters = {
+      'HI': this.hi,
+      'LO': this.lo
+    };
     this.usedRegisters[this.zeroReg] = 0;
     this.usedRegisters[this.stackPointerRegister] = this.stackPointer;
     this.usedRegisters[this.stddoutRegister] = this.stddout;
@@ -40,7 +45,22 @@ export class Mips32 {
       if(instruction instanceof Pop) {
         this.addPopInstruction(instruction)
       }
+      if(instruction instanceof Mul) {
+        this.addMultInstruction(instruction);
+      }
+      if(instruction instanceof Div) {
+
+      }
     }
+  }
+
+  addDivInstruction(instruction) {
+    this.block.push(new MipsDiv(instruction.b, instruction.c));
+  }
+
+  addMultInstruction(instruction) {
+    this.block.push(new MipsMult(instruction.b, instruction.c));
+    this.block.push(new MipsAddi(instruction.dst, this.lo, 0));
   }
 
   addPushBlock(instruction) {
@@ -158,7 +178,7 @@ export class MipsDiv extends MipsRegister {
 }
 
 // lo = s * t (first 32 bits), hi = s * t (last 32 bits)
-export class MipsMultu extends MipsRegister {
+export class MipsMult extends MipsRegister {
   constructor(s, t) {
     super();
     this.s = s;
