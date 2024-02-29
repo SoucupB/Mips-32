@@ -1,4 +1,4 @@
-import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label } from "./Register.js";
+import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -34,7 +34,7 @@ export class Mips32 {
     for(let i = 0, c = instructionBlockAsm.length; i < c; i++) {
       const instruction = instructionBlockAsm[i];
       if(instruction instanceof Mov) {
-        this.addMoveBlock(instruction);
+        this.addMoveBlock(instruction, instructionBlockAsm, i);
       }
       if(instruction instanceof Push) {
         this.addPushBlock(instruction);
@@ -57,7 +57,9 @@ export class Mips32 {
       if(instruction instanceof Label) {
         continue;
       }
-      
+      if(instruction instanceof Cmp) {
+        continue;
+      }
     }
   }
 
@@ -105,11 +107,31 @@ export class Mips32 {
     this.block.push(new MipsSub(this.stackPointerRegister, this.stackPointerRegister, this.freeRegister));
   }
 
-  addMoveBlock(instruction) {
+  searchClosestCmp(instructions, index) {
+    for(let i = index; i >= 0; i--) {
+      if(instructions[i] instanceof Cmp) {
+        return instructions[i];
+      }
+    }
+
+    return null;
+  }
+
+  addSpecialMov(instruction, instructions, index) {
+    console.log("PENIS", instruction.src)
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    if(instruction.src == 'CF') {
+      this.block.push(new MipsSlt(instruction.dst, closestCmp.regA, closestCmp.regB));
+      return ;
+    }
+    this.block.push(new MipsAdd(instruction.dst, this.getRegisterValue(instruction.src), this.zeroReg));
+  }
+
+  addMoveBlock(instruction, instructions, index) {
 
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
-        this.block.push(new MipsAdd(instruction.dst, this.getRegisterValue(instruction.src), this.zeroReg));
+        this.addSpecialMov(instruction, instructions, index)
         break;
       }
       case MovTypes.NUMBER_TO_REG: { // In case number is only 16 bits.
@@ -318,5 +340,18 @@ export class MipsJr extends MipsRegister {
 
   toString() {
     return `JR $${this.register}`;
+  }
+}
+
+export class MipsSlt extends MipsRegister {
+  constructor(d, s, t) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.t = t;
+  }
+
+  toString() {
+    return `SLT $${this.d} $${this.s} $${this.t}`;
   }
 }
