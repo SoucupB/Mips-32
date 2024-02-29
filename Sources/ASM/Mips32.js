@@ -1,4 +1,4 @@
-import { Add, Div, Mov, MovTypes, Mul, Pop, Push } from "./Register.js";
+import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -49,13 +49,41 @@ export class Mips32 {
         this.addMultInstruction(instruction);
       }
       if(instruction instanceof Div) {
+        this.addDivInstruction(instruction);
+      }
+      if(instruction instanceof Jmp) {
+        this.addJumpInstruction(instruction)
+      }
+      if(instruction instanceof Label) {
+        continue;
+      }
+      
+    }
+  }
 
+  addJumpInstruction(instruction) {
+    switch(instruction.type) {
+      case JmpTypes.REGISTER: {
+        this.block.push(new MipsJr(instruction.value));
+        break;
+      }
+      case JmpTypes.LABEL: {
+        // to do
+        break;
       }
     }
   }
 
+  getRegisterValue(register) {
+    if(register in this.usedRegisters) {
+      return this.usedRegisters[register];
+    }
+
+    return register;
+  }
+
   addDivInstruction(instruction) {
-    this.block.push(new MipsDiv(instruction.b, instruction.c));
+    this.block.push(new MipsDiv(instruction.a, instruction.b));
   }
 
   addMultInstruction(instruction) {
@@ -78,9 +106,10 @@ export class Mips32 {
   }
 
   addMoveBlock(instruction) {
+
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
-        this.block.push(new MipsAdd(instruction.dst, instruction.src, this.zeroReg));
+        this.block.push(new MipsAdd(instruction.dst, this.getRegisterValue(instruction.src), this.zeroReg));
         break;
       }
       case MovTypes.NUMBER_TO_REG: { // In case number is only 16 bits.
@@ -278,5 +307,16 @@ export class MipsXor extends MipsRegister {
 
   toString() {
     return `XOR $${this.d} $${this.s} $${this.t}`;
+  }
+}
+
+export class MipsJr extends MipsRegister {
+  constructor(register) {
+    super();
+    this.register = register;
+  }
+
+  toString() {
+    return `JR $${this.register}`;
   }
 }
