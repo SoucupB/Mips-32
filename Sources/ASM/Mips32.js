@@ -1,4 +1,4 @@
-import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp } from "./Register.js";
+import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -60,7 +60,44 @@ export class Mips32 {
       if(instruction instanceof Cmp) {
         continue;
       }
+      if(instruction instanceof Setne) {
+        this.addSetneInstruction(instruction, instructionBlockAsm, i);
+      }
+      if(instruction instanceof Sete) {
+        this.addSeteInstruction(instruction, instructionBlockAsm, i);
+      }
+      if(instruction instanceof Setge) {
+        this.addSetgeInstruction(instruction, instructionBlockAsm, i);
+      }
+      if(instruction instanceof Setle) {
+        this.addSetleInstruction(instruction, instructionBlockAsm, i);
+      }
     }
+  }
+
+  addSetleInstruction(instruction, instructions, index) {
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    this.block.push(new MipsSlt(instruction.regA, closestCmp.regB, closestCmp.regA));
+    this.block.push(new MipsXori(instruction.regA, instruction.regA, 1));
+  }
+
+  addSetgeInstruction(instruction, instructions, index) {
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    this.block.push(new MipsSlt(instruction.regA, closestCmp.regA, closestCmp.regB));
+    this.block.push(new MipsXori(instruction.regA, instruction.regA, 1));
+  }
+
+  addSeteInstruction(instruction, instructions, index) {
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    this.block.push(new MipsXor(closestCmp.regA, closestCmp.regA, closestCmp.regB));
+    this.block.push(new MipsSltu(instruction.regA, this.zeroReg, closestCmp.regA));
+    this.block.push(new MipsXori(instruction.regA, instruction.regA, 1));
+  }
+
+  addSetneInstruction(instruction, instructions, index) {
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    this.block.push(new MipsXor(closestCmp.regA, closestCmp.regA, closestCmp.regB));
+    this.block.push(new MipsSltu(instruction.regA, this.zeroReg, closestCmp.regA));
   }
 
   addJumpInstruction(instruction) {
@@ -118,10 +155,13 @@ export class Mips32 {
   }
 
   addSpecialMov(instruction, instructions, index) {
-    console.log("PENIS", instruction.src)
     let closestCmp = this.searchClosestCmp(instructions, index);
     if(instruction.src == 'CF') {
       this.block.push(new MipsSlt(instruction.dst, closestCmp.regA, closestCmp.regB));
+      return ;
+    }
+    if(instruction.src == 'CT') {
+      this.block.push(new MipsSlt(instruction.dst, closestCmp.regB, closestCmp.regA));
       return ;
     }
     this.block.push(new MipsAdd(instruction.dst, this.getRegisterValue(instruction.src), this.zeroReg));
@@ -332,6 +372,19 @@ export class MipsXor extends MipsRegister {
   }
 }
 
+export class MipsXori extends MipsRegister {
+  constructor(d, s, i) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.i = i;
+  }
+
+  toString() {
+    return `XORI $${this.d} $${this.s} ${this.i}`;
+  }
+}
+
 export class MipsJr extends MipsRegister {
   constructor(register) {
     super();
@@ -353,5 +406,18 @@ export class MipsSlt extends MipsRegister {
 
   toString() {
     return `SLT $${this.d} $${this.s} $${this.t}`;
+  }
+}
+
+export class MipsSltu extends MipsRegister {
+  constructor(d, s, t) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.t = t;
+  }
+
+  toString() {
+    return `SLTU $${this.d} $${this.s} $${this.t}`;
   }
 }
