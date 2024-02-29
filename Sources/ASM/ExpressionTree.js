@@ -357,7 +357,7 @@ export class ExpressionTree {
     block.push(new Or(freeRegisterSrc, freeRegisterDst));
     block.push(new Setdor(freeBufferRegister));
     this.addNodeToTheStack(node, freeBufferRegister, block, registerStack, registerMem);
-    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem)
+    this.freeRegisters([freeRegisterSrc, freeRegisterDst], registerMem);
   }
 
   addInstructions(node, block, registerMem, registerStack) {

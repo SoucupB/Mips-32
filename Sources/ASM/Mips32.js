@@ -1,4 +1,4 @@
-import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle } from "./Register.js";
+import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -72,7 +72,27 @@ export class Mips32 {
       if(instruction instanceof Setle) {
         this.addSetleInstruction(instruction, instructionBlockAsm, i);
       }
+      if(instruction instanceof Setnz) {
+        this.addSetnzInstruction(instruction, instructionBlockAsm, i);
+      }
+      if(instruction instanceof Setdor) {
+        this.addSetdorInstruction(instruction, instructionBlockAsm, i);
+      }
     }
+  }
+
+  addSetdorInstruction(instruction, instructions, index) {
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    this.block.push(new MipsSlt(closestCmp.regA, this.zeroReg, closestCmp.regA));
+    this.block.push(new MipsSlt(closestCmp.regB, this.zeroReg, closestCmp.regB));
+    this.block.push(new MipsOr(instruction.reg, closestCmp.regA, closestCmp.regB));
+  }
+
+  addSetnzInstruction(instruction, instructions, index) {
+    let closestCmp = this.searchClosestCmp(instructions, index);
+    this.block.push(new MipsSlt(closestCmp.regA, this.zeroReg, closestCmp.regA));
+    this.block.push(new MipsSlt(closestCmp.regB, this.zeroReg, closestCmp.regB));
+    this.block.push(new MipsAnd(instruction.regA, closestCmp.regA, closestCmp.regB));
   }
 
   addSetleInstruction(instruction, instructions, index) {
@@ -382,6 +402,19 @@ export class MipsXori extends MipsRegister {
 
   toString() {
     return `XORI $${this.d} $${this.s} ${this.i}`;
+  }
+}
+
+export class MipsAnd extends MipsRegister {
+  constructor(d, s, t) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.t = t;
+  }
+
+  toString() {
+    return `AND $${this.d} $${this.s} $${this.t}`;
   }
 }
 
