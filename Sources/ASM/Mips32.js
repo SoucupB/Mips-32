@@ -1,4 +1,4 @@
-import { Mov, MovTypes } from "./Register.js";
+import { Add, Mov, MovTypes, Pop, Push } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -29,9 +29,32 @@ export class Mips32 {
     for(let i = 0, c = instructionBlockAsm.length; i < c; i++) {
       const instruction = instructionBlockAsm[i];
       if(instruction instanceof Mov) {
-        this.addMoveBlock(instruction)
+        this.addMoveBlock(instruction);
+      }
+      if(instruction instanceof Push) {
+        this.addPushBlock(instruction);
+      }
+      if(instruction instanceof Add) {
+        this.addAddInstruction(instruction);
+      }
+      if(instruction instanceof Pop) {
+        this.addPopInstruction(instruction)
       }
     }
+  }
+
+  addPushBlock(instruction) {
+    this.block.push(new MipsSw(instruction.register, 0, this.stackPointerRegister));
+    this.block.push(new MipsAddi(this.stackPointerRegister, this.zeroReg, 4));
+  }
+
+  addAddInstruction(instruction) {
+    this.block.push(new MipsAdd(instruction.dst, instruction.b, instruction.c));
+  }
+
+  addPopInstruction(instruction) {
+    this.block.push(new MipsAddi(this.freeRegister, this.zeroReg, instruction.bytes));
+    this.block.push(new MipsSub(this.stackPointerRegister, this.stackPointerRegister, this.freeRegister));
   }
 
   addMoveBlock(instruction) {
@@ -58,6 +81,10 @@ export class Mips32 {
       }
       case MovTypes.REG_TO_MEM_REG: {
         this.block.push(new MipsSw(instruction.dst, 0, instruction.src));
+        break;
+      }
+
+      default: {
         break;
       }
     }
@@ -166,6 +193,19 @@ export class MipsSub extends MipsRegister {
 
   toString() {
     return `SUB $${this.d} $${this.s} $${this.t}`;
+  }
+}
+
+export class MipsSubi extends MipsRegister {
+  constructor(d, s, i) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.i = i;
+  }
+
+  toString() {
+    return `SUBI $${this.d} $${this.s} ${this.i}`;
   }
 }
 
