@@ -1,4 +1,4 @@
-import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor } from "./Register.js";
+import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -14,18 +14,56 @@ export class Mips32 {
     this.freeRegister = 28;
     this.hi = 27;
     this.lo = 26;
+    this.testRegister = 25;
+    this.rsp = 24;
+    this.ret = 23;
 
     this.registerCount = 32;
     this.usedRegisters = {
       'HI': this.hi,
-      'LO': this.lo
+      'LO': this.lo,
+      'rsp': this.rsp,
+      'ret': this.ret
     };
     this.usedRegisters[this.zeroReg] = 0;
     this.usedRegisters[this.stackPointerRegister] = this.stackPointer;
     this.usedRegisters[this.stddoutRegister] = this.stddout;
 
+    this.labelsOffsets = {};
+
     this.prepareHeader();
     this.iterateBlock();
+    this.createLabelOffsets();
+  }
+
+  // findClosestLabelPosition(index, registerBlock) {
+  //   for(let i = index, c = registerBlock.length; i < c; i++) {
+  //     if(!(registerBlock[i] instanceof Label)) {
+  //       return i;
+  //     }
+  //   }
+
+  //   return registerBlock.length;
+  // }
+
+  createLabelOffsets() {
+    for(let i = 0, c = this.block.length; i < c; i++) {
+      if(this.block[i] instanceof MipsLabel) {
+        this.labelsOffsets[this.block[i].label] = i;
+        this.block[i] = new MipsNoop()
+      }
+    }
+    for(let i = 0, c = this.block.length; i < c; i++) {
+      if(this.block[i] instanceof MipsJ) {
+        this.block[i] = new MipsJ(this.labelsOffsets[this.block[i].register])
+      }
+      if(this.block[i] instanceof MipsBeq) {
+        this.block[i].label = this.labelsOffsets[this.block[i].label] - i;
+      }
+      if(this.block[i] instanceof MipsPrp) {
+        this.block[i] = new MipsAddi(this.block[i].reg, this.zeroReg, i + this.block[i].offset);
+      }
+    }
   }
 
   iterateBlock() {
@@ -55,7 +93,7 @@ export class Mips32 {
         this.addJumpInstruction(instruction)
       }
       if(instruction instanceof Label) {
-        continue;
+        this.block.push(new MipsLabel(instruction.label));
       }
       if(instruction instanceof Cmp) {
         continue;
@@ -78,7 +116,37 @@ export class Mips32 {
       if(instruction instanceof Setdor) {
         this.addSetdorInstruction(instruction, instructionBlockAsm, i);
       }
+      if(instruction instanceof Sub) {
+        this.addSubInstruction(instruction);
+      }
+      if(instruction instanceof Test) {
+        this.addSetTestInstruction(instruction, instructionBlockAsm, i);
+      }
+      if(instruction instanceof Jz) {
+        this.addJzInstruction(instruction, this.block.length)
+      }
+      if(instruction instanceof Prp) {
+        this.addPrpInstruction(instruction)
+      }
     }
+  }
+
+  addPrpInstruction(instruction) {
+    this.block.push(new MipsPrp(instruction.reg, instruction.offset))
+  }
+
+  addJzInstruction(instruction) {
+    this.block.push(new MipsBeq(this.testRegister, this.zeroReg, instruction.label))
+  }
+
+  addSetTestInstruction(instruction) {
+    this.block.push(new MipsSlt(instruction.regA, this.zeroReg, instruction.regA));
+    this.block.push(new MipsSlt(instruction.regB, this.zeroReg, instruction.regB));
+    this.block.push(new MipsAnd(this.testRegister, instruction.regA, instruction.regB));
+  }
+
+  addSubInstruction(instruction) {
+    this.block.push(new MipsSub(instruction.dst, instruction.b, instruction.c));
   }
 
   addSetdorInstruction(instruction, instructions, index) {
@@ -127,7 +195,7 @@ export class Mips32 {
         break;
       }
       case JmpTypes.LABEL: {
-        // to do
+        this.block.push(new MipsJ(instruction.value));
         break;
       }
     }
@@ -439,6 +507,63 @@ export class MipsSlt extends MipsRegister {
 
   toString() {
     return `SLT $${this.d} $${this.s} $${this.t}`;
+  }
+}
+
+export class MipsBeq extends MipsRegister {
+  constructor(s, t, label) {
+    super();
+    this.s = s;
+    this.t = t;
+    this.label = label;
+  }
+
+  toString() {
+    return `BEQ $${this.s} $${this.t} ${this.label}`;
+  }
+}
+
+export class MipsNoop extends MipsRegister {
+  constructor() {
+    super();
+  }
+
+  toString() {
+    return `NOOP`;
+  }
+}
+
+export class MipsLabel extends MipsRegister {
+  constructor(label) {
+    super();
+    this.label = label;
+  }
+
+  toString() {
+    return `:${this.label}`;
+  }
+}
+
+export class MipsJ extends MipsRegister {
+  constructor(register) {
+    super();
+    this.register = register;
+  }
+
+  toString() {
+    return `J ${this.register}`;
+  }
+}
+
+export class MipsPrp extends MipsRegister {
+  constructor(reg, offset) {
+    super();
+    this.reg = reg;
+    this.offset = offset
+  }
+
+  toString() {
+    return `PRP $${this.reg} ${this.offset}`
   }
 }
 
