@@ -2,8 +2,10 @@ import tap from 'tap'
 const { test } = tap;
 import { Mips32, MipsNoop } from '../ASM/Mips32.js';
 import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Pop, Prp, Push, RegisterBlock, Setdor, Sete, Setge, Setne, Setnz, Test } from '../ASM/Register.js';
+import { Program } from '../AST/Program.js';
+import { Compiler } from '../ASM/Compiler.js';
 
-test('Prepare header', (t) => {
+test('Code translation v1', (t) => {
   let registerBlock = new RegisterBlock();
   registerBlock.push(new Mov(0, 1, MovTypes.REG_TO_REG))
   registerBlock.push(new Mov(3, 2242, MovTypes.NUMBER_TO_REG))
@@ -46,6 +48,25 @@ test('Prepare header', (t) => {
   registerBlock.push(new Jz('_yolo'))
   registerBlock.push(new Jmp('_yolo', JmpTypes.LABEL))
   const mips32 = new Mips32(registerBlock, 10, 100);
+  // console.log(mips32.toString())
+  // t.equal(Variable.isValid('test'), true, 'returns true');
+  t.end();
+});
+
+test('Code translation v2', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = 10, b = 15;
+      int c = a + b;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  console.log(asmBlock.toString(), '\n--------------------\n')
+
+  const mips32 = new Mips32(asmBlock, 1024 * 512, 1024 * 1024);
   console.log(mips32.toString())
   // t.equal(Variable.isValid('test'), true, 'returns true');
   t.end();
