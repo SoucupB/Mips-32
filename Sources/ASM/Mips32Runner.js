@@ -1,4 +1,4 @@
-import { MipsAdd, MipsAddi, MipsAnd, MipsBeq, MipsDiv, MipsJ, MipsJr, MipsLw, MipsMult, MipsOr, MipsSlt, MipsSltu, MipsSub, MipsSw, MipsXor, MipsXori } from "./Mips32.js";
+import { MipsAdd, MipsAddi, MipsAnd, MipsAndi, MipsBeq, MipsDiv, MipsJ, MipsJr, MipsLw, MipsMult, MipsOr, MipsSlt, MipsSltu, MipsSub, MipsSw, MipsXor, MipsXori } from "./Mips32.js";
 
 export const ReadMemoryType = {
   INT32: 1,
@@ -183,6 +183,9 @@ export class Mips32Runner {
     if(instruction instanceof MipsLw) {
       this.saveNumberInReg(this.registerValue(instruction.s), instruction.t, parseInt(instruction.i));
     }
+    if(instruction instanceof MipsAndi) {
+      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) & parseInt(instruction.i));
+    }
   }
 
   booleanToNumber(instr) {
@@ -193,8 +196,15 @@ export class Mips32Runner {
   }
 
   run() {
+    let maximumInstrictons = 600;
+    let instructions = 0;
     for(this.pc = 0; this.pc < this.block.length; this.pc++) {
+      // console.log(this.pc, this.block[this.pc].toString());
       this.runInstruction(this.block[this.pc]);
+      // instructions++;
+      // if(instructions >= maximumInstrictons) {
+      //   break;
+      // }
     }
   }
 }

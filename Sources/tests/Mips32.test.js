@@ -296,9 +296,6 @@ test('Code translation v9', (t) => {
   
   const mips32 = new Mips32(registerBlock, 1024 * 2, 1024 * 4);
   mips32.run();
-  // console.log(mips32.runner.printPointerBytes(32, 1000))
-  // console.log(mips32.runner.printPointerBytes(32, 4096))
-  // console.log(mips32.toString())
   t.equal(mips32.runner.printPointerBytes(32, 4096)[0], 0, 'returns true');
   t.equal(mips32.runner.printPointerBytes(32, 4100)[0], 1, 'returns true');
   t.end();
@@ -307,9 +304,10 @@ test('Code translation v9', (t) => {
 test('Code translation v10', (t) => {
   const program = new Program(`
     void main() {
-      int a = 0, i = 10;
-      while(a < i) {
-        a = a + 1;
+      int a = 0, i = 11, j = 1;
+      while(j < i) {
+        a = a + j;
+        j = j + 1;
       }
       int pointer = 2048;
       *pointer = a;
@@ -319,13 +317,114 @@ test('Code translation v10', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  console.log(asmBlock.toString(), '\n--------------------\n')
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 55, 'returns true');
+  t.end();
+});
+
+test('Code translation v11', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = 0;
+      for(int i = 0; i < 15; i = i + 1) {
+        a = a + i;
+      }
+      *(2048) = a;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 105, 'returns true');
+  t.end();
+});
+
+test('Code translation v12', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = 0, b = 1;
+      for(int i = 0; i < 5; i = i + 1) {
+        int c = a + b;
+        a = b;
+        b = c;
+      }
+      *(2048) = b;
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  // console.log(asmBlock.toString(), '\n--------------------\n')
 
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
-  // mips32.run();
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 8, 'returns true');
+  t.end();
+});
+
+test('Code translation v13', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = 0, b = 1;
+      for(int i = 0; i < 9; i = i + 1) {
+        int c = a + b;
+        a = b;
+        b = c;
+      }
+      *(2048) = b;
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  // console.log(asmBlock.toString(), '\n--------------------\n')
+
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
   // console.log(mips32.runner.printPointerBytes(32, 2048))
-  console.log(mips32.toString())
+  // console.log(`-----`)
+  // console.log(mips32.toString(true))
   // console.log(mips32.runner.printPointerBytes(32, 2048))
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 55, 'returns true');
+  // t.equal(Variable.isValid('test'), true, 'returns true');
+  t.end();
+});
+
+test('Code translation v14', (t) => {
+  const program = new Program(`
+    int fibbo(int n) {
+      int a = 0, b = 1;
+      for(int i = 0; i < n; i = i + 1) {
+        int c = a + b;
+        a = b;
+        b = c;
+      }
+      return b;
+    }
+
+    void main() {
+      *(2048) = fibbo(9);
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  // console.log(asmBlock.toString(), '\n--------------------\n')
+
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  // console.log(mips32.runner.printPointerBytes(32, 2048))
+  // console.log(`-----`)
+  // console.log(mips32.toString(true))
+  console.log(mips32.runner.printPointerBytes(32, 2048))
+  // t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 55, 'returns true');
   // t.equal(Variable.isValid('test'), true, 'returns true');
   t.end();
 });

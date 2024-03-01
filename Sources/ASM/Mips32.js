@@ -141,7 +141,16 @@ export class Mips32 {
     this.block.push(new MipsBeq(this.testRegister, this.zeroReg, instruction.label))
   }
 
+  addSetTestOnEqual(instruction) {
+    this.block.push(new MipsSltu(this.testRegister, this.zeroReg, instruction.regA));
+    // this.block.push(new MipsAndi(this.testRegister, instruction.regA, 1));
+  }
+
   addSetTestInstruction(instruction) {
+    if(instruction.regA == instruction.regB) {
+      this.addSetTestOnEqual(instruction);
+      return ;
+    }
     this.block.push(new MipsSlt(instruction.regA, this.zeroReg, instruction.regA));
     this.block.push(new MipsSlt(instruction.regB, this.zeroReg, instruction.regB));
     this.block.push(new MipsAnd(this.testRegister, instruction.regA, instruction.regB));
@@ -272,7 +281,7 @@ export class Mips32 {
         break;
       }
       case MovTypes.REG_TO_STACK: {
-        this.block.push(new MipsSw(this.getRegisterValue(instruction.dst), -instruction.src, this.stackPointerRegister));
+        this.block.push(new MipsSw(this.getRegisterValue(instruction.src), -instruction.dst, this.stackPointerRegister));
         break;
       }
       case MovTypes.REG_MEM_TO_REG: {
@@ -304,10 +313,14 @@ export class Mips32 {
   toStringArray_t(block) {
   }
 
-  toString() {
+  toString(withIndex = false) {
     let response = [];
     for(let i = 0, c = this.block.length; i < c; i++) {
-      response.push(this.block[i].toString());
+      if(!withIndex) {
+        response.push(this.block[i].toString());
+        continue;
+      }
+      response.push(`${i}: ${this.block[i].toString()}`);
     }
     return response.join('\n');
   }
@@ -485,6 +498,19 @@ export class MipsAnd extends MipsRegister {
 
   toString() {
     return `AND $${this.d} $${this.s} $${this.t}`;
+  }
+}
+
+export class MipsAndi extends MipsRegister {
+  constructor(d, s, i) {
+    super();
+    this.d = d;
+    this.s = s;
+    this.i = i;
+  }
+
+  toString() {
+    return `ANDI $${this.d} $${this.s} ${this.i}`;
   }
 }
 
