@@ -1,3 +1,4 @@
+import { Mips32Runner } from "./Mips32Runner.js";
 import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp } from "./Register.js";
 
 export class Mips32 {
@@ -25,9 +26,9 @@ export class Mips32 {
       'rsp': this.rsp,
       'ret': this.ret
     };
-    this.usedRegisters[this.zeroReg] = 0;
-    this.usedRegisters[this.stackPointerRegister] = this.stackPointer;
-    this.usedRegisters[this.stddoutRegister] = this.stddout;
+    // this.usedRegisters[this.zeroReg] = 0;
+    // this.usedRegisters[this.stackPointerRegister] = this.stackPointer;
+    // this.usedRegisters[this.stddoutRegister] = this.stddout;
 
     this.labelsOffsets = {};
 
@@ -36,15 +37,16 @@ export class Mips32 {
     this.createLabelOffsets();
   }
 
-  // findClosestLabelPosition(index, registerBlock) {
-  //   for(let i = index, c = registerBlock.length; i < c; i++) {
-  //     if(!(registerBlock[i] instanceof Label)) {
-  //       return i;
-  //     }
-  //   }
+  getStdoutResponse() {
+    const bufferSize = this.runner.getNumberAtAddress(this.runner.memory, this.stddout - 4);
 
-  //   return registerBlock.length;
-  // }
+    let response = [];
+    for(let i = 0, c = bufferSize; i < c; i += 4) {
+      response.push(this.getNumberAtAddress(this.runner.memory, this.stddout + i));
+    }
+
+    return response.join('\n');
+  }
 
   createLabelOffsets() {
     for(let i = 0, c = this.block.length; i < c; i++) {
@@ -191,11 +193,11 @@ export class Mips32 {
   addJumpInstruction(instruction) {
     switch(instruction.type) {
       case JmpTypes.REGISTER: {
-        this.block.push(new MipsJr(instruction.value));
+        this.block.push(new MipsJr(this.getRegisterValue(instruction.value)));
         break;
       }
       case JmpTypes.LABEL: {
-        this.block.push(new MipsJ(instruction.value));
+        this.block.push(new MipsJ(this.getRegisterValue(instruction.value)));
         break;
       }
     }
@@ -219,8 +221,8 @@ export class Mips32 {
   }
 
   addPushBlock(instruction) {
-    this.block.push(new MipsSw(instruction.register, 0, this.stackPointerRegister));
-    this.block.push(new MipsAddi(this.stackPointerRegister, this.zeroReg, 4));
+    this.block.push(new MipsSw(this.getRegisterValue(instruction.register), 0, this.stackPointerRegister));
+    this.block.push(new MipsAddi(this.stackPointerRegister, this.stackPointerRegister, 4));
   }
 
   addAddInstruction(instruction) {
@@ -252,34 +254,33 @@ export class Mips32 {
       this.block.push(new MipsSlt(instruction.dst, closestCmp.regB, closestCmp.regA));
       return ;
     }
-    this.block.push(new MipsAdd(instruction.dst, this.getRegisterValue(instruction.src), this.zeroReg));
+    this.block.push(new MipsAdd(this.getRegisterValue(instruction.dst), this.getRegisterValue(instruction.src), this.zeroReg));
   }
 
   addMoveBlock(instruction, instructions, index) {
-
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
         this.addSpecialMov(instruction, instructions, index)
         break;
       }
       case MovTypes.NUMBER_TO_REG: { // In case number is only 16 bits.
-        this.block.push(new MipsAddi(instruction.dst, this.zeroReg, instruction.src));
+        this.block.push(new MipsAddi(this.getRegisterValue(instruction.dst), this.zeroReg, instruction.src));
         break;
       }
       case MovTypes.STACK_TO_REG: {
-        this.block.push(new MipsLw(instruction.dst, -instruction.src, this.stackPointerRegister));
+        this.block.push(new MipsLw(this.getRegisterValue(instruction.dst), -instruction.src, this.stackPointerRegister));
         break;
       }
       case MovTypes.REG_TO_STACK: {
-        this.block.push(new MipsSw(instruction.dst, -instruction.src, this.stackPointerRegister));
+        this.block.push(new MipsSw(this.getRegisterValue(instruction.dst), -instruction.src, this.stackPointerRegister));
         break;
       }
       case MovTypes.REG_MEM_TO_REG: {
-        this.block.push(new MipsLw(instruction.dst, 0, instruction.src));
+        this.block.push(new MipsLw(this.getRegisterValue(instruction.dst), 0, this.getRegisterValue(instruction.src)));
         break;
       }
       case MovTypes.REG_TO_MEM_REG: {
-        this.block.push(new MipsSw(instruction.dst, 0, instruction.src));
+        this.block.push(new MipsSw(this.getRegisterValue(instruction.src), 0, this.getRegisterValue(instruction.dst)));
         break;
       }
 
@@ -295,8 +296,9 @@ export class Mips32 {
     this.block.push(new MipsAddi(this.stddoutRegister, this.zeroReg, this.stddout));
   }
 
-  flatten() {
-
+  run() {
+    this.runner = new Mips32Runner(this.block);
+    this.runner.run()
   }
 
   toStringArray_t(block) {
