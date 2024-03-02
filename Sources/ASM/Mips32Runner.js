@@ -107,7 +107,6 @@ export class Mips32Runner {
 
   saveRegInMemory(pointer, reg, offset) {
     let crp = this.numberToByteArray(this.registerValue(reg));
-    // console.log(reg, this.registerValue(reg), pointer)
     for(let i = 0, c = crp.length; i < c; i++) {
       this.memory[pointer + i + offset] = crp[i];
     }
