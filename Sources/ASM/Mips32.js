@@ -19,6 +19,7 @@ export class Mips32 {
     this.testRegister = 25;
     this.rsp = 24;
     this.ret = 23;
+    this.bitSplitterRegister = 22;
 
     this.registerCount = 32;
     this.usedRegisters = {
@@ -64,6 +65,18 @@ export class Mips32 {
         this.block[i] = new MipsAddi(this.getRegisterValue(this.block[i].reg), this.zeroReg, i + this.block[i].offset);
       }
     }
+  }
+
+  numberToUnsignedRpresentation(number) {
+    if(number >= 0) {
+      return number;
+    }
+
+    return 2 ** 32 - number + 1;
+  }
+
+  doesNumberFitInImmediate(immediate) {
+    return immediate <= 2 ** 16;
   }
 
   iterateBlock() {
@@ -141,7 +154,6 @@ export class Mips32 {
 
   addSetTestOnEqual(instruction) {
     this.block.push(new MipsSltu(this.testRegister, this.zeroReg, instruction.regA));
-    // this.block.push(new MipsAndi(this.testRegister, instruction.regA, 1));
   }
 
   addSetTestInstruction(instruction) {
@@ -274,14 +286,32 @@ export class Mips32 {
     this.block.push(new MipsAdd(this.getRegisterValue(instruction.dst), this.getRegisterValue(instruction.src), this.zeroReg));
   }
 
+  addNumberToBlock(instruction) { 
+    let dstRegisterNumber = this.getRegisterValue(instruction.dst);
+    if(this.doesNumberFitInImmediate(instruction)) {
+      this.block.push(new MipsAddi(dstRegisterNumber, this.zeroReg, instruction.src));
+      return ;
+    }
+    let immediate = parseInt(instruction.src);
+
+    let lowImmediate = (immediate & ((1 << 16) - 1));
+    let highImmediate = (immediate >> 16);
+
+    this.block.push(new MipsAddi(this.bitSplitterRegister, this.zeroReg, lowImmediate));
+    this.block.push(new MipsAddi(dstRegisterNumber, this.zeroReg, highImmediate));
+    this.block.push(new MipsSll(dstRegisterNumber, dstRegisterNumber, 16));
+    this.block.push(new MipsOr(dstRegisterNumber, dstRegisterNumber, this.bitSplitterRegister));
+  }
+
   addMoveBlock(instruction, instructions, index) {
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
-        this.addSpecialMov(instruction, instructions, index)
+        // Extend number in case its bigger then 16 bits.
+        this.addSpecialMov(instruction, instructions, index);
         break;
       }
-      case MovTypes.NUMBER_TO_REG: { // In case number is only 16 bits.
-        this.block.push(new MipsAddi(this.getRegisterValue(instruction.dst), this.zeroReg, instruction.src));
+      case MovTypes.NUMBER_TO_REG: {
+        this.addNumberToBlock(instruction);
         break;
       }
       case MovTypes.STACK_TO_REG: {

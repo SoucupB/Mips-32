@@ -203,7 +203,7 @@ export class Mips32Runner {
       this.register[instruction.d.toString()] = (this.registerValue(instruction.s) & parseInt(instruction.i));
     }
     if(instruction instanceof MipsSll) {
-      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) << parseInt(instruction.i));
+      this.register[instruction.s.toString()] = (this.registerValue(instruction.t) << parseInt(instruction.i));
     } 
   }
 

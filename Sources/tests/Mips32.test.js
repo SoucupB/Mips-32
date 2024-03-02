@@ -1113,3 +1113,25 @@ test('Code translation v38', (t) => {
   t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
+
+test('Code translation v39', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = 150000;
+      *(2048) = a;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  console.log(mips32.toString())
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 240, 'returns true');
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[1], 73, 'returns true');
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[2], 2, 'returns true');
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[3], 0, 'returns true');
+  // t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
+  t.end();
+});
