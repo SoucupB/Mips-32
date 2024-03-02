@@ -1,6 +1,6 @@
 import { Mips32Runner } from "./Mips32Runner.js";
 import { writeFile } from 'fs/promises';
-import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp } from "./Register.js";
+import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp, Or } from "./Register.js";
 
 export class Mips32 {
   constructor(registerBlock, stddout, stackPointer) {
@@ -159,16 +159,16 @@ export class Mips32 {
   }
 
   addSetdorInstruction(instruction, instructions, index) {
-    let closestCmp = this.searchClosestCmp(instructions, index);
-    this.block.push(new MipsSlt(closestCmp.regA, this.zeroReg, closestCmp.regA));
-    this.block.push(new MipsSlt(closestCmp.regB, this.zeroReg, closestCmp.regB));
+    let closestCmp = this.searchClosestOr(instructions, index);
+    this.block.push(new MipsSltu(closestCmp.regA, this.zeroReg, closestCmp.regA));
+    this.block.push(new MipsSltu(closestCmp.regB, this.zeroReg, closestCmp.regB));
     this.block.push(new MipsOr(instruction.reg, closestCmp.regA, closestCmp.regB));
   }
 
   addSetnzInstruction(instruction, instructions, index) {
     let closestCmp = this.searchClosestCmp(instructions, index);
-    this.block.push(new MipsSlt(closestCmp.regA, this.zeroReg, closestCmp.regA));
-    this.block.push(new MipsSlt(closestCmp.regB, this.zeroReg, closestCmp.regB));
+    this.block.push(new MipsSltu(closestCmp.regA, this.zeroReg, closestCmp.regA));
+    this.block.push(new MipsSltu(closestCmp.regB, this.zeroReg, closestCmp.regB));
     this.block.push(new MipsAnd(instruction.regA, closestCmp.regA, closestCmp.regB));
   }
 
@@ -244,6 +244,16 @@ export class Mips32 {
   searchClosestCmp(instructions, index) {
     for(let i = index; i >= 0; i--) {
       if(instructions[i] instanceof Cmp) {
+        return instructions[i];
+      }
+    }
+
+    return null;
+  }
+
+  searchClosestOr(instructions, index) {
+    for(let i = index; i >= 0; i--) {
+      if(instructions[i] instanceof Or) {
         return instructions[i];
       }
     }
