@@ -51,15 +51,19 @@ export class PredefinedMethods {
       pushCharacter(element % 10 + 48);
       return 0;
     }
-    
-    int printNumber(int element){
-      return printNumber_t(element);
-    }
 
     int printChar(int element){
       return pushCharacter(element);
     }
     
+    int printNumber(int element){
+      if(element < 0) {
+        element = 0 - element;
+        printChar(45);
+        return printNumber_t(element);
+      }
+      return printNumber_t(element);
+    }
     `;
   }
 
