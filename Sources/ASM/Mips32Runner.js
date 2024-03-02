@@ -28,7 +28,7 @@ export class Mips32Runner {
     };
 
     this.memory = new Array(1024 * 1024).fill(0);
-    this.register = {};
+    this.register = new Array(40).fill(0);
 
     this.pc = 0;
   }
@@ -50,12 +50,7 @@ export class Mips32Runner {
   }
 
   registerValue(reg) {
-    const stringReg = reg.toString();
-    if(stringReg in this.register) {
-      return this.register[stringReg];
-    }
-
-    return 0;
+    return this.register[parseInt(reg)];
   }
 
   printPointerBytes(nrOfBytes, pointer) {
@@ -143,21 +138,21 @@ export class Mips32Runner {
 
   saveNumberInReg(pointer, reg, offset) {
     let number = this.getNumberAtAddress(this.memory, pointer + offset);
-    this.register[reg.toString()] = number;
+    this.register[parseInt(reg)] = number;
   }
 
   runInstruction(instruction) {
     if(instruction instanceof MipsAdd) {
-      this.register[instruction.dst.toString()] = this.registerValue(instruction.srcA) + this.registerValue(instruction.srcB);
+      this.register[parseInt(instruction.dst)] = this.registerValue(instruction.srcA) + this.registerValue(instruction.srcB);
     }
     if(instruction instanceof MipsSub) {
-      this.register[instruction.d.toString()] = this.registerValue(instruction.s) - this.registerValue(instruction.t);
+      this.register[parseInt(instruction.d)] = this.registerValue(instruction.s) - this.registerValue(instruction.t);
     }
     if(instruction instanceof MipsOr) {
-      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) | this.registerValue(instruction.t));
+      this.register[parseInt(instruction.d)] = (this.registerValue(instruction.s) | this.registerValue(instruction.t));
     }
     if(instruction instanceof MipsAnd) {
-      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) & this.registerValue(instruction.t));
+      this.register[parseInt(instruction.d)] = (this.registerValue(instruction.s) & this.registerValue(instruction.t));
     }
     if(instruction instanceof MipsDiv) {
       this.register[this.lo] = Math.floor(this.registerValue(instruction.s) / this.registerValue(instruction.t));
@@ -172,7 +167,7 @@ export class Mips32Runner {
       }
     }
     if(instruction instanceof MipsAddi) {
-      this.register[instruction.t.toString()] = this.registerValue(instruction.s) + parseInt(instruction.immediate);
+      this.register[parseInt(instruction.t)] = this.registerValue(instruction.s) + parseInt(instruction.immediate);
     }
     if(instruction instanceof MipsJr) {
       this.pc = this.registerValue(instruction.register);
@@ -181,16 +176,16 @@ export class Mips32Runner {
       this.register[this.lo] = this.registerValue(instruction.s) * this.registerValue(instruction.t);
     }
     if(instruction instanceof MipsSlt) {
-      this.register[instruction.d.toString()] = this.booleanToNumber(this.registerValue(instruction.s) < this.registerValue(instruction.t));
+      this.register[parseInt(instruction.d)] = this.booleanToNumber(this.registerValue(instruction.s) < this.registerValue(instruction.t));
     }
     if(instruction instanceof MipsSltu) {
-      this.register[instruction.d.toString()] = this.booleanToNumber(this.unsigned(this.registerValue(instruction.s)) < this.unsigned(this.registerValue(instruction.t)));
+      this.register[parseInt(instruction.d)] = this.booleanToNumber(this.unsigned(this.registerValue(instruction.s)) < this.unsigned(this.registerValue(instruction.t)));
     }
     if(instruction instanceof MipsXor) {
-      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) ^ this.registerValue(instruction.t));
+      this.register[parseInt(instruction.d)] = (this.registerValue(instruction.s) ^ this.registerValue(instruction.t));
     }
     if(instruction instanceof MipsXori) {
-      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) ^ parseInt(instruction.i));
+      this.register[parseInt(instruction.d)] = (this.registerValue(instruction.s) ^ parseInt(instruction.i));
     }
     if(instruction instanceof MipsSw) {
       this.saveRegInMemory(this.registerValue(instruction.s), instruction.t, parseInt(instruction.i));
@@ -199,10 +194,10 @@ export class Mips32Runner {
       this.saveNumberInReg(this.registerValue(instruction.s), instruction.t, parseInt(instruction.i));
     }
     if(instruction instanceof MipsAndi) {
-      this.register[instruction.d.toString()] = (this.registerValue(instruction.s) & parseInt(instruction.i));
+      this.register[parseInt(instruction.d)] = (this.registerValue(instruction.s) & parseInt(instruction.i));
     }
     if(instruction instanceof MipsSll) {
-      this.register[instruction.s.toString()] = (this.registerValue(instruction.t) << parseInt(instruction.i));
+      this.register[parseInt(instruction.s)] = (this.registerValue(instruction.t) << parseInt(instruction.i));
     } 
   }
 
