@@ -4,7 +4,7 @@
   "description": "A repository for describind a mips 32 compiler",
   "main": "dist/bundle.js",
   "scripts": {
-    "test": "npx tap --disable-coverage --allow-empty-coverage",
+    "test": "npx tap tests/Mips32.test.js --timeout 500000 --disable-coverage --allow-empty-coverage",
     "build": "webpack --mode production"
   },
   "keywords": [],

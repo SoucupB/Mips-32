@@ -76,7 +76,7 @@ export class Mips32 {
   }
 
   doesNumberFitInImmediate(immediate) {
-    return immediate <= 2 ** 16;
+    return parseInt(immediate) <= 2 ** 16;
   }
 
   iterateBlock() {
@@ -288,7 +288,7 @@ export class Mips32 {
 
   addNumberToBlock(instruction) { 
     let dstRegisterNumber = this.getRegisterValue(instruction.dst);
-    if(this.doesNumberFitInImmediate(instruction)) {
+    if(this.doesNumberFitInImmediate(instruction.src)) {
       this.block.push(new MipsAddi(dstRegisterNumber, this.zeroReg, instruction.src));
       return ;
     }
@@ -303,6 +303,26 @@ export class Mips32 {
     this.block.push(new MipsOr(dstRegisterNumber, dstRegisterNumber, this.bitSplitterRegister));
   }
 
+  getPositiveLwInstructions(t, i, s) {
+    if(i >= 0) {
+      return new MipsLw(t, i, s);
+    }
+
+    this.block.push(new MipsAddi(this.freeRegister, this.zeroReg, -i));
+    this.block.push(new MipsSub(this.freeRegister, s, this.freeRegister));
+    return new MipsLw(t, 0, this.freeRegister);
+  }
+
+  getPositiveSwInstructions(t, i, s) {
+    if(i >= 0) {
+      return new MipsSw(t, i, s);
+    }
+
+    this.block.push(new MipsAddi(this.freeRegister, this.zeroReg, -i));
+    this.block.push(new MipsSub(this.freeRegister, s, this.freeRegister));
+    return new MipsSw(t, 0, this.freeRegister);
+  }
+
   addMoveBlock(instruction, instructions, index) {
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
@@ -315,19 +335,19 @@ export class Mips32 {
         break;
       }
       case MovTypes.STACK_TO_REG: {
-        this.block.push(new MipsLw(this.getRegisterValue(instruction.dst), -instruction.src, this.stackPointerRegister));
+        this.block.push(this.getPositiveLwInstructions(this.getRegisterValue(instruction.dst), -instruction.src, this.stackPointerRegister));
         break;
       }
       case MovTypes.REG_TO_STACK: {
-        this.block.push(new MipsSw(this.getRegisterValue(instruction.src), -instruction.dst, this.stackPointerRegister));
+        this.block.push(this.getPositiveSwInstructions(this.getRegisterValue(instruction.src), -instruction.dst, this.stackPointerRegister));
         break;
       }
       case MovTypes.REG_MEM_TO_REG: {
-        this.block.push(new MipsLw(this.getRegisterValue(instruction.dst), 0, this.getRegisterValue(instruction.src)));
+        this.block.push(this.getPositiveLwInstructions(this.getRegisterValue(instruction.dst), 0, this.getRegisterValue(instruction.src)));
         break;
       }
       case MovTypes.REG_TO_MEM_REG: {
-        this.block.push(new MipsSw(this.getRegisterValue(instruction.src), 0, this.getRegisterValue(instruction.dst)));
+        this.block.push(this.getPositiveSwInstructions(this.getRegisterValue(instruction.src), 0, this.getRegisterValue(instruction.dst)));
         break;
       }
 
