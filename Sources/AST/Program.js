@@ -40,7 +40,6 @@ export class PredefinedMethods {
       int currentOffset = *(stdoutBuffer - 4);
       *(stdoutBuffer + currentOffset) = character;
       *(stdoutBuffer - 4) = currentOffset + 1;
-
       return 0;
     }
     

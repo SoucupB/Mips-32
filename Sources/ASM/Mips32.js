@@ -63,7 +63,7 @@ export class Mips32 {
         this.block[i].label = this.labelsOffsets[this.block[i].label] - i;
       }
       if(this.block[i] instanceof MipsPrp) {
-        this.block[i] = new MipsAddi(this.block[i].reg, this.zeroReg, i + this.block[i].offset);
+        this.block[i] = new MipsAddi(this.getRegisterValue(this.block[i].reg), this.zeroReg, i + this.block[i].offset);
       }
     }
   }

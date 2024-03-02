@@ -33,6 +33,18 @@ export class Mips32Runner {
     this.pc = 0;
   }
 
+  getRawStdoutBuffer() {
+    let stdoutBufferValue = this.registerValue(this.stddoutRegister);
+    const bufferSize = this.getNumberAtAddress(this.memory, stdoutBufferValue - 4);
+    let response = "";
+
+    for(let i = 0; i < bufferSize; i++) {
+      response += String.fromCharCode(this.memory[i + stdoutBufferValue]);
+    }
+
+    return response;
+  }
+
   registerValue(reg) {
     const stringReg = reg.toString();
     if(stringReg in this.register) {
@@ -146,7 +158,7 @@ export class Mips32Runner {
     }
     if(instruction instanceof MipsDiv) {
       this.register[this.lo] = Math.floor(this.registerValue(instruction.s) / this.registerValue(instruction.t));
-      this.register[this.hi] = this.registerValue(instruction.s) & this.registerValue(instruction.t);
+      this.register[this.hi] = this.registerValue(instruction.s) % this.registerValue(instruction.t);
     }
     if(instruction instanceof MipsJ) {
       this.pc = parseInt(instruction.register);
