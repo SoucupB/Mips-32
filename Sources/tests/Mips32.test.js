@@ -320,6 +320,7 @@ test('Code translation v10', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 55, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -340,6 +341,7 @@ test('Code translation v11', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 105, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -359,11 +361,11 @@ test('Code translation v12', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString(), '\n--------------------\n')
 
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 8, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -383,11 +385,11 @@ test('Code translation v13', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString(), '\n--------------------\n')
 
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 55, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -414,6 +416,7 @@ test('Code translation v14', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 55, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -438,6 +441,7 @@ test('Code translation v15', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 8, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -463,6 +467,7 @@ test('Code translation v16', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 89, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -487,6 +492,7 @@ test('Code translation v17', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 24, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -512,6 +518,7 @@ test('Code translation v18', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 120, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
 
@@ -529,6 +536,7 @@ test('Code translation v18', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 2);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 150)[0], 143, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -551,6 +559,7 @@ test('Code translation v19', (t) => {
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 21, 'returns true');
   t.equal(mips32.runner.printPointerBytes(32, 2052)[0], 5, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -565,11 +574,11 @@ test('Code translation v19', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString(), '\n--------------------\n')
 
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '1257', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -588,6 +597,7 @@ test('Code translation v20', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '224556', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -613,6 +623,7 @@ test('Code translation v21', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '8', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -637,6 +648,7 @@ test('Code translation v21', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '89', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -673,6 +685,7 @@ test('Code translation v22', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '120', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -709,6 +722,7 @@ test('Code translation v23', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '40320', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -745,6 +759,7 @@ test('Code translation v24', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 512);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '5040', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -786,6 +801,7 @@ test('Code translation v25', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 512);
   mips32.run();
   t.equal(mips32.runner.getRawStdoutBuffer(), '1 2 3 \n1 3 2 \n2 1 3 \n2 3 1 \n3 1 2 \n3 2 1 \n', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
   t.end();
 });
 
@@ -943,18 +959,30 @@ test('Code translation v26', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   let programCompiler = new Compiler(null);
   let asmBlock = programCompiler.compileProgram(chomp);
-  // console.log(asmBlock.toString(), '\n--------------------\n')
 
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 512);
   mips32.run();
-  // console.log(mips32.runner.printPointerBytes(32, 2048))
-  // console.log(`-----`)
-  console.log(mips32.toString(true))
-  // console.log(mips32.runner.getRawStdoutBuffer())
-  // console.log(mips32.runner.printPointerBytes(32, 2 ** 16))
-  // console.log(mips32.runner.getRawStdoutBuffer())
   t.equal(mips32.runner.getRawStdoutBuffer(), '20 1 1 59704', 'returns true');
-  // t.equal(mips32.runner.printPointerBytes(32, 2052)[0], 5, 'returns true');
-  // t.equal(Variable.isValid('test'), true, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
+  t.end();
+});
+
+test('Code translation v27', (t) => {
+  const program = new Program(`
+    void main() {
+      *(2048) = 0 - 8;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 248, 'returns true');
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[1], 255, 'returns true');
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[2], 255, 'returns true');
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[3], 255, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });

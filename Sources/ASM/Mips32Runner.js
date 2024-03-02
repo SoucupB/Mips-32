@@ -45,6 +45,10 @@ export class Mips32Runner {
     return response;
   }
 
+  getStackPointer() {
+    return this.registerValue(this.stddoutRegister);
+  }
+
   registerValue(reg) {
     const stringReg = reg.toString();
     if(stringReg in this.register) {

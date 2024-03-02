@@ -1,4 +1,5 @@
 import { Mips32Runner } from "./Mips32Runner.js";
+import { writeFile } from 'fs/promises';
 import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp } from "./Register.js";
 
 export class Mips32 {
@@ -26,9 +27,6 @@ export class Mips32 {
       'rsp': this.rsp,
       'ret': this.ret
     };
-    // this.usedRegisters[this.zeroReg] = 0;
-    // this.usedRegisters[this.stackPointerRegister] = this.stackPointer;
-    // this.usedRegisters[this.stddoutRegister] = this.stddout;
 
     this.labelsOffsets = {};
 
@@ -323,6 +321,14 @@ export class Mips32 {
       response.push(`${i}: ${this.block[i].toString()}`);
     }
     return response.join('\n');
+  }
+
+  async toFile(fileName) {
+    try {
+      await writeFile(fileName, this.toString(true));
+    } catch (err) {
+      console.error('Error writing to file:', err);
+    }
   }
 }
 
