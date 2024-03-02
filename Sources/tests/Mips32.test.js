@@ -5,29 +5,6 @@ import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Or, Pop, P
 import { Program } from '../AST/Program.js';
 import { Compiler } from '../ASM/Compiler.js';
 
-// test('Code translation v2', (t) => {
-//   const program = new Program(`
-//     void main() {
-//       int a = 10, b = 15;
-//       int c = a + b;
-//       int pointer = 2048;
-//       *pointer = c;
-//     }
-//   `, [], false)
-//   let chomp = program.chomp();
-//   t.equal(chomp.isInvalid(), false, 'returns');
-//   let programCompiler = new Compiler(null);
-//   let asmBlock = programCompiler.compileProgram(chomp);
-//   // console.log(asmBlock.toString(), '\n--------------------\n')
-
-//   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
-//   mips32.run();
-//   // console.log(mips32.toString())
-//   // console.log(mips32.runner.printPointerBytes(32, 2048))
-//   // t.equal(Variable.isValid('test'), true, 'returns true');
-//   t.end();
-// });
-
 test('Code translation v1', (t) => {
   let registerBlock = new RegisterBlock();
   registerBlock.push(new Mov(0, 25, MovTypes.NUMBER_TO_REG))
@@ -1061,6 +1038,78 @@ test('Code translation v34', (t) => {
   const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 0, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
+  t.end();
+});
+
+test('Code translation v35', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = (5 == 6);
+      *(2048) = a;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 0, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
+  t.end();
+});
+
+test('Code translation v36', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = (6 == 6);
+      *(2048) = a;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 1, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
+  t.end();
+});
+
+test('Code translation v37', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = (6 != 6);
+      *(2048) = a;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 0, 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
+  t.end();
+});
+
+test('Code translation v38', (t) => {
+  const program = new Program(`
+    void main() {
+      int a = (6 != 7);
+      *(2048) = a;
+    }
+  `, [], false)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  const mips32 = new Mips32(asmBlock, 1024 * 2, 1024 * 4);
+  mips32.run();
+  t.equal(mips32.runner.printPointerBytes(32, 2048)[0], 1, 'returns true');
   t.equal(mips32.runner.getStackPointer(), 2048, 'returns true');
   t.end();
 });
