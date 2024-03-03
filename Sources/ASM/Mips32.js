@@ -218,7 +218,7 @@ export class Mips32 {
         break;
       }
       case JmpTypes.LABEL: {
-        this.block.push(new MipsJ(this.getRegisterValue(instruction.value)));
+        this.block.push(new MipsJ(instruction.value));
         break;
       }
     }
