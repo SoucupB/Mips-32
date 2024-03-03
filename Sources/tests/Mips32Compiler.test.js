@@ -80,7 +80,11 @@ test('Code compilation v4', (t) => {
       int memoizator = 1024;
       printNumber(fibbo(7500, memoizator));
     }
-  `, 1024 * 512, 1024 * 1024, 1024 * 1024 * 4);
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
   mipsCompiler.compile();
   mipsCompiler.run();
   console.log(mipsCompiler.mips32Code().toString(true))
