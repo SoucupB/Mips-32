@@ -83,6 +83,7 @@ test('Code compilation v4', (t) => {
   `, 1024 * 512, 1024 * 1024, 1024 * 1024 * 4);
   mipsCompiler.compile();
   mipsCompiler.run();
+  console.log(mipsCompiler.mips32Code().toString(true))
   t.equal(mipsCompiler.stdoutBuffer(), '581', 'returns true');
     
   t.end();
