@@ -1,5 +1,5 @@
 import Chomp from "./Chomp.js";
-import Variable from "./Variable.js";
+import { MethodVariable, Variable } from "./Variable.js";
 import Character from "./Character.js";
 import { MethodsParams } from "./MethodsParam.js";
 import { CodeBlock } from "./CodeBlock.js";
@@ -174,7 +174,7 @@ export class Methods {
   }
 
   static chompMethodCall(str, index) {
-    let methodName = Variable.chomp(str, index);
+    let methodName = MethodVariable.chomp(str, index);
     if(methodName.isInvalid()) {
       return Chomp.invalid();
     }
@@ -257,7 +257,7 @@ export class Methods {
     }
     index++;
 
-    let methodName = Variable.chomp(str, index);
+    let methodName = MethodVariable.chomp(str, index);
     if(methodName.isInvalid()) {
       return Chomp.invalid();
     }

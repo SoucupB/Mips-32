@@ -2,7 +2,7 @@ import Constant from "../AST/Constant.js";
 import Expression from "../AST/Expression.js";
 import { MethodCall } from "../AST/Methods.js";
 import { Pointer } from "../AST/Pointer.js";
-import Variable from "../AST/Variable.js";
+import { Variable } from "../AST/Variable.js";
 import { Add, Cmp, Div, Jmp, Mov, MovTypes, Mul, Or, Pop, PopTypes, Prp, Push, Setdor, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from "./Register.js";
 
 let nodeID = 0;

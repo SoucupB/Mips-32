@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import Variable from '../AST/Variable.js';
+import { Variable } from '../AST/Variable.js';
 
 test('Check if variable is correct v1', (t) => {
   t.equal(Variable.isValid('test'), true, 'returns true');

@@ -1,7 +1,7 @@
 import Character from "./Character.js";
 import Chomp from "./Chomp.js";
 import Expression from "./Expression.js";
-import Variable from "./Variable.js";
+import { Variable } from "./Variable.js";
 
 export class Pointer {
   static chomp(str, index) {

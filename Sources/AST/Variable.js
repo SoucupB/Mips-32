@@ -1,7 +1,19 @@
 import Character from "./Character.js";
 import Chomp from "./Chomp.js";
 
-class Variable {
+export class MethodVariable {
+  static chomp(str, index) {
+    let variableChomp = Variable.chomp(str, index);
+    if(variableChomp.isInvalid()) {
+      return Chomp.invalid();
+    }
+
+    variableChomp.type = MethodVariable;
+    return variableChomp;
+  }
+}
+
+export class Variable {
   static isValid(str) {
     if(!str.length) {
       return false;
@@ -57,5 +69,3 @@ class Variable {
     return new Chomp(result, i, Variable);
   }
 }
-
-export default Variable;

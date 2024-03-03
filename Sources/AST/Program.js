@@ -1,5 +1,5 @@
 import Chomp from "./Chomp.js";
-import Variable from "./Variable.js";
+import { MethodVariable, Variable } from "./Variable.js";
 import { Methods } from "./Methods.js";
 import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
@@ -116,6 +116,10 @@ export class Program {
     if(!this.validateStackVariables(chomp)) {
       return false;
     }
+    if(!this.validateMethodNoVariables(chomp)) {
+      this.errors.push(new CompilationErrors(null, ErrorTypes.AMBIGUOS_DECLARATION))
+      return false;
+    }
 
     return true;
   }
@@ -175,6 +179,26 @@ export class Program {
     return true;
   }
 
+  validateMethodNoVariables(chomp) {
+    let allMethods = Methods.searchAllMethods(chomp);
+    let allVariables = Helper.searchChompByType(chomp, {
+      type: Variable
+    });
+    let variableNames = {};
+
+    for(let i = 0, c = allVariables.length; i < c; i++) {
+      variableNames[allVariables[i].buffer] = 1;
+    }
+
+    for(let i = 0, c = allMethods.length; i < c; i++) {
+      if(allMethods[i].buffer in variableNames) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   validateStackVariables(chomp) {
     return this.validateStackVariables_t(chomp, new StackDeclarations())
   }
@@ -217,7 +241,7 @@ export class Program {
   }
 
   _chomp(str, index) {
-    let testingMethods = [Methods.chompDeclaration, Assignation.chomp, Initialization.chomp];
+    let testingMethods = [Methods.chompDeclaration];
     let response = [];
 
     while(index < str.length) {

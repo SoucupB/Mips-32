@@ -1,7 +1,7 @@
 import Operator from "./Operator.js";
 import Constant from "./Constant.js";
 import Chomp from "./Chomp.js";
-import Variable from "./Variable.js";
+import { Variable } from "./Variable.js";
 import { Methods, MethodCall } from "./Methods.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 import { Pointer } from "./Pointer.js";

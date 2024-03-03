@@ -5,7 +5,7 @@ import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
-import { Methods, ReturnMethod, ReturnWithExpression } from "../AST/Methods.js";
+import { Methods, ReturnWithExpression, ReturnWithoutExpression } from "../AST/Methods.js";
 import { Pointer } from "../AST/Pointer.js";
 import { ExpressionReturnTypes, ExpressionTree } from "./ExpressionTree.js";
 import { Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
@@ -224,7 +224,23 @@ export class Compiler {
     }
   }
 
-  compileReturnMethod(child) {
+  compileReturnNonVoidMethod(child) {
+    const expression = child.childrenChomps[0];
+
+    let block = new RegisterBlock();
+    this.createExpressionAsm(expression, block);
+    const expressionRegister = this.getExpressionRegister(expression);
+
+    block.push(new Mov('ret', this.registerStack.getStackOffset('return_address'), MovTypes.STACK_TO_REG));
+    block.push(new Mov('rsp', expressionRegister, MovTypes.REG_TO_REG))
+    this.popReturnStackPointer(block);
+    block.push(new Jmp('ret', JmpTypes.REGISTER));
+    this.registerMem.freeRegister(expressionRegister);
+
+    return block;
+  }
+
+  compileReturnVoidMethod(child) {
     const expression = child.childrenChomps[0];
 
     let block = new RegisterBlock();
@@ -295,6 +311,10 @@ export class Compiler {
           break;
         }
         case ReturnWithExpression: {
+          block.push(this.compileReturnNonVoidMethod(child));
+          break;
+        }
+        case ReturnWithoutExpression: {
           block.push(this.compileReturnMethod(child));
           break;
         }
