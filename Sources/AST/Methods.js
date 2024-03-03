@@ -53,6 +53,10 @@ export class ReturnWithExpression {
 
 }
 
+export class ReturnWithoutExpression {
+
+}
+
 export class ReturnMethod {
   static keyWords() {
     return ['return']
@@ -76,6 +80,19 @@ export class ReturnMethod {
     return responseChomp;
   }
 
+  static chompReturnWithoutExpression(str, index) {
+    index = Character.pruneSpacesAndNewlines(str, index);
+    if(index >= str.length || !Character.isAssignationEnding(str[index])) {
+      return Chomp.invalid();
+    }
+    index++;
+
+    let responseChomp = new Chomp(null, index, ReturnWithoutExpression);
+    responseChomp.childrenChomps = [];
+
+    return responseChomp;
+  }
+
   static chomp(str, index, withExpression = true) {
     let returnKeyword = ReturnMethod.chompKeywordsInitialization(str, index);
     if(returnKeyword.isInvalid()) {
@@ -87,11 +104,16 @@ export class ReturnMethod {
     }
     index++;
 
-    if(withExpression) {
-      return ReturnMethod.chompReturnWithExpression(str, index);
+    const returnWithExpression = ReturnMethod.chompReturnWithExpression(str, index);
+    if(!returnWithExpression.isInvalid()) {
+      return returnWithExpression;
+    }
+    const returnWithoutExpression = ReturnMethod.chompReturnWithoutExpression(str, index);
+    if(!returnWithoutExpression.isInvalid()) {
+      return returnWithoutExpression;
     }
 
-    return null;
+    return Chomp.invalid();
   }
 
   static chompKeywordsInitialization(str, index) {

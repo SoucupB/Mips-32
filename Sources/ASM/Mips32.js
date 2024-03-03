@@ -376,12 +376,10 @@ export class Mips32 {
   addMoveBlock(instruction, instructions, index) {
     switch(instruction.type) {
       case MovTypes.REG_TO_REG: {
-        // Extend number in case its bigger then 16 bits.
         this.addSpecialMov(instruction, instructions, index);
         break;
       }
       case MovTypes.NUMBER_TO_REG: {
-        // this.addNumberToBlock(instruction);
         this.block.push(new MipsAddi(this.getRegisterValue(instruction.dst), this.registerData.zeroReg, instruction.src));
         break;
       }
