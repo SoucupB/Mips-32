@@ -352,11 +352,14 @@ export class Methods {
   }
 
   static doesReturnNeedsToBeNonVoid(block) {
-    const returnWord = Helper.searchChompByType(block, {
+    const expressionReturns = Helper.searchChompByType(block, {
       type: ReturnWithExpression
     });
+    const woExpressionReturns = Helper.searchChompByType(block, {
+      type: ReturnWithoutExpression
+    });
 
-    if(returnWord.length) {
+    if(expressionReturns.length && !woExpressionReturns.length) {
       return true;
     }
 
