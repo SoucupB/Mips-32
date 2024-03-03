@@ -28,12 +28,9 @@ export class Mips32Compiler {
   compile() {
     let errors = []
     const program = new Program(this.code, errors, true, this.stdout);
-    if(!program.compilationError()) {
-      throw new Error(`Errors: ${program.errorsToString()}`);
-    }
     let chomp = program.chomp();
     if(chomp.isInvalid()) {
-      return false;
+      throw new Error(`Errors: ${program.errorsToString()}`);
     }
     let programCompiler = new Compiler(null);
     this.intermediaryASMInsturctions = programCompiler.compileProgram(chomp);

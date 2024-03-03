@@ -57,3 +57,33 @@ test('Code compilation v3', (t) => {
     
   t.end();
 });
+
+test('Code compilation v4', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    int fibbo(int n, int memoizator) {
+      if(n < 2) {
+        return 1;
+      }
+      int currentElement = getElement(memoizator, n);
+      if(currentElement) {
+        return currentElement;
+      }
+
+      int first = fibbo(n - 1, memoizator);
+      int second = fibbo(n - 2, memoizator);
+
+      setElement(memoizator, n, first + second);
+      return (first + second) % 7919;
+    }
+
+    void main() {
+      int memoizator = 1024;
+      printNumber(fibbo(7500, memoizator));
+    }
+  `, 1024 * 512, 1024 * 1024, 1024 * 1024 * 4);
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), '581', 'returns true');
+    
+  t.end();
+});
