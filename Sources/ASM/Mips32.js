@@ -13,12 +13,13 @@ export class Mips32 {
     rsp: 24,
     ret: 23,
     bitSplitterRegister: 22,
-  }) {
+  }, memorySize = 1024 * 1024) {
     this.registerBlock = registerBlock.flatten();
     this.registerBlock.optimize();
     this.stddout = stddout;
     this.stackPointer = stackPointer;
     this.block = [];
+    this.memorySize = memorySize;
 
     this.registerData = registerData
 
@@ -414,7 +415,7 @@ export class Mips32 {
   }
 
   run() {
-    this.runner = new Mips32Runner(this.block, this.registerData);
+    this.runner = new Mips32Runner(this.block, this.registerData, this.memorySize);
     this.runner.run()
   }
 
