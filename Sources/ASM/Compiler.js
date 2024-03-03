@@ -241,17 +241,11 @@ export class Compiler {
   }
 
   compileReturnVoidMethod(child) {
-    const expression = child.childrenChomps[0];
-
     let block = new RegisterBlock();
-    this.createExpressionAsm(expression, block);
-    const expressionRegister = this.getExpressionRegister(expression);
 
     block.push(new Mov('ret', this.registerStack.getStackOffset('return_address'), MovTypes.STACK_TO_REG));
-    block.push(new Mov('rsp', expressionRegister, MovTypes.REG_TO_REG))
     this.popReturnStackPointer(block);
     block.push(new Jmp('ret', JmpTypes.REGISTER));
-    this.registerMem.freeRegister(expressionRegister);
 
     return block;
   }
@@ -315,7 +309,7 @@ export class Compiler {
           break;
         }
         case ReturnWithoutExpression: {
-          block.push(this.compileReturnMethod(child));
+          block.push(this.compileReturnVoidMethod(child));
           break;
         }
         case ConditionalBlocks: {

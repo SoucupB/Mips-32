@@ -210,15 +210,8 @@ export class Mips32Runner {
   }
 
   run() {
-    let maximumInstrictons = 600;
-    let instructions = 0;
     for(this.pc = 0; this.pc < this.block.length; this.pc++) {
-      // console.log(this.pc, this.block[this.pc].toString());
       this.runInstruction(this.block[this.pc]);
-      // instructions++;
-      // if(instructions >= maximumInstrictons) {
-      //   break;
-      // }
     }
   }
 }
