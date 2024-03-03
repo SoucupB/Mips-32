@@ -1,6 +1,6 @@
 import tap from 'tap'
 const { test } = tap;
-import { Mips32, MipsNoop } from '../ASM/Mips32.js';
+import { Mips32, MipsAddi, MipsJ, MipsNoop } from '../ASM/Mips32.js';
 import { Add, Cmp, Div, Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Mul, Or, Pop, Prp, Push, RegisterBlock, Setdor, Sete, Setge, Setle, Setne, Setnz, Sub, Test } from '../ASM/Register.js';
 import { Program } from '../AST/Program.js';
 import { Compiler } from '../ASM/Compiler.js';
@@ -1167,5 +1167,14 @@ test('Code translation print negative number v2', (t) => {
   const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 4);
   mips32.run();
   t.equal(mips32.runner.printPointerBytes(32, 80480)[0], 15, 'returns true');
+  t.end();
+});
+
+test('Code jump code', (t) => {
+  let registerBlock = new Mips32(new RegisterBlock(), 1024 * 2, 1024 * 4, false);
+  registerBlock.push(new MipsAddi(0, 1, 3))
+  registerBlock.push(new MipsJ(324256))
+  registerBlock.rebuildJumpInstructions();
+  t.equal(registerBlock.block.length, 6, 'returns true');
   t.end();
 });

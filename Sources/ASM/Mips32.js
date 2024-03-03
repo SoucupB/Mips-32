@@ -35,6 +35,7 @@ export class Mips32 {
       this.prepareHeader();
       this.iterateBlock();
       this.createLabelOffsets();
+      this.rebuildJumpInstructions();
     }
   }
 
@@ -47,6 +48,36 @@ export class Mips32 {
     }
 
     return response.join('\n');
+  }
+
+  addLabelFromImmediate(instruction, block) {
+    if(this.doesNumberFitInImmediate(instruction.register)) {
+      block.push(instruction)
+      return ;
+    }
+    let immediate = parseInt(instruction.register);
+
+    let lowImmediate = (immediate & ((1 << 16) - 1));
+    let highImmediate = (immediate >> 16);
+
+    block.push(new MipsAddi(this.bitSplitterRegister, this.zeroReg, lowImmediate));
+    block.push(new MipsAddi(this.freeRegister, this.zeroReg, highImmediate));
+    block.push(new MipsSll(this.freeRegister, this.freeRegister, 16));
+    block.push(new MipsOr(this.freeRegister, this.freeRegister, this.bitSplitterRegister));
+    block.push(new MipsJr(this.freeRegister));
+  }
+
+  rebuildJumpInstructions() {
+    let newBlock = [];
+    for(let i = 0, c = this.block.length; i < c; i++) {
+      if(this.block[i] instanceof MipsJ) {
+        this.addLabelFromImmediate(this.block[i], newBlock);
+        continue;
+      }
+
+      newBlock.push(this.block[i]);
+    }
+    this.block = newBlock;
   }
 
   createLabelOffsets() {
