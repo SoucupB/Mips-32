@@ -5,8 +5,8 @@ const { test } = tap;
 test('Code compilation v1', (t) => {
   let mipsCompiler = new Mips32Compiler(`
     void main() {
-      for(int i = 0; i < 10; i = i + 1) {
-        printNumber(i);
+      for(int i = 0, c = 10; i < c; i = i + 1) {
+        printNumber(i * 2);
         printChar(32);
       }
     }
