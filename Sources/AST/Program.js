@@ -60,6 +60,9 @@ export class PredefinedMethods {
         printChar(45);
         return printNumber_t(element);
       }
+      if(element == 0) {
+        printChar(48);
+      }
       return printNumber_t(element);
     }
     `;
