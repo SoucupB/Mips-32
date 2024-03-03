@@ -4,7 +4,7 @@ import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import { LoopBlocks } from "./LoopBlocks.js";
 import { ConditionalBlocks } from "./ConditionalBlocks.js";
-import { ReturnMethod } from "./Methods.js";
+import { ReturnMethod, ReturnWithExpression } from "./Methods.js";
 import Expression from "./Expression.js";
 import Character from "./Character.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
@@ -115,7 +115,7 @@ export class CodeBlock {
           }
           break;
         }
-        case ReturnMethod: {
+        case ReturnWithExpression: {
           let returnBlocks = ReturnMethod.addToStackAndVerify(currentChild, stackDeclaration);
           if(!returnBlocks.isClean()) {
             return returnBlocks;

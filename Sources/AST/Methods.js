@@ -49,22 +49,16 @@ export class MethodDefinitionAndName {
 
 }
 
+export class ReturnWithExpression {
+
+}
+
 export class ReturnMethod {
   static keyWords() {
     return ['return']
   }
 
-  static chomp(str, index) {
-    let returnKeyword = ReturnMethod.chompKeywordsInitialization(str, index);
-    if(returnKeyword.isInvalid()) {
-      return Chomp.invalid();
-    }
-    index = returnKeyword.index;
-    if(index >= str.length || !Character.isSeparator(str[index])) {
-      return Chomp.invalid();
-    }
-    index++;
-
+  static chompReturnWithExpression(str, index) {
     let expression = Expression.chomp(str, index);
     if(expression.isInvalid()) {
       return Chomp.invalid();
@@ -76,10 +70,28 @@ export class ReturnMethod {
     }
     index++;
 
-    let responseChomp = new Chomp(null, index, ReturnMethod);
+    let responseChomp = new Chomp(null, index, ReturnWithExpression);
     responseChomp.childrenChomps = [expression];
 
     return responseChomp;
+  }
+
+  static chomp(str, index, withExpression = true) {
+    let returnKeyword = ReturnMethod.chompKeywordsInitialization(str, index);
+    if(returnKeyword.isInvalid()) {
+      return Chomp.invalid();
+    }
+    index = returnKeyword.index;
+    if(index >= str.length || !Character.isSeparator(str[index])) {
+      return Chomp.invalid();
+    }
+    index++;
+
+    if(withExpression) {
+      return ReturnMethod.chompReturnWithExpression(str, index);
+    }
+
+    return null;
   }
 
   static chompKeywordsInitialization(str, index) {
@@ -319,7 +331,7 @@ export class Methods {
 
   static doesReturnNeedsToBe(methodReturnType, block) {
     const returnWord = Helper.searchChompByType(block, {
-      type: ReturnMethod
+      type: ReturnWithExpression
     });
     if(methodReturnType == 'void' && returnWord.length) {
       return false;

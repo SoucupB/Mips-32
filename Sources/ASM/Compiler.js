@@ -5,7 +5,7 @@ import Expression from "../AST/Expression.js";
 import { Helper } from "../AST/Helper.js";
 import { Initialization } from "../AST/Initialization.js";
 import { LoopBlocks } from "../AST/LoopBlocks.js";
-import { Methods, ReturnMethod } from "../AST/Methods.js";
+import { Methods, ReturnMethod, ReturnWithExpression } from "../AST/Methods.js";
 import { Pointer } from "../AST/Pointer.js";
 import { ExpressionReturnTypes, ExpressionTree } from "./ExpressionTree.js";
 import { Jmp, JmpTypes, Jz, Label, Mov, MovTypes, Pop, Push, RegisterBlock, Test } from "./Register.js";
@@ -294,7 +294,7 @@ export class Compiler {
           block.push(this.compileLoop(child))
           break;
         }
-        case ReturnMethod: {
+        case ReturnWithExpression: {
           block.push(this.compileReturnMethod(child));
           break;
         }
@@ -389,8 +389,5 @@ export class Compiler {
     }
 
     return block;
-  }
-
-  compile() {
   }
 }
