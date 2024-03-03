@@ -3,7 +3,7 @@ import { writeFile } from 'fs/promises';
 import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp, Or } from "./Register.js";
 
 export class Mips32 {
-  constructor(registerBlock, stddout, stackPointer) {
+  constructor(registerBlock, stddout, stackPointer, compile = true) {
     this.registerBlock = registerBlock.flatten();
     this.registerBlock.optimize();
     this.stddout = stddout;
@@ -31,9 +31,11 @@ export class Mips32 {
 
     this.labelsOffsets = {};
 
-    this.prepareHeader();
-    this.iterateBlock();
-    this.createLabelOffsets();
+    if(compile) {
+      this.prepareHeader();
+      this.iterateBlock();
+      this.createLabelOffsets();
+    }
   }
 
   getStdoutResponse() {
@@ -364,14 +366,11 @@ export class Mips32 {
   }
 
   run() {
-    this.runner = new Mips32Runner(this.block);
+    this.runner = new Mips32Runner(this.flatten().block);
     this.runner.run()
   }
 
-  toStringArray_t(block) {
-  }
-
-  toString(withIndex = false) {
+  toString_t(withIndex = false) {
     let response = [];
     for(let i = 0, c = this.block.length; i < c; i++) {
       if(!withIndex) {
@@ -382,6 +381,32 @@ export class Mips32 {
     }
     return response.join('\n');
   }
+
+  toString(withIndex = false) {
+    const newBlock = this.flatten();
+    return newBlock.toString_t(withIndex);
+  }
+
+  flatten_t(instruction, block) {
+    if(instruction instanceof Mips32) {
+      for(let i = 0, c = instruction.block.length; i < c; i++) {
+        this.flatten_t(instruction.block[i], block);
+      }
+      return ;
+    }
+    block.push(instruction);
+  }
+  
+  flatten() {
+    let block = new Mips32(this.registerBlock, this.stddout, this.stackPointer, false);
+    this.flatten_t(this, block);
+
+    return block;
+  }
+
+  push(instruction) {
+    this.block.push(instruction)
+  } 
 
   async toFile(fileName) {
     try {
