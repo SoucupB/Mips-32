@@ -1178,3 +1178,31 @@ test('Code jump code', (t) => {
   t.equal(registerBlock.block.length, 6, 'returns true');
   t.end();
 });
+
+test('Hello world!', (t) => {
+  const program = new Program(`
+    void main() {
+      printChar(72);
+      printChar(101);
+      printChar(108);
+      printChar(108);
+      printChar(111);
+      printChar(32);
+      printChar(87);
+      printChar(111);
+      printChar(114);
+      printChar(108);
+      printChar(100);
+    }
+  `)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+
+  const mips32 = new Mips32(asmBlock, 2 ** 16, 1024 * 6);
+  mips32.run();
+  t.equal(mips32.runner.getRawStdoutBuffer(), 'Hello World', 'returns true');
+  t.equal(mips32.runner.getStackPointer(), 2 ** 16, 'returns true');
+  t.end();
+});
