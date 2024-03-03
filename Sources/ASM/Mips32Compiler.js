@@ -26,7 +26,7 @@ export class Mips32Compiler {
   }
 
   compile() {
-    const program = new Program(this.stdout)
+    const program = new Program(this.code, [], true, this.stdout)
     let chomp = program.chomp();
     if(chomp.isInvalid()) {
       return false;
@@ -34,7 +34,7 @@ export class Mips32Compiler {
     let programCompiler = new Compiler(null);
     this.intermediaryASMInsturctions = programCompiler.compileProgram(chomp);
     this.mips32Instructions = new Mips32(this.intermediaryASMInsturctions, this.stdout,
-                                         this.stackPointer, this.registerData, this.memorySize);
+                                         this.stackPointer, true, this.registerData, this.memorySize);
     return true;
   }
 
