@@ -53,7 +53,6 @@ test('Code compilation v3', (t) => {
   `)
   mipsCompiler.compile();
   mipsCompiler.run();
-  console.log(mipsCompiler.mips32Code().toString())
   t.equal(mipsCompiler.stdoutBuffer(), '254', 'returns true');
     
   t.end();

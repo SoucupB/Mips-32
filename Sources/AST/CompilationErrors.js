@@ -28,6 +28,11 @@ export class CompilationErrors {
   }
 
   toString() {
-    return "Error";
+    for(const [key, value] of Object.entries(ErrorTypes)) {
+      if(value == this.type) {
+        return key;
+      }
+    }
+    return "";
   }
 }

@@ -143,6 +143,19 @@ export class Program {
     return true;
   }
 
+  compilationError() {
+    return this.errors.length == 0;
+  }
+
+  errorsToString() {
+    let stringErrors = [];
+    for(let i = 0, c = this.errors.length; i < c; i++) {
+      stringErrors.push(this.errors[i].toString());
+    }
+
+    return stringErrors.join(', ')
+  }
+
   validateMethodsUniqueness(chomp) {
     let allMethods = Methods.searchAllMethods(chomp);
     let methodNames = {};
