@@ -6,26 +6,26 @@ export const ReadMemoryType = {
 };
 
 export class Mips32Runner {
-  constructor(block) {
+  constructor(block, registerData = {
+    zeroReg: 31,
+    stackPointerRegister: 30,
+    stddoutRegister: 29,
+    freeRegister: 28,
+    hi: 27,
+    lo: 26,
+    testRegister: 25,
+    rsp: 24,
+    ret: 23,
+    bitSplitterRegister: 22,
+  }) {
     this.block = block;
+    this.stackPointerRegister = registerData.stackPointerRegister;
+    this.stddoutRegister = registerData.stddoutRegister;
 
-    this.zeroReg = 31;
-    this.stackPointerRegister = 30;
-    this.stddoutRegister = 29;
-    this.freeRegister = 28;
-    this.hi = 27;
-    this.lo = 26;
-    this.testRegister = 25;
-    this.rsp = 24;
-    this.ret = 23;
-
-    this.registerCount = 32;
-    this.usedRegisters = {
-      'HI': this.hi,
-      'LO': this.lo,
-      'rsp': this.rsp,
-      'ret': this.ret
-    };
+    this.hi = registerData.hi;
+    this.lo = registerData.lo;
+    
+    this.registerData = registerData;
 
     this.memory = new Array(1024 * 1024).fill(0);
     this.register = new Array(40).fill(0);

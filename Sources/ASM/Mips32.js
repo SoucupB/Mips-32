@@ -414,7 +414,7 @@ export class Mips32 {
   }
 
   run() {
-    this.runner = new Mips32Runner(this.block);
+    this.runner = new Mips32Runner(this.block, this.registerData);
     this.runner.run()
   }
 
