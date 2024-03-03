@@ -1,5 +1,4 @@
 import { Mips32Runner } from "./Mips32Runner.js";
-import { writeFile } from 'fs/promises';
 import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp, Or } from "./Register.js";
 
 export class Mips32 {
@@ -453,14 +452,6 @@ export class Mips32 {
 
   push(instruction) {
     this.block.push(instruction)
-  } 
-
-  async toFile(fileName) {
-    try {
-      await writeFile(fileName, this.toString(true));
-    } catch (err) {
-      console.error('Error writing to file:', err);
-    }
   }
 }
 
