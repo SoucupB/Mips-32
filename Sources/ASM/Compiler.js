@@ -354,7 +354,6 @@ export class Compiler {
     block.push(new Label(methodBlockNameLabel));
     this.registerStack.freeze();
     for(let i = 0; i < methodParams.length; i++) {
-      const type = methodParams[i].childrenChomps[0];
       const paramName = methodParams[i].childrenChomps[1];
       this.registerStack.push(paramName.buffer, 4);
     }
@@ -376,10 +375,6 @@ export class Compiler {
       const child = children[i];
 
       switch(child.type) {
-        case Initialization: {
-          // block.push(this.compileInitialization(child)); // To do on another memory region
-          break;
-        }
         case Methods: {
           block.push(this.compileMethods(child));
           break;

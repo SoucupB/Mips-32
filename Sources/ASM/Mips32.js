@@ -2,7 +2,18 @@ import { Mips32Runner } from "./Mips32Runner.js";
 import { Add, Div, JmpTypes, Mov, MovTypes, Mul, Pop, Push, Jmp, Label, Cmp, Sete, Setne, Setge, Setle, Setnz, Setdor, Sub, Test, Jz, Prp, Or } from "./Register.js";
 
 export class Mips32 {
-  constructor(registerBlock, stddout, stackPointer, compile = true) {
+  constructor(registerBlock, stddout, stackPointer, compile = true, registerData = {
+    zeroReg: 31,
+    stackPointerRegister: 30,
+    stddoutRegister: 29,
+    freeRegister: 28,
+    hi: 27,
+    lo: 26,
+    testRegister: 25,
+    rsp: 24,
+    ret: 23,
+    bitSplitterRegister: 22,
+  }) {
     this.registerBlock = registerBlock.flatten();
     this.registerBlock.optimize();
     this.stddout = stddout;
@@ -19,6 +30,7 @@ export class Mips32 {
     this.rsp = 24;
     this.ret = 23;
     this.bitSplitterRegister = 22;
+    this.registersData = registerData
 
     this.registerCount = 32;
     this.usedRegisters = {
