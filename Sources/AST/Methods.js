@@ -367,7 +367,11 @@ export class Methods {
   }
 
   static doesReturnNeedsToBeVoid(block) {
-    if(Methods.doesReturnNeedsToBeNonVoid(block)) {
+    const expressionReturns = Helper.searchChompByType(block, {
+      type: ReturnWithExpression
+    });
+
+    if(expressionReturns.length) {
       return false;
     }
 

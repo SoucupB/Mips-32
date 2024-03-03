@@ -273,3 +273,20 @@ test('Check Methods checker with return error v6', (t) => {
   t.equal(variableErrors.type, ErrorTypes.INVALID_RETURN, 'returns');
   t.end();
 });
+
+test('Check Methods checker with return error v7', (t) => {
+  let chomp = Methods.chompDeclaration(`
+  void someMethod(int _aaga, int _dafb) {
+    int b = 5;
+    if(b == 0) {
+      return ;
+    }
+    return 0;
+  }`, 0);
+  let stack = new StackDeclarations();
+
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let variableErrors = Methods.addToStackAndVerify(chomp, stack);
+  t.equal(variableErrors.type, ErrorTypes.INVALID_RETURN, 'returns');
+  t.end();
+});
