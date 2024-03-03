@@ -413,7 +413,7 @@ export class Mips32 {
   }
 
   run() {
-    this.runner = new Mips32Runner(this.flatten().block);
+    this.runner = new Mips32Runner(this.block);
     this.runner.run()
   }
 
