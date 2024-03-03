@@ -8,11 +8,9 @@ import { Helper } from "./Helper.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 import Character from "./Character.js";
 
-let stddoutOutputBuffer = 2 ** 16;
-
 export class PredefinedMethods {
-  static methods() {
-    return `${PredefinedMethods.getElementAt()}${PredefinedMethods.storeElement()}${PredefinedMethods.storePrint()}${PredefinedMethods.bytePrint()}`
+  static methods(stddoutOutputBuffer) {
+    return `${PredefinedMethods.getElementAt()}${PredefinedMethods.storeElement()}${PredefinedMethods.storePrint(stddoutOutputBuffer)}${PredefinedMethods.bytePrint(stddoutOutputBuffer)}`
   }
 
   static getElementAt() {
@@ -23,7 +21,7 @@ export class PredefinedMethods {
     return `int setElement(int buffer,int pos,int element){*(buffer+pos*4)=element;return 0;}`;
   }
 
-  static bytePrint() {
+  static bytePrint(stddoutOutputBuffer) {
     return `
     int __digitCount(int n) {
       int total = 0;
@@ -67,15 +65,15 @@ export class PredefinedMethods {
     `;
   }
 
-  static storePrint() {
+  static storePrint(stddoutOutputBuffer) {
     return `int printLine(int element){int startingPointer=${stddoutOutputBuffer};int size=*(startingPointer-4);*(startingPointer+size)=element;*(startingPointer-4)=size+4;return 0;}`;
   }
 };
 
 export class Program {
-  constructor(code, errors = [], withPredefinedMethods = true) {
+  constructor(code, errors = [], withPredefinedMethods = true, stddoutOutputBuffer = 2 ** 16) {
     if(withPredefinedMethods) {
-      this.code = `${PredefinedMethods.methods()}${code}`;
+      this.code = `${PredefinedMethods.methods(stddoutOutputBuffer)}${code}`;
     }
     else {
       this.code = code;

@@ -26,7 +26,7 @@ export class Mips32Compiler {
   }
 
   compile() {
-    const program = new Program()
+    const program = new Program(this.stdout)
     let chomp = program.chomp();
     if(chomp.isInvalid()) {
       return false;
