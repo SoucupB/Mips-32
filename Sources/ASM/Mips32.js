@@ -34,9 +34,24 @@ export class Mips32 {
     if(compile) {
       this.prepareHeader();
       this.iterateBlock();
+      this.iterateImediates();
       this.createLabelOffsets();
-      this.rebuildJumpInstructions();
+      // this.rebuildJumpInstructions(); 
+      // This will not work since labels will not be reofseted.
     }
+  }
+
+  iterateImediates() {
+    let newBlock = [];
+    for(let i = 0, c = this.block.length; i < c; i++) {
+      if(this.block[i] instanceof MipsAddi) {
+        this.addNumberToBlock(this.block[i], newBlock);
+        continue;
+      }
+
+      newBlock.push(this.block[i]);
+    }
+    this.block = newBlock;
   }
 
   getStdoutResponse() {
@@ -169,7 +184,7 @@ export class Mips32 {
         this.addSetTestInstruction(instruction, instructionBlockAsm, i);
       }
       if(instruction instanceof Jz) {
-        this.addJzInstruction(instruction, this.block.length)
+        this.addJzInstruction(instruction)
       }
       if(instruction instanceof Prp) {
         this.addPrpInstruction(instruction)
@@ -319,21 +334,21 @@ export class Mips32 {
     this.block.push(new MipsAdd(this.getRegisterValue(instruction.dst), this.getRegisterValue(instruction.src), this.zeroReg));
   }
 
-  addNumberToBlock(instruction) { 
-    let dstRegisterNumber = this.getRegisterValue(instruction.dst);
-    if(this.doesNumberFitInImmediate(instruction.src)) {
-      this.block.push(new MipsAddi(dstRegisterNumber, this.zeroReg, instruction.src));
+  addNumberToBlock(instruction, block) { 
+    let dstRegisterNumber = instruction.t;
+    if(this.doesNumberFitInImmediate(instruction.immediate)) {
+      block.push(instruction);
       return ;
     }
-    let immediate = parseInt(instruction.src);
+    let immediate = parseInt(instruction.immediate);
 
     let lowImmediate = (immediate & ((1 << 16) - 1));
     let highImmediate = (immediate >> 16);
 
-    this.block.push(new MipsAddi(this.bitSplitterRegister, this.zeroReg, lowImmediate));
-    this.block.push(new MipsAddi(dstRegisterNumber, this.zeroReg, highImmediate));
-    this.block.push(new MipsSll(dstRegisterNumber, dstRegisterNumber, 16));
-    this.block.push(new MipsOr(dstRegisterNumber, dstRegisterNumber, this.bitSplitterRegister));
+    block.push(new MipsAddi(this.bitSplitterRegister, this.zeroReg, lowImmediate));
+    block.push(new MipsAddi(dstRegisterNumber, this.zeroReg, highImmediate));
+    block.push(new MipsSll(dstRegisterNumber, dstRegisterNumber, 16));
+    block.push(new MipsOr(dstRegisterNumber, dstRegisterNumber, this.bitSplitterRegister));
   }
 
   getPositiveLwInstructions(t, i, s) {
@@ -364,7 +379,8 @@ export class Mips32 {
         break;
       }
       case MovTypes.NUMBER_TO_REG: {
-        this.addNumberToBlock(instruction);
+        // this.addNumberToBlock(instruction);
+        this.block.push(new MipsAddi(this.getRegisterValue(instruction.dst), this.zeroReg, instruction.src));
         break;
       }
       case MovTypes.STACK_TO_REG: {
