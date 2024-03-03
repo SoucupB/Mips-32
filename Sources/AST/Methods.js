@@ -351,15 +351,32 @@ export class Methods {
     }
   }
 
-  static doesReturnNeedsToBe(methodReturnType, block) {
+  static doesReturnNeedsToBeNonVoid(block) {
     const returnWord = Helper.searchChompByType(block, {
       type: ReturnWithExpression
     });
-    if(methodReturnType == 'void' && returnWord.length) {
+
+    if(returnWord.length) {
+      return true;
+    }
+
+    return false
+  }
+
+  static doesReturnNeedsToBeVoid(block) {
+    if(Methods.doesReturnNeedsToBeNonVoid(block)) {
       return false;
     }
-    if(methodReturnType != 'void' && !returnWord.length) {
-      return false;
+
+    return true;
+  }
+
+  static doesReturnNeedsToBe(methodReturnType, block) {
+    if(methodReturnType == 'void') {
+      return Methods.doesReturnNeedsToBeVoid(block);
+    }
+    if(methodReturnType != 'void') {
+      return Methods.doesReturnNeedsToBeNonVoid(block);
     }
     return true;
   }
