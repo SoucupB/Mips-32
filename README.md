@@ -1,94 +1,45 @@
-Initially, the language will have no spaces or special unrenderableCharacters.
+# Mips compiler
 
-Constant = (-2^31, 2^31);
-Variable = (char)(number)(underscore).
+## Description
+This repository constitutes a Pseudo C language compiler to a valid mips32 code
+The generated mips32 code according to this [Cheat sheet](https://uweb.engr.arizona.edu/~ece369/Resources/spim/MIPSReference.pdf) 
+with several differences.
+| Instruction | Operation |
+|-----------------|-------------------|
+| J address       | pc = address      |
+| NOOP            | None              |
 
-Expression = Constant
-Expression = Variable
-Expression = Constant Operator Expression
-Expression = Variable Operator Expression
-Expression = (Expression)
 
-Compiling the code will transform it into temporary ASM code
+The input string undergoes several transformations before being compiled into Mips32 instructions.
+![image](https://github.com/SoucupB/Mips-32/assets/49458226/c476acb9-29f5-4092-bc4b-6f6c97223bd2).
 
-```
-MOV $a, $b (a -> register, b -> register)
-MOV [$a + constant], $b ([a] -> memory block at register + constant, b -> register)
-MOV $a, [$b + constant] (a -> register, [b] -> memory block at register + constant)
+First, the C code is passed through the AST(Abstract syntax tree) compiler which splits the code into
+tokens, then it is assembled into an intermediary ASM instruction set which resembles x86 instruction
+set with some differences, and at the end is, again translated into mips32 code.
 
-push $a (pushes value of a onto the stack)
-pop $a (pops value from the stack)
+## Examples
 
-push *a (pushes stack with size 'a')
-pop *a (pops stack of size 'a')
+Sum of 2 numbers.
+```js
+let mipsCompiler = new Mips32Compiler(`
+  void main() {
+    int a = 5;
+    int b = 10;
+    printNumber(a + b);
+  }
+`, {
+  stdout: 1024 * 512, // The pointer from where "mipsCompiler.stdoutBuffer()" will transform the data into a string.
+  stackPointer: 1024 * 1024, // The stack pointer for when the program will start to run.
+  memorySize: 1024 * 1024 * 4 // The memory of the process that runs the program.
+})
 
-jmp $a (jumps at the memory value of register $a)
-jmp x (jumps at absolute value x)
-```
+mipsCompiler.compile();
+mipsCompiler.run();
 
-In order to load an expression tree into normal ASM we can use
-
-### Expression evaluation
-# Simple code
-```
-1+3*8 (1+(3*8))
-becomes
-
-MOV $0 1
-MOV $1 3
-MOV $2 8
-mul $3 $1 $2
-add $1 $0 $3
-
-Considering that 
-int a=0;
-int b=0;
-1+a*b
-
-MOV $0 1
-MOV $1 [sb - 4]
-MOV $2 [sb - 2]
-mul $3 $1 $2
-add $1 $0 $3
-```
-# Operations
-```
-a+b
-add c, a, b -- c = a + b
-
-a-b
-sub c, a, b -- c = a - b
-
-a*b
-mul c, a, b -- c = a * b
-
-a/b
-
-// if 7 is busy with another locked value, push $7 and pop it after the instruction ends
-MOV $7 a
-MOV $8 b
-
-div $8  -- $7 / $8 and results are div - $13 reminder $14
-
-cmp $0, $1  ; Compare $1 $0
-if $0 < $1
-$26 <- 1 $27 <- 0 $28 <- 0
-if $0 > $1
-$26 <- 0 $27 <- 1 $28 <- 0
-if $0 == $1
-$26 <- 0 $27 <- 0 $28 <- 1
-push $26, $27, $28 if needed.
+console.log(mipsCompiler.stdoutBuffer()); // This will print 15
 ```
 
-### Initialization
-```
-int x=expression;
 
-*Evaluate expression and put the result in register x
 
-push $x // The size is evaluated with the size of the datatype
-```
-
-### Conditional
 
 
