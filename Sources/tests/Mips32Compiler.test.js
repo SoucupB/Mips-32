@@ -234,3 +234,28 @@ test('Code compilation v8', (t) => {
   t.end();
 });
 
+test('Code compilation v9', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    void test(int pointer) {
+      *pointer = 100;
+      return ;
+      *pointer = 150;
+    }
+
+    void main() {
+      int pointer = 1024;
+      test(pointer);
+      printNumber(*pointer);
+    }
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), '100', 'returns true');
+    
+  t.end();
+});
+
