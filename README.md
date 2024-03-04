@@ -19,28 +19,7 @@ set with some differences, and at the end is, again translated into mips32 code.
 
 ## Examples
 
-Sum of 2 numbers.
-```js
-let mipsCompiler = new Mips32Compiler(`
-  void main() {
-    int a = 5;
-    int b = 10;
-    printNumber(a + b);
-  }
-`, {
-  stdout: 1024 * 512, // The pointer from where "mipsCompiler.stdoutBuffer()" will transform the data into a string.
-  stackPointer: 1024 * 1024, // The stack pointer for when the program will start to run.
-  memorySize: 1024 * 1024 * 4 // The memory of the process that runs the program in bytes.
-})
-
-mipsCompiler.compile();
-mipsCompiler.run();
-
-console.log(mipsCompiler.stdoutBuffer()); // This will print 15
-```
-
 Hello world
-
 For this one, we should print all characters one after another.
 ```js
 let mipsCompiler = new Mips32Compiler(`
@@ -62,6 +41,71 @@ mipsCompiler.compile();
 mipsCompiler.run();
 
 console.log(mipsCompiler.stdoutBuffer()); // This will print "Hello World"
+```
+
+Sum of 2 numbers.
+```js
+let mipsCompiler = new Mips32Compiler(`
+  void main() {
+    int a = 5;
+    int b = 10;
+    printNumber(a + b);
+  }
+`, {
+  stdout: 1024 * 512, // The pointer from where "mipsCompiler.stdoutBuffer()" will transform the data into a string.
+  stackPointer: 1024 * 1024, // The stack pointer for when the program will start to run.
+  memorySize: 1024 * 1024 * 4 // The memory of the process that runs the program in bytes.
+})
+
+mipsCompiler.compile();
+mipsCompiler.run();
+
+console.log(mipsCompiler.stdoutBuffer()); // This will print 15
+```
+
+Recursive fibbonaci.
+```js
+let mipsCompiler = new Mips32Compiler(`
+  int fibboRecursive(int n) {
+    if ( n < 2 ) {
+      return 1;
+    }
+    return fibboRecursive ( n - 1 ) + fibboRecursive ( n - 2 );
+  }
+  void main() {
+    printNumber(fibboRecursive(8));
+  }
+`, {
+  stdout: 1024 * 512,
+  stackPointer: 1024 * 1024,
+  memorySize: 1024 * 1024 * 4
+})
+
+mipsCompiler.compile();
+mipsCompiler.run();
+
+console.log(mipsCompiler.stdoutBuffer()); // This will print 34
+```
+Print first 10 digits
+
+```js
+let mipsCompiler = new Mips32Compiler(`
+  void main() {
+    for(int i = 0; i < 10; i = i + 1) {
+      printNumber(i * 2);
+      printChar(32);
+    }
+  }
+`, {
+  stdout: 1024 * 512,
+  stackPointer: 1024 * 1024,
+  memorySize: 1024 * 1024 * 4
+})
+
+mipsCompiler.compile();
+mipsCompiler.run();
+
+console.log(mipsCompiler.stdoutBuffer()); // This will print 0 1 2 3 4 5 6 7 8 9 
 ```
 
 ## Instructions
@@ -110,10 +154,40 @@ Will show this (without the comments).
 20: LW $1 0($28) // Loads the (5*3) result into $1 register from [stack_pointer - 8] position.
 21: ADD $2 $0 $1 // adds the result and stores it into $2 register.
 22: ADDI $28 $31 4
-23: SUB $30 $30 $28
+23: SUB $30 $30 $28 // pops the stack from the main method.
 ```
+## What it can do
+- Compilation messages in case of errors (although quite limited in what they offer).
+- Methods usage.
+- Expressions definitions.
+- Initializations.
+- Assignations.
+- Code blocks.
+- General pointers access. (Full access to the entire memory).
+- Loops.
 
 
+## Limitations.
+- The compiler processes only 4 bytes signed integers. 
+- There are no definitions for stack pointers (int a[100]), a[1]=.... but there is general access to the memory of the program
+through pointers.
+  ```c
+  int a = 5000;
+  *a = 150;
+  ```
+- No direct negative numbers definitions
+  ```c
+  int c = -5;
+  ```
+  is not allowed.
+  ```c
+  int c = 0 - 5;
+  ```
+  is allowed.
+- Even if the asm is mips32, in order to be translated to valid binaries, the amount of generated instructions should be less then 64kb (j jumps support 24 bits address jump but BEQ $a $b label supports only 16 bits offset jump and the compiler does not split the label into 32 bits numbers).
+- Assignations are not threated as expressions so things like `a = b = c;` is not considered as valid code.
+- No comments.
+- No instructions assignations such as `a++, a += 2, etc...`;
 
 
 
