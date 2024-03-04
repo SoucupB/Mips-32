@@ -269,6 +269,14 @@ export class Methods {
     return chomp;
   }
 
+  static methodName(chomp) {
+    if(chomp.type != Methods) {
+      return null;
+    }
+
+    return chomp.childrenChomps[0].buffer;
+  }
+
   static arrayToChomp(arr, index) {
     let chomp = new Chomp(null, index);
     chomp.childrenChomps = arr;

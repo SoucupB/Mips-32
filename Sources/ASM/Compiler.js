@@ -390,7 +390,9 @@ export class Compiler {
 
       switch(child.type) {
         case Methods: {
-          block.push(this.compileMethods(child));
+          if(!child.ignore) {
+            block.push(this.compileMethods(child));
+          }
           break;
         }
         default: {

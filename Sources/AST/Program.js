@@ -102,6 +102,7 @@ export class Program {
     if(!this.validateChomp(chomp)) {
       return Chomp.invalid();
     }
+    this.ignoreUnusedMethods(chomp);
     return chomp;
   }
 
@@ -262,6 +263,49 @@ export class Program {
     }
 
     return true;
+  }
+
+  ignoreUnusedMethods_t(currentMethodName, methodsPairs, usedMethods) {
+    const currentMethod = methodsPairs[currentMethodName];
+
+    let methodCalls = Helper.searchChompByType(currentMethod, {
+      type: MethodCall,
+    });
+
+    for(let i = 0, c = methodCalls.length; i < c; i++) {
+      const currentMethodCall = methodCalls[i].childrenChomps[0].buffer;
+
+      if(!(currentMethodCall in usedMethods)) {
+        usedMethods[currentMethodCall] = 1;
+        this.ignoreUnusedMethods_t(currentMethodCall, methodsPairs, usedMethods);
+      }
+    }
+  }
+
+  pairMethodsWithNames(chomp) {
+    let methodsReferences = {};
+    let allMethods = Helper.searchChompByType(chomp, {
+      type: Methods,
+    });
+    for(let i = 0, c = allMethods.length; i < c; i++) {
+      methodsReferences[Methods.methodName(allMethods[i])] = allMethods[i];
+    }
+
+    return methodsReferences;
+  }
+
+  ignoreUnusedMethods(chomp) {
+    let methodsPairs = this.pairMethodsWithNames(chomp);
+    let usedMethods = {
+      'main': 1
+    };
+
+    this.ignoreUnusedMethods_t('main', methodsPairs, usedMethods);
+    for(const [key, value] of Object.entries(methodsPairs)) {
+      if(!(key in usedMethods)) {
+        value.ignore = true;
+      }
+    }
   }
 
   compilationError() {

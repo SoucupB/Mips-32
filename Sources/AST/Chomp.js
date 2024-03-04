@@ -11,6 +11,7 @@ class Chomp {
     this.isParent = isParent;
     this.parentChomp = null;
     this.id = chompID++;
+    this.ignore = false;
 
     this.expressionTree = null;
   }

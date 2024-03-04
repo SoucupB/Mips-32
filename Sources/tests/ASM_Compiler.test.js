@@ -1652,3 +1652,29 @@ test('Void method test v4', (t) => {
 
   t.end();
 });
+
+test('Removing unused methods', (t) => {
+  const program = new Program(`
+    void testMethod(int ana, int n) {
+      if(n >= 10) {
+        return ;
+      }
+      *ana = 30;
+    }
+
+    void main() {
+      int ana = 5000;
+      int a = ana + 5;
+      printNumber(a);
+    }
+  `, [], true)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getRawStdoutBuffer(), '5005', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
