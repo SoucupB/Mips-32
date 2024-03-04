@@ -19,7 +19,7 @@ set with some differences, and at the end is, again translated into mips32 code.
 
 ## Examples
 
-Hello world
+### Hello world
 For this one, we should print all characters one after another.
 ```js
 let mipsCompiler = new Mips32Compiler(`
@@ -38,7 +38,7 @@ let mipsCompiler = new Mips32Compiler(`
 })
 
 mipsCompiler.compile();
-mipsCompiler.run();
+mipsCompiler.run(); // This runs the mips32 instructions in order
 
 console.log(mipsCompiler.stdoutBuffer()); // This will print "Hello World"
 ```
@@ -58,12 +58,12 @@ let mipsCompiler = new Mips32Compiler(`
 })
 
 mipsCompiler.compile();
-mipsCompiler.run();
+mipsCompiler.run(); // This runs the mips32 instructions in order
 
 console.log(mipsCompiler.stdoutBuffer()); // This will print 15
 ```
 
-Recursive fibbonaci.
+### Recursive fibbonaci.
 ```js
 let mipsCompiler = new Mips32Compiler(`
   int fibboRecursive(int n) {
@@ -82,17 +82,42 @@ let mipsCompiler = new Mips32Compiler(`
 })
 
 mipsCompiler.compile();
-mipsCompiler.run();
+mipsCompiler.run(); // This runs the mips32 instructions in order
 
 console.log(mipsCompiler.stdoutBuffer()); // This will print 34
 ```
-Print first 10 digits
 
+### Print first 10 digits
 ```js
 let mipsCompiler = new Mips32Compiler(`
   void main() {
     for(int i = 0; i < 10; i = i + 1) {
-      printNumber(i * 2);
+      printNumber(i);
+      printChar(32);
+    }
+  }
+`, {
+  stdout: 1024 * 512,
+  stackPointer: 1024 * 1024,
+  memorySize: 1024 * 1024 * 4
+})
+
+mipsCompiler.compile();
+mipsCompiler.run();
+
+console.log(mipsCompiler.stdoutBuffer()); // This will print 0 1 2 3 4 5 6 7 8 9 
+```
+
+### Arrays
+```js
+let mipsCompiler = new Mips32Compiler(`
+  void main() {
+    int array = 1024;
+    for(int i = 0; i < 10; i = i + 1) {
+      *(array + i * 4) = i;
+    }
+    for(int i = 0; i < 10; i = i + 1) {
+      printNumber(*(array + i * 4));
       printChar(32);
     }
   }
@@ -113,7 +138,7 @@ In order to print the mips32 instructions code we can use the method.
 ```js
 mipsCompiler.mips32Code().toString(true)
 ```
-Example
+### Example
 ```js
 let mipsCompiler = new Mips32Compiler(`
   void main() {
