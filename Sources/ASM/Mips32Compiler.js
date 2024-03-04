@@ -57,6 +57,10 @@ export class Mips32Compiler {
     return this.mips32Instructions;
   }
 
+  intermediaryAsm() {
+    return this.intermediaryASMInsturctions;
+  }
+
   stdoutBuffer() {
     return this.mips32Instructions.runner.getRawStdoutBuffer();
   }
