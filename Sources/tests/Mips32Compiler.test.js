@@ -170,3 +170,42 @@ test('Code compilation v6', (t) => {
   t.end();
 });
 
+test('Code compilation v7', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    void permutations(int n, int k, int displayBuffer, int checker) {
+      if(k >= n) {
+        for(int i = 0; i < n; i = i + 1) {
+          printNumber(getElement(displayBuffer, i));
+          printChar(32);
+        }
+        printChar(10);
+        return ;
+      }
+
+      for(int i = 1; i <= n; i = i + 1) {
+        if(getElement(checker, i) == 0) {
+          setElement(checker, i, 1);
+          setElement(displayBuffer, k, i);
+          permutations(n, k + 1, displayBuffer, checker);
+          setElement(checker, i, 0);
+        }
+      }
+    }
+
+    void main() {
+      int buffer = 1050, n = 3, checker = 2000;
+      int responseBuffer = 504;
+      permutations(n, 0, responseBuffer, checker);
+    }
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), '1 2 3 \n1 3 2 \n2 1 3 \n2 3 1 \n3 1 2 \n3 2 1 \n', 'returns true');
+    
+  t.end();
+});
+
