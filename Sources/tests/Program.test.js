@@ -363,3 +363,19 @@ test('Program void in expression v2', (t) => {
   t.equal(chomp.isInvalid(), false, 'returns');
   t.end();
 });
+
+test('Program void in expression v3', (t) => {
+  let program = new Program(`
+  void coco(int n) {
+    int v = 5;
+    return ;
+  }
+  void main() {
+    int a = 0, b = 5;
+    printNumber(coco(b));
+  }
+  `);
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

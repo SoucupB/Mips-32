@@ -182,6 +182,19 @@ export class Program {
     return false;
   }
 
+  doMethodHasVoidCalls(methodCall, voidMethods) {
+    let methodCalls = Helper.searchChompByType(methodCall, {
+      type: MethodCall
+    });
+    for(let i = 0, c = methodCalls.length; i < c; i++) {
+      let currentMethodName = methodCalls[i].childrenChomps[0];
+      if(currentMethodName.buffer in voidMethods) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // check if the expression has only one operand
   expressionsVoidMethods(chomp, voidMethods) {
     let methodCalls = Helper.searchChompByType(chomp, {
@@ -190,7 +203,7 @@ export class Program {
 
     for(let i = 0, c = methodCalls.length; i < c; i++) {
       let currentMethodName = methodCalls[i].childrenChomps[0];
-      if(currentMethodName.buffer in voidMethods && methodCalls[i].parentChomp.childrenChomps.length > 1) {
+      if((currentMethodName.buffer in voidMethods && methodCalls[i].parentChomp.childrenChomps.length > 1) || this.doMethodHasVoidCalls(methodCalls[i].childrenChomps[1], voidMethods)) {
         return false;
       }
     }
