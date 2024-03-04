@@ -259,3 +259,25 @@ test('Code compilation v9', (t) => {
   t.end();
 });
 
+test('Code compilation v10', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    void main() {
+      printChar(72);printChar(101);
+      printChar(108);printChar(108);
+      printChar(111);printChar(32);
+      printChar(87);printChar(111);
+      printChar(114);printChar(108);
+      printChar(100);
+    }
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), 'Hello World', 'returns true');
+    
+  t.end();
+});
+
