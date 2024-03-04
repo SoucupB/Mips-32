@@ -1,12 +1,13 @@
 import Chomp from "./Chomp.js";
 import { MethodVariable, Variable } from "./Variable.js";
-import { Methods } from "./Methods.js";
+import { MethodCall, Methods } from "./Methods.js";
 import { Assignation } from "./Assignation.js";
 import { Initialization } from "./Initialization.js";
 import { StackDeclarations } from "./StackDeclarations.js";
 import { Helper } from "./Helper.js";
 import { CompilationErrors, ErrorTypes } from "./CompilationErrors.js";
 import Character from "./Character.js";
+import Expression from "./Expression.js";
 
 export class PredefinedMethods {
   static methods(stddoutOutputBuffer) {
@@ -119,6 +120,81 @@ export class Program {
     if(!this.validateMethodNoVariables(chomp)) {
       this.errors.push(new CompilationErrors(null, ErrorTypes.AMBIGUOS_DECLARATION))
       return false;
+    }
+    if(!this.validateVoidMethodsInExpressions(chomp)) {
+      this.errors.push(new CompilationErrors(null, ErrorTypes.INVALID_VOID_EXPRESSION_USE))
+      return false;
+    }
+
+    return true;
+  }
+
+  pairVoidMethods(chomp) {
+    let voidMethods = {};
+
+    let methods = Helper.searchChompByType(chomp, {
+      type: Methods
+    });
+    for(let i = 0, c = methods.length; i < c; i++) {
+      if(methods[i].buffer != 'main' && Methods.isMethodVoid(methods[i])) {
+        voidMethods[methods[i].buffer] = 1;
+      }
+    }
+
+    return voidMethods;
+  }
+
+  doesExpressionHaveMethod(expression, voidMethods) {
+    let allCalls = Helper.searchChompByType(expression, {
+      type: MethodCall
+    });
+
+    for(let i = 0, c = allCalls.length; i < c; i++) {
+      let currentMethodName = allCalls[i].childrenChomps[0];
+
+      if(currentMethodName.buffer in voidMethods) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  doesNodeHaveMethod(node, voidMethods) {
+    let expressions = Helper.searchChompByType(node, {
+      type: Expression
+    });
+
+    for(let i = 0, c = expressions.length; i < c; i++) {
+      if(this.doesExpressionHaveMethod(expressions[i], voidMethods)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  validateVoidMethodsInExpressions(chomp) {
+    let voidMethods = this.pairVoidMethods(chomp);
+
+    let initializations = Helper.searchChompByType(chomp, {
+      type: Initialization
+    });
+
+    for(let i = 0, c = initializations.length; i < c; i++) {
+      if(this.doesNodeHaveMethod(initializations[i], voidMethods)) {
+        return false;
+      }
+    }
+
+    let assignations = Helper.searchChompByType(chomp, {
+      type: Assignation
+    });
+
+    for(let i = 0, c = assignations.length; i < c; i++) {
+      if(this.doesNodeHaveMethod(assignations[i], voidMethods)) {
+        return false;
+      }
     }
 
     return true;
