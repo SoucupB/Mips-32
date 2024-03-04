@@ -1,5 +1,6 @@
 import { Pointer } from "./Pointer.js";
 
+let chompID = 0;
 class Chomp {
   constructor(buffer, index, type = null, isParent = false, invalid = false) {
     this.buffer = buffer;
@@ -9,6 +10,7 @@ class Chomp {
     this.childrenChomps = [];
     this.isParent = isParent;
     this.parentChomp = null;
+    this.id = chompID++;
 
     this.expressionTree = null;
   }
