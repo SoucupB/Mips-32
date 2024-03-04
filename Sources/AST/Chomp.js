@@ -8,6 +8,7 @@ class Chomp {
     this.type = type;
     this.childrenChomps = [];
     this.isParent = isParent;
+    this.parentChomp = null;
 
     this.expressionTree = null;
   }

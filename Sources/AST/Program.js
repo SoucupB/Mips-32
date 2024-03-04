@@ -85,8 +85,16 @@ export class Program {
     this.errors = errors;
   }
 
+  fillParents(chomp) {
+    for(let i = 0, c = chomp.childrenChomps.length; i < c; i++) {
+      chomp.childrenChomps[i].parentChomp = chomp;
+      this.fillParents(chomp.childrenChomps[i]);
+    }
+  }
+
   chomp() {
     let chomp = this._chomp(this.code, 0);
+    this.fillParents(chomp);
     if(chomp.isInvalid()) {
       this.errors.push(new CompilationErrors(null, ErrorTypes.PARSE_ERROR))
       return Chomp.invalid();
@@ -174,6 +182,22 @@ export class Program {
     return false;
   }
 
+  // check if the expression has only one operand
+  expressionsVoidMethods(chomp, voidMethods) {
+    let methodCalls = Helper.searchChompByType(chomp, {
+      type: MethodCall
+    });
+
+    for(let i = 0, c = methodCalls.length; i < c; i++) {
+      let currentMethodName = methodCalls[i].childrenChomps[0];
+      if(currentMethodName.buffer in voidMethods && methodCalls[i].parentChomp.childrenChomps.length > 1) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   validateVoidMethodsInExpressions(chomp) {
     let voidMethods = this.pairVoidMethods(chomp);
 
@@ -195,6 +219,10 @@ export class Program {
       if(this.doesNodeHaveMethod(assignations[i], voidMethods)) {
         return false;
       }
+    }
+
+    if(!this.expressionsVoidMethods(chomp, voidMethods)) {
+      return false;
     }
 
     return true;
