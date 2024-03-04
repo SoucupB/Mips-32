@@ -268,6 +268,7 @@ export class Program {
     }
     let programChomp = new Chomp(null, index, Program);
     programChomp.childrenChomps = response;
+    Methods.addDefaultReturnsForVoidMethods(programChomp);
 
     return programChomp;
   }

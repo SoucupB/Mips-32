@@ -388,6 +388,32 @@ export class Methods {
     return true;
   }
 
+  static isMethodVoid(chomp) {
+    let header = chomp.childrenChomps[0];
+    let methods = Helper.searchChompByType(header, {
+      type: MethodsKeywords
+    });
+
+    return methods[0].buffer == 'void';
+  }
+
+  static addDefaultReturn(method) {
+    let block = method.childrenChomps[2];
+    block.childrenChomps.push(new Chomp(null, 0, ReturnWithoutExpression));
+  }
+
+  static addDefaultReturnsForVoidMethods(chomp) {
+    let methods = Helper.searchChompByType(chomp, {
+      type: Methods
+    });
+    for(let i = 0, c = methods.length; i < c; i++) {
+      if(methods[i].buffer != 'main' && Methods.isMethodVoid(methods[i])) {
+        Methods.addDefaultReturn(methods[i]);
+      }
+    }
+
+  }
+
   static addToStackAndVerify(chomp, stackDeclaration) {
     let children = chomp.childrenChomps;
 
