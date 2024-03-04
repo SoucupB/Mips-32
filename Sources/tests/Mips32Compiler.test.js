@@ -91,3 +91,82 @@ test('Code compilation v4', (t) => {
     
   t.end();
 });
+
+test('Code compilation v4', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    void test(int pointer) {
+      *pointer = 100;
+    }
+
+    void main() {
+      int pointer = 1024;
+      *pointer = 5;
+      test(pointer);
+      printNumber(*pointer);
+    }
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), '100', 'returns true');
+    
+  t.end();
+});
+
+test('Code compilation v5', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    void test(int pointer, int n) {
+      if(n >= 10) {
+        return ;
+      }
+      *pointer = 100;
+    }
+
+    void main() {
+      int pointer = 1024;
+      *pointer = 5;
+      test(pointer, 5);
+      printNumber(*pointer);
+    }
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), '100', 'returns true');
+    
+  t.end();
+});
+
+test('Code compilation v6', (t) => {
+  let mipsCompiler = new Mips32Compiler(`
+    void test(int pointer, int n) {
+      if(n >= 10) {
+        return ;
+      }
+      *pointer = 100;
+    }
+
+    void main() {
+      int pointer = 1024;
+      *pointer = 5;
+      test(pointer, 10);
+      printNumber(*pointer);
+    }
+  `, {
+    stdout: 1024 * 512,
+    stackPointer: 1024 * 1024,
+    memorySize: 1024 * 1024 * 4
+  });
+  mipsCompiler.compile();
+  mipsCompiler.run();
+  t.equal(mipsCompiler.stdoutBuffer(), '5', 'returns true');
+    
+  t.end();
+});
+

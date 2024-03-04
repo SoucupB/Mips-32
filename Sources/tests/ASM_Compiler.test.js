@@ -1549,3 +1549,106 @@ test('Pointer tic tac toe AI v9', (t) => {
 
   t.end();
 });
+
+test('Void method test v1', (t) => {
+  const program = new Program(`
+    void testMethod(int ana) {
+      *ana = 30;
+    }
+
+    void main() {
+      int ana = 5000;
+      *ana = 150;
+      testMethod(ana);
+      printNumber(*ana);
+    }
+  `, [], true)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getRawStdoutBuffer(), '30', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Void method test v2', (t) => {
+  const program = new Program(`
+    void testMethod(int ana) {
+      *ana = 30;
+      return ;
+    }
+
+    void main() {
+      int ana = 5000;
+      *ana = 150;
+      testMethod(ana);
+      printNumber(*ana);
+    }
+  `, [], true)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getRawStdoutBuffer(), '30', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Void method test v3', (t) => {
+  const program = new Program(`
+    void testMethod(int ana, int n) {
+      if(n >= 10) {
+        return ;
+      }
+      *ana = 30;
+    }
+
+    void main() {
+      int ana = 5000;
+      *ana = 150;
+      testMethod(ana, 100);
+      printNumber(*ana);
+    }
+  `, [], true)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getRawStdoutBuffer(), '150', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
+
+test('Void method test v4', (t) => {
+  const program = new Program(`
+    void testMethod(int ana, int n) {
+      if(n >= 10) {
+        return ;
+      }
+      *ana = 30;
+    }
+
+    void main() {
+      int ana = 5000;
+      *ana = 150;
+      testMethod(ana, 5);
+      printNumber(*ana);
+    }
+  `, [], true)
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), false, 'returns');
+  let programCompiler = new Compiler(null);
+  let asmBlock = programCompiler.compileProgram(chomp);
+  asmBlock.run();
+  t.equal(asmBlock.getRawStdoutBuffer(), '30', 'returns');
+  t.equal(asmBlock.runner.initialStackPointer, asmBlock.runner.stackPointer, 'returns');
+
+  t.end();
+});
