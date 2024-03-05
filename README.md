@@ -207,7 +207,7 @@ There is also a config for some of the registers which hold stuff such as stack 
 - Loops.
 
 
-## Problems.
+## Limitations and problems.
 - The compiler processes only 4 bytes signed integers. 
 - There are no definitions for stack pointers (int a[100]), a[1]=.... but there is general access to the memory of the program
 through pointers.
@@ -229,6 +229,9 @@ through pointers.
 - No comments.
 - No instructions assignations such as `a++, a += 2, etc...`;
 - Might suffer some weird compilation error problems due to bugs.
+
+## Notes
+The compiler might not be complete and lacks things that C language already have, however it might be a good way to be used for simple MIPS32.
 
 
 
