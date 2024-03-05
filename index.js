@@ -1,5 +1,3 @@
-import { Mips32Compiler } from "../Sources";
-
 const runButton = document.getElementById('runButton');
 const compileButton = document.getElementById('compileButton');
 
