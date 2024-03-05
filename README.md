@@ -176,7 +176,7 @@ Will show this (without the comments).
 17: ADDI $0 $31 5 // Store 5 into 0 register.
 18: ADDI $28 $31 4 
 19: SUB $28 $30 $28 // pop the stack with 4 bytes.
-20: LW $1 0($28) // Loads the (5*3) result into $1 register from [stack_pointer - 8] position.
+20: LW $1 0($28) // Loads the (5*3) result into $1 register from [stack_pointer - 4] position.
 21: ADD $2 $0 $1 // adds the result and stores it into $2 register.
 22: ADDI $28 $31 4
 23: SUB $30 $30 $28 // pops the stack from the main method.
