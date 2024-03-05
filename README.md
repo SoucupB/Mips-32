@@ -192,7 +192,7 @@ Will show this (without the comments).
 - Loops.
 
 
-## Limitations.
+## Problems.
 - The compiler processes only 4 bytes signed integers. 
 - There are no definitions for stack pointers (int a[100]), a[1]=.... but there is general access to the memory of the program
 through pointers.
@@ -213,6 +213,7 @@ through pointers.
 - Assignations are not threated as expressions so things like `a = b = c;` is not considered as valid code.
 - No comments.
 - No instructions assignations such as `a++, a += 2, etc...`;
+- Might suffer some weird compilation error problems due to bugs.
 
 
 
