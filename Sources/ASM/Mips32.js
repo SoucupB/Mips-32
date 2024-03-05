@@ -126,7 +126,7 @@ export class Mips32 {
   }
 
   doesNumberFitInImmediate(immediate) {
-    return parseInt(immediate) <= 2 ** 16;
+    return parseInt(immediate) < 2 ** 16;
   }
 
   iterateBlock() {
