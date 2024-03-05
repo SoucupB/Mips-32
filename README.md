@@ -1,7 +1,7 @@
 # Mips compiler
 
 ## Description
-This repository constitutes a Pseudo C language compiler to a valid mips32 code
+This repository constitutes a Pseudo C language compiler to a valid mips32 code with 32 general purpose registers.
 The generated mips32 code according to this [Cheat sheet](https://uweb.engr.arizona.edu/~ece369/Resources/spim/MIPSReference.pdf) 
 with several differences.
 | Instruction | Operation |
@@ -180,6 +180,21 @@ Will show this (without the comments).
 21: ADD $2 $0 $1 // adds the result and stores it into $2 register.
 22: ADDI $28 $31 4
 23: SUB $30 $30 $28 // pops the stack from the main method.
+```
+There is also a config for some of the registers which hold stuff such as stack pointer, high, low (for mult and div) and other such stuff
+```
+{
+  zeroReg: 31, // The register which holds value 0
+  stackPointerRegister: 30, // The register which holds the stack pointer
+  stddoutRegister: 29, // Deprecrated register
+  freeRegister: 28, // General purpose register used for operations substitutions.
+  hi: 27, 
+  lo: 26,
+  testRegister: 25,
+  rsp: 24, // The register which holds the return value after a function call.
+  ret: 23, // The register which holds the address where the pc should go after the method yields.
+  bitSplitterRegister: 22, // A register used for splitting immediates which are higher then 16 bits.
+}
 ```
 ## What it can do
 - Compilation messages in case of errors (although quite limited in what they offer).
