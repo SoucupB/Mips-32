@@ -184,9 +184,9 @@ Will show this (without the comments).
 There is also a config for some of the registers which hold stuff such as stack pointer, high, low (for mult and div) and other such stuff
 ```
 {
-  zeroReg: 31, // The register which holds value 0
+  zeroReg: 31, // The register which holds value 0.
   stackPointerRegister: 30, // The register which holds the stack pointer
-  stddoutRegister: 29, // Deprecrated register
+  stddoutRegister: 29, // Deprecated register.
   freeRegister: 28, // General purpose register used for operations substitutions.
   hi: 27, 
   lo: 26,
