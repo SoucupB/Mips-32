@@ -1,4 +1,4 @@
-import { Mips32Compiler } from "./bundle.js";
+import { Mips32Compiler } from "./Compiler.js";
 
 const runButton = document.getElementById('runButton');
 const compileButton = document.getElementById('compileButton');
