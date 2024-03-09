@@ -15,6 +15,10 @@ module.exports = {
           loader: 'babel-loader', // Use Babel for transpilation
         },
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
     ],
   },
   mode: 'production',
