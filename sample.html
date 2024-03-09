@@ -3,43 +3,18 @@
 	<head>
 		<title>browser-amd-editor</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-		<style>
-			@font-face {
-				font-family: 'codicon';
-				src: url('../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf')
-					format('truetype');
-			}
-		</style>
 	</head>
 	<body>
 		<h2>Monaco Editor Sample</h2>
 		<div id="container" style="width: 800px; height: 600px; border: 1px solid grey"></div>
 
 		<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
-		<script src="editor/loader.js"></script>
+		<script src="editor/monaco-editor/min/vs/loader.js"></script>
 		<script>
-			require.config({
-				paths: { vs: '../node_modules/monaco-editor/min/vs' },
-				'vs/css': { disabled: true }
-			});
-
-			const container = document.getElementById('container');
-			const shadowRoot = container.attachShadow({
-				mode: 'closed'
-			});
-
-			const innerContainer = document.createElement('div');
-			shadowRoot.appendChild(innerContainer);
-			innerContainer.style.width = '800px';
-			innerContainer.style.height = '600px';
-
-			const innerStyle = document.createElement('style');
-			innerStyle.innerText =
-				'@import "../node_modules/monaco-editor/min/vs/editor/editor.main.css";';
-			shadowRoot.appendChild(innerStyle);
+			require.config({ paths: { vs: 'editor/monaco-editor/min/vs' } });
 
 			require(['vs/editor/editor.main'], function () {
-				const editor = monaco.editor.create(innerContainer, {
+				var editor = monaco.editor.create(document.getElementById('container'), {
 					value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
 					language: 'c'
 				});
