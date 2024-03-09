@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <title>Mips32 Code Editor</title>
+  <script src="editor/monaco-editor/min/vs/loader.js"></script>
   <script src="dst/bundle.js" defer></script>
 </head>
 
@@ -15,9 +16,9 @@
     <button id="runButton">Run</button>
     <button id="compileButton">Compile</button>
   </header>
-  <div class="container">
-    <textarea id="textarea1" placeholder="Enter code here..."></textarea>
-    <textarea id="textarea2" placeholder="Output..."></textarea>
+  <div class="parent-container">
+		<div id="container" style="width: 49%; height: 600px; border: 1px solid grey"></div>
+    <textarea id="textarea2" class="output-box" placeholder="Output..."></textarea>
   </div>
 </body>
 

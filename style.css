@@ -11,16 +11,16 @@ header {
   text-align: center;
 }
 
-.container {
+.parent-container {
   display: flex;
   justify-content: space-between;
   padding: 20px;
 }
 
-textarea {
-  width: 45%;
-  height: 300px;
-  padding: 10px;
+.output-box {
+  width: 49%;
+  height: 600px;
+  padding: 1px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
