@@ -16,9 +16,34 @@
     <button id="compileButtonMips32">Compile to Mips32</button>
     <button id="compileButtonAsm">Compile to Asm</button>
   </header>
+  <form id="memoryForm" class="form-container">
+    <div class="form-row">
+      <label for="stdout" class="form-label">Stdout Pointer</label>
+      <input value='524288' type="text" id="stdout" name="stdout" class="form-input" required>
+    </div>
+    <div class="form-row">
+      <label for="total_memory" class="form-label">Total Memory (In bytes)</label>
+      <input value=4194304 type="text" id="total_memory" name="total_memory" class="form-input" required>
+    </div>
+    <div class="form-row">
+      <label for="stack_memory_pointer" class="form-label">Stack Memory Pointer</label>
+      <input value=1048576 type="text" id="stack_memory_pointer" name="stack_memory_pointer" class="form-input"
+        required>
+    </div>
+    <div class="form-row">
+      <label for="task" class="form-label">Task:</label>
+      <select id="task" name="task" class="form-select">
+        <option value="none">None</option>
+        <option value="hello_world">Hello World</option>
+        <option value="fibbonachi">Fibonacci</option>
+        <option value="permutations">Permutations</option>
+        <option value="xo_ai">TicTacToe AI</option>
+      </select>
+    </div>
+  </form>
   <div class="parent-container">
-		<div id="input-container" style="width: 49%; height: 600px; border: 1px solid grey"></div>
-		<div id="output-container" style="width: 49%; height: 600px; border: 1px solid grey"></div>
+    <div id="input-container" style="width: 49%; height: 600px; border: 1px solid grey"></div>
+    <div id="output-container" style="width: 49%; height: 600px; border: 1px solid grey"></div>
   </div>
 </body>
 

@@ -1,4 +1,5 @@
 import { Mips32Compiler } from "./Compiler.js";
+import { exampleAlgorithms } from "./exampleAlgorithms.js";
 const monaco = require('monaco-editor');
 
 const runButton = document.getElementById('runButton');
@@ -8,12 +9,18 @@ const compileButtonAsm = document.getElementById('compileButtonAsm');
 var inputEditor;
 var outputEditor;
 
+const getValueFromFormDOM = (domID) => {
+  const formElementDOM = document.getElementById(domID);
+
+  return parseInt(formElementDOM.value);
+}
+
 runButton.addEventListener('click', () => {
   const code = inputEditor.getValue();
   let mipsCompiler = new Mips32Compiler(code, {
-    stdout: 1024 * 512,
-    stackPointer: 1024 * 1024,
-    memorySize: 1024 * 1024 * 4
+    stdout: getValueFromFormDOM('stdout'),
+    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
+    memorySize: getValueFromFormDOM('total_memory')
   });
   mipsCompiler.compile();
   mipsCompiler.run();
@@ -24,9 +31,9 @@ runButton.addEventListener('click', () => {
 compileButtonMips32.addEventListener('click', () => {
   const code = inputEditor.getValue();
   let mipsCompiler = new Mips32Compiler(code, {
-    stdout: 1024 * 512,
-    stackPointer: 1024 * 1024,
-    memorySize: 1024 * 1024 * 4
+    stdout: getValueFromFormDOM('stdout'),
+    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
+    memorySize: getValueFromFormDOM('total_memory')
   });
   mipsCompiler.compile();
   outputEditor.setValue(mipsCompiler.mips32Code().toString());
@@ -35,9 +42,9 @@ compileButtonMips32.addEventListener('click', () => {
 compileButtonAsm.addEventListener('click', () => {
   const code = inputEditor.getValue();
   let mipsCompiler = new Mips32Compiler(code, {
-    stdout: 1024 * 512,
-    stackPointer: 1024 * 1024,
-    memorySize: 1024 * 1024 * 4
+    stdout: getValueFromFormDOM('stdout'),
+    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
+    memorySize: getValueFromFormDOM('total_memory')
   });
   mipsCompiler.compile();
   outputEditor.setValue(mipsCompiler.intermediaryAsm().toString());
@@ -69,8 +76,15 @@ const outputEditorSetup = () => {
     language: 'asm'
   });
   monaco.editor.setTheme('vs-dark');
-
 }
 
+const changeExampleAlgorithm = () => {
+  const selectedValue = document.getElementById('task').value;
+  if(selectedValue in exampleAlgorithms) {
+    inputEditor.setValue(exampleAlgorithms[selectedValue]);
+  }
+}
+
+document.getElementById('task').addEventListener('change', changeExampleAlgorithm);
 inputEditorSetup();
 outputEditorSetup();
