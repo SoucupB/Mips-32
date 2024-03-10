@@ -215,13 +215,13 @@ through pointers.
   int a = 5000;
   *a = 150;
   ```
-- No direct negative numbers definitions
-  is not allowed.
+- No direct negative numbers definitions.
   ```c
+  // is not allowed.
   int c = -5;
   ```
-  is allowed.
   ```c
+  // is allowed.
   int c = 0 - 5;
   ```
 - Even if the asm is mips32, in order to be translated to valid binaries, the amount of generated instructions should be less then 64kb (j jumps support 24 bits address jump but BEQ $a $b label supports only 16 bits offset jump and the compiler does not split the a 32 bits label into 16 bits numbers).
