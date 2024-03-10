@@ -1,0 +1,30 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.11.0]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      run: cd Sources/
+    - name: Run npm i
+      run: |
+        cd Sources/
+        npm i
+    - name: run tests
+      run: |
+        cd Sources/
+        npm test
+    - name: Error code
+      run: echo $?
