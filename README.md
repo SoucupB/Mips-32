@@ -1,3 +1,4 @@
+[![Node.js CI](https://github.com/SoucupB/Mips-32/actions/workflows/node.js.yml/badge.svg)](https://github.com/SoucupB/Mips-32/actions/workflows/node.js.yml)
 # Mips compiler
 
 ## Description
