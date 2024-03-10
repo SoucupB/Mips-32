@@ -1,7 +1,7 @@
 {
   "name": "mips32-compiler",
   "version": "1.0.0",
-  "description": "A package with a method to compile C code into mips32 code",
+  "description": "A package with a method to compile C code into mips32 asm code",
   "main": "bundle.js",
   "repository": {
     "type": "git",
@@ -10,9 +10,9 @@
   "author": "Bogdan S",
   "license": "ISC",
   "keywords": [
+    "compiler",
     "mips32",
-    "single cycle",
-    "compiler"
+    "single cycle"
   ],
   "bugs": {
     "url": "https://github.com/SoucupB/Mips-32/issues"

@@ -216,15 +216,15 @@ through pointers.
   *a = 150;
   ```
 - No direct negative numbers definitions
+  is not allowed.
   ```c
   int c = -5;
   ```
-  is not allowed.
   ```c
+  is allowed.
   int c = 0 - 5;
   ```
-  is allowed.
-- Even if the asm is mips32, in order to be translated to valid binaries, the amount of generated instructions should be less then 64kb (j jumps support 24 bits address jump but BEQ $a $b label supports only 16 bits offset jump and the compiler does not split the label into 32 bits numbers).
+- Even if the asm is mips32, in order to be translated to valid binaries, the amount of generated instructions should be less then 64kb (j jumps support 24 bits address jump but BEQ $a $b label supports only 16 bits offset jump and the compiler does not split the a 32 bits label into 16 bits numbers).
 - Assignations are not threated as expressions so things like `a = b = c;` is not considered as valid code.
 - No comments.
 - No instructions assignations such as `a++, a += 2, etc...`;
