@@ -47,6 +47,7 @@ const editorSetup = () => {
     value: 'void main() {\n\tprintNumber(10);\n}',
     language: 'c'
   });
+  monaco.editor.setTheme('vs-dark');
 }
 
 editorSetup();
