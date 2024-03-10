@@ -17,37 +17,21 @@ const getValueFromFormDOM = (domID) => {
 
 runButton.addEventListener('click', () => {
   const code = inputEditor.getValue();
-  let mipsCompiler = new Mips32Compiler(code, {
-    stdout: getValueFromFormDOM('stdout'),
-    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
-    memorySize: getValueFromFormDOM('total_memory')
-  });
-  mipsCompiler.compile();
-  mipsCompiler.run();
 
-  outputEditor.setValue(mipsCompiler.stdoutBuffer());
+  const compilation = compile(code);
+  compilation.run();
+
+  outputEditor.setValue(compilation.stdoutBuffer());
 });
 
 compileButtonMips32.addEventListener('click', () => {
   const code = inputEditor.getValue();
-  let mipsCompiler = new Mips32Compiler(code, {
-    stdout: getValueFromFormDOM('stdout'),
-    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
-    memorySize: getValueFromFormDOM('total_memory')
-  });
-  mipsCompiler.compile();
-  outputEditor.setValue(mipsCompiler.mips32Code().toString());
+  outputEditor.setValue(compile(code).mips32Code().toString());
 });
 
 compileButtonAsm.addEventListener('click', () => {
   const code = inputEditor.getValue();
-  let mipsCompiler = new Mips32Compiler(code, {
-    stdout: getValueFromFormDOM('stdout'),
-    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
-    memorySize: getValueFromFormDOM('total_memory')
-  });
-  mipsCompiler.compile();
-  outputEditor.setValue(mipsCompiler.intermediaryAsm().toString());
+  outputEditor.setValue(compile(code).intermediaryAsm().toString());
 });
 
 const inputEditorSetup = () => {
@@ -56,6 +40,21 @@ const inputEditorSetup = () => {
     language: 'c'
   });
   monaco.editor.setTheme('vs-dark');
+}
+
+const compile = (code) => {
+  let mipsCompiler = new Mips32Compiler(code, {
+    stdout: getValueFromFormDOM('stdout'),
+    stackPointer: getValueFromFormDOM('stack_memory_pointer'),
+    memorySize: getValueFromFormDOM('total_memory')
+  });
+  try {
+    mipsCompiler.compile();
+  } catch (error) {
+    alert(error.message);
+  }
+
+  return mipsCompiler;
 }
 
 const outputEditorSetup = () => {
