@@ -17,6 +17,33 @@ First, the C code is passed through the AST(Abstract syntax tree) compiler which
 tokens, then it is assembled into an intermediary ASM instruction set which resembles x86 instruction
 set with some differences, and at the end is, again translated into mips32 code.
 
+## Predefined methods.
+There are several predefined methods which can help in order to use this library.
+
+1)
+```
+int setElement(int buffer,int pos,int element);
+```
+This will set an element at a pointers position (pos << 2). Its equivalent of using buffer[pos] = element. *(buffer + pos << 2) = element;
+
+2) 
+```
+int getElement(int buffer,int pos);
+```
+This will get an element at a pointers position (pos << 2). Its equivalent of using element = buffer[pos]. element = *(buffer + pos << 2);
+
+3)
+```
+int printNumber(int element);
+```
+Will put the 32 bits number on the stdout pointer position.
+
+4)
+```
+int printChar(int element);
+```
+Will put a char at the current stdout pointer offset (this is used to print individual ASCII characters).
+
 ## Examples
 
 ### Hello world
