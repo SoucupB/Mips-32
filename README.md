@@ -220,8 +220,8 @@ through pointers.
   ```c
   int c = -5;
   ```
-  ```c
   is allowed.
+  ```c
   int c = 0 - 5;
   ```
 - Even if the asm is mips32, in order to be translated to valid binaries, the amount of generated instructions should be less then 64kb (j jumps support 24 bits address jump but BEQ $a $b label supports only 16 bits offset jump and the compiler does not split the a 32 bits label into 16 bits numbers).
