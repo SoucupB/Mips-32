@@ -11,6 +11,7 @@ with several differences.
 
 
 The input string undergoes several transformations before being compiled into Mips32 instructions.
+
 ![image](https://github.com/SoucupB/Mips-32/assets/49458226/c476acb9-29f5-4092-bc4b-6f6c97223bd2).
 
 First, the C code is passed through the AST(Abstract syntax tree) compiler which splits the code into

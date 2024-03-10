@@ -17,6 +17,12 @@ First, the C code is passed through the AST(Abstract syntax tree) compiler which
 tokens, then it is assembled into an intermediary ASM instruction set which resembles x86 instruction
 set with some differences, and at the end is, again translated into mips32 code.
 
+## Installation
+Currently the package is available through npm package manager and it can be installed with this command.
+```
+npm i mips32-compiler
+```
+
 ## Predefined methods.
 There are several predefined methods which can help in order to use this library.
 
