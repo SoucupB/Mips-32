@@ -195,5 +195,21 @@ void main() {
   'none': `void main() {
   printNumber(10);
 }
-    `
+    `,
+  'swap_elements': `void swap(int a, int b) {
+  int aux = *a;
+  *a = *b;
+  *b = aux;
+}
+
+void main() {
+  int a = 500, b = 504;
+  *a = 10;
+  *b = 15;
+  swap(a, b);
+  printNumber(*a);
+  printChar(32);
+  printNumber(*b);
+}
+  `
 } 
