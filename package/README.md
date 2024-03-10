@@ -53,6 +53,8 @@ Will put a char at the current stdout pointer offset (this is used to print indi
 ### Hello world
 For this one, we should print all characters one after another.
 ```js
+const { Mips32Compiler } = require('mips32-compiler');
+
 let mipsCompiler = new Mips32Compiler(`
   void main() {
     printChar(72);printChar(101);
@@ -76,6 +78,8 @@ console.log(mipsCompiler.stdoutBuffer()); // This will print "Hello World"
 
 Sum of 2 numbers.
 ```js
+const { Mips32Compiler } = require('mips32-compiler');
+
 let mipsCompiler = new Mips32Compiler(`
   void main() {
     int a = 5;
@@ -96,6 +100,8 @@ console.log(mipsCompiler.stdoutBuffer()); // This will print 15
 
 ### Recursive fibbonaci.
 ```js
+const { Mips32Compiler } = require('mips32-compiler');
+
 let mipsCompiler = new Mips32Compiler(`
   int fibboRecursive(int n) {
     if ( n < 2 ) {
@@ -120,6 +126,8 @@ console.log(mipsCompiler.stdoutBuffer()); // This will print 34
 
 ### Print first 10 digits
 ```js
+const { Mips32Compiler } = require('mips32-compiler');
+
 let mipsCompiler = new Mips32Compiler(`
   void main() {
     for(int i = 0; i < 10; i = i + 1) {
@@ -141,6 +149,8 @@ console.log(mipsCompiler.stdoutBuffer()); // This will print 0 1 2 3 4 5 6 7 8 9
 
 ### Arrays
 ```js
+const { Mips32Compiler } = require('mips32-compiler');
+
 let mipsCompiler = new Mips32Compiler(`
   void main() {
     int array = 1024;
@@ -171,6 +181,8 @@ mipsCompiler.mips32Code().toString(true)
 ```
 ### Example
 ```js
+const { Mips32Compiler } = require('mips32-compiler');
+
 let mipsCompiler = new Mips32Compiler(`
   void main() {
     int a = 5+2*3;
