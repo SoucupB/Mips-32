@@ -343,3 +343,10 @@ test('Check Initialization checker with spaces v6', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check Initialization checker with spaces v6', (t) => {
+  const chomp = Initialization.chomp('int a = 5b=6;', 0)
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

@@ -56,9 +56,10 @@ export class Initialization {
       initializers.push(currentChomp);
       index = currentChomp.index;
       index = Character.pruneSpacesAndNewlines(str, index);
-      if(Character.isCommaSeparator(str[index])) {
-        index++;
+      if(!Character.isCommaSeparator(str[index])) {
+        break;
       }
+      index++;
     }
     index = Character.pruneSpacesAndNewlines(str, index);
     if(!Character.isAssignationEnding(str[index])) {
