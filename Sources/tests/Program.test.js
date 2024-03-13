@@ -379,3 +379,15 @@ test('Program void in expression v3', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Program void in expression v4', (t) => {
+  let program = new Program(`
+  void main() {
+    int a = 10b=4;
+	  printNumber(10);
+  }
+  `);
+  let chomp = program.chomp();
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});

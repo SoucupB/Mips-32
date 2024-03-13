@@ -455,3 +455,12 @@ test('Check CodeBlock with spaces with return v3', (t) => {
   t.equal(chomp.isInvalid(), true, 'returns');
   t.end();
 });
+
+test('Check CodeBlock with spaces with return v4', (t) => {
+  let chomp = CodeBlock.chomp(`{
+    int a = 10b = 5;
+  }`, 0, true);
+
+  t.equal(chomp.isInvalid(), true, 'returns');
+  t.end();
+});
