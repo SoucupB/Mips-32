@@ -19,7 +19,7 @@ tokens, then it is assembled into an intermediary ASM instruction set which rese
 set with some differences, and at the end is, again translated into mips32 code.
 
 ### Demo
-[Here](https://soucupb.github.io/Mips-32/)
+[Here](https://soucupb.github.io/Mips32-Playground/)
 
 ## Installation
 Currently the package is available through npm package manager and it can be installed with this command.
