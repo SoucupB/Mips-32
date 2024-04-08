@@ -19,7 +19,7 @@ tokens, then it is assembled into an intermediary ASM instruction set which rese
 set with some differences, and at the end is, again translated into mips32 code.
 
 ## Playground
-The compiler can be tested [Here](https://soucupb.github.io/Mips-32/)
+The compiler can be tested [Here](https://soucupb.github.io/Mips32-Playground/)
 
 ## Predefined methods.
 There are several predefined methods which can help in order to use this library.
