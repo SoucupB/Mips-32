@@ -211,5 +211,108 @@ void main() {
   printChar(32);
   printNumber(*b);
 }
+  `,
+  'binary_search_tree': `int malloc(int size) {
+  int currentHeapPointer = 5000;
+  int lastPointer = *(currentHeapPointer - 4);
+  if(lastPointer == 0) {
+    *(currentHeapPointer - 4) = currentHeapPointer + size;
+    return currentHeapPointer;
+  }
+  *(currentHeapPointer - 4) = lastPointer + size;
+  return lastPointer;
+}
+
+int nodeSize() {
+  return 12;
+}
+
+void setValue(int nodePointer, int value) {
+  *nodePointer = value;
+}
+
+void setLeft(int node, int value) {
+  *(node + 4) = value;
+}
+
+void setRight(int node, int value) {
+  *(node + 8) = value;
+}
+
+int leftNode(int node) {
+  return *(node + 4);
+}
+
+int rightNode(int node) {
+  return *(node + 8);
+}
+
+int createNode(int value) {
+  int node = malloc(nodeSize());
+  setValue(node, value);
+  return node;
+}
+
+void displayNode(int node) {
+  printNumber(*node);
+}
+
+int insertNodeBST(int root, int value) {
+  if(root == 0) {
+    return createNode(value);
+  }
+  if(*root > value) {
+    setLeft(root, insertNodeBST(leftNode(root), value));
+  }
+  if(*root < value) {
+    setRight(root, insertNodeBST(rightNode(root), value));
+  }
+  return root;
+}
+
+void preorderPrint(int root) {
+  if(root == 0) {
+    return ;
+  }
+  printNumber(*root);
+  printChar(32);
+  preorderPrint(leftNode(root));
+  preorderPrint(rightNode(root));
+}
+
+void inorderPrint(int root) {
+  if(root == 0) {
+    return ;
+  }
+  inorderPrint(leftNode(root));
+  printNumber(*root);
+  printChar(32);
+  inorderPrint(rightNode(root));
+}
+
+void postorderPrint(int root) {
+  if(root == 0) {
+    return ;
+  }
+  postorderPrint(leftNode(root));
+  postorderPrint(rightNode(root));
+  printNumber(*root);
+  printChar(32);
+}
+
+void main() {
+  int root = createNode(144);
+  root = insertNodeBST(root, 15);
+  root = insertNodeBST(root, 166);
+  root = insertNodeBST(root, 125);
+  root = insertNodeBST(root, 211);
+  root = insertNodeBST(root, 155);
+  root = insertNodeBST(root, 1);
+  preorderPrint(root);
+  printChar(10);
+  inorderPrint(root);
+  printChar(10);
+  postorderPrint(root);
+}
   `
 } 
